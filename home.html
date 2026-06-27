@@ -11,7 +11,6 @@
     background: #000;
   }
 
-  /* 顶部菜单 */
   .navbar {
     position: fixed;
     top: 0;
@@ -27,22 +26,12 @@
     padding-top: 70px;
   }
 
-  /* 视频容器：宽度 100% + 高度自适应 */
-  .video-wrapper {
-    position: relative;
+  /* 视频宽度最大化，高度不限制 */
+  video, iframe {
     width: 100%;
-    padding-bottom: 56.25%; /* 16:9 */
+    height: auto; /* 高度自动，不限制 */
+    display: block;
     background: #000;
-  }
-
-  .video-wrapper video,
-  .video-wrapper iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
   }
 </style>
 </head>
@@ -53,22 +42,16 @@
 
 <div class="content">
 
-  <div class="video-wrapper">
-    <video src="https://dogegoog.com/967711711.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
-  </div>
+  <video src="https://dogegoog.com/967711711.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
 
-  <div class="video-wrapper">
-    <video src="video2.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
-  </div>
+  <video src="video2.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
 
-  <div class="video-wrapper">
-    <iframe 
-      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-      allowfullscreen
-      webkitallowfullscreen
-      mozallowfullscreen>
-    </iframe>
-  </div>
+  <iframe 
+    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+    allowfullscreen
+    webkitallowfullscreen
+    mozallowfullscreen>
+  </iframe>
 
 </div>
 
