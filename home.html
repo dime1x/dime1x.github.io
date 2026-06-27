@@ -1,102 +1,76 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>自适应视频布局</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-    }
+<meta charset="UTF-8">
+<title>手机全屏宽度视频</title>
 
-    /* 顶部菜单栏 */
-    .navbar {
-      background-color: #333;
-      color: #fff;
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10;
-    }
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+  }
 
-    .navbar a {
-      color: #fff;
-      text-decoration: none;
-      margin-left: 20px;
-    }
+  /* 顶部菜单 */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #333;
+    color: #fff;
+    padding: 12px 20px;
+    z-index: 10;
+  }
 
-    /* 内容区域 */
-    .content {
-      padding-top: 80px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
+  .content {
+    padding-top: 70px;
+  }
 
-    /* 视频上下排列 */
-    .video-list {
-      display: flex;
-      flex-direction: column;
-      gap: 40px;
-      margin-top: 20px;
-    }
+  /* 视频容器：宽度 100% + 高度自适应 */
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 */
+    background: #000;
+  }
 
-    /* 16:9 自适应视频容器 */
-    .video-wrapper {
-      position: relative;
-      width: 100%;
-      padding-bottom: 56.25%; /* 16:9 高度比例 */
-      background: #000;
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .video-wrapper iframe,
-    .video-wrapper video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-  </style>
+  .video-wrapper video,
+  .video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
 </head>
+
 <body>
 
-  <!-- 顶部菜单 -->
-  <div class="navbar">
-    <div>我的网站</div>
-    <div>
-      <a href="#">首页</a>
-      <a href="#">视频</a>
-      <a href="#">关于</a>
-    </div>
+<div class="navbar">我的网站</div>
+
+<div class="content">
+
+  <div class="video-wrapper">
+    <video src="https://dogegoog.com/967711711.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
   </div>
 
-  <!-- 中间内容 -->
-  <div class="content">
-    <div class="video-list">
-
-      <div class="video-wrapper">
-        <iframe src="https://dogegoog.com/967711711.mp4" allowfullscreen></iframe>
-      </div>
-
-      <div class="video-wrapper">
-        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-      </div>
-
-      <div class="video-wrapper">
-        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-      </div>
-
-    </div>
+  <div class="video-wrapper">
+    <video src="video2.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
   </div>
+
+  <div class="video-wrapper">
+    <iframe 
+      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+      allowfullscreen
+      webkitallowfullscreen
+      mozallowfullscreen>
+    </iframe>
+  </div>
+
+</div>
 
 </body>
 </html>
