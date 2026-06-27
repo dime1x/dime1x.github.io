@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>顶部菜单 + 三个上下视频</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+
+    /* 顶部菜单栏 */
+    .navbar {
+      background-color: #333;
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+    }
+
+    .navbar .logo {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .navbar ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 20px;
+    }
+
+    .navbar a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* 内容区域 */
+    .content {
+      padding-top: 80px; /* 给菜单留空间 */
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    /* 视频容器：上下排列 */
+    .video-list {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    .video-item {
+      background: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .video-item iframe {
+      width: 100%;
+      height: 300px;
+      border: none;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部菜单 -->
+  <div class="navbar">
+    <div class="logo">我的网站</div>
+    <ul>
+      <li><a href="#">首页</a></li>
+      <li><a href="#">视频</a></li>
+      <li><a href="#">关于</a></li>
+    </ul>
+  </div>
+
+  <!-- 中间内容 -->
+  <div class="content">
+    <h2>三个上下排列的视频</h2>
+
+    <div class="video-list">
+      <div class="video-item">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+      </div>
+
+      <div class="video-item">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+      </div>
+
+      <div class="video-item">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
