@@ -2,16 +2,13 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>手机全屏宽度视频</title>
+<title>自适应视频布局</title>
 
 <style>
-  /* 网页高度不限制 */
-  html, body {
+  body {
     margin: 0;
     padding: 0;
     background: #000;
-    width: 100%;
-    height: auto; /* 高度无限制 */
   }
 
   /* 顶部菜单 */
@@ -26,19 +23,28 @@
     z-index: 10;
   }
 
-  /* 内容区域高度不限制 */
   .content {
     padding-top: 70px;
-    width: 100%;
-    height: auto; /* 高度无限制 */
   }
 
-  /* 视频宽度最大化，高度自动 */
+  /* 默认：手机端（宽度最大化） */
+  .video-box {
+    width: 100%;
+    margin: 0;
+  }
+
   video, iframe {
     width: 100%;
-    height: auto; /* 高度不限制 */
+    height: auto;
     display: block;
-    background: #000;
+  }
+
+  /* 电脑端：宽度固定 + 居中 */
+  @media (min-width: 900px) {
+    .video-box {
+      width: 800px;   /* 电脑端视频宽度 */
+      margin: 0 auto; /* 居中 */
+    }
   }
 </style>
 </head>
@@ -49,16 +55,22 @@
 
 <div class="content">
 
-  <video src="https://dogegoog.com/967711711.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
+  <div class="video-box">
+    <video src="https://dogegoog.com/967711711.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
+  </div>
 
-  <video src="video2.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
+  <div class="video-box">
+    <video src="https://dogegoog.com/967711711.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
+  </div>
 
-  <iframe 
-    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-    allowfullscreen
-    webkitallowfullscreen
-    mozallowfullscreen>
-  </iframe>
+  <div class="video-box">
+    <iframe 
+      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+      allowfullscreen
+      webkitallowfullscreen
+      mozallowfullscreen>
+    </iframe>
+  </div>
 
 </div>
 
