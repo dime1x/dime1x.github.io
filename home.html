@@ -5,12 +5,16 @@
 <title>手机全屏宽度视频</title>
 
 <style>
-  body {
+  /* 网页高度不限制 */
+  html, body {
     margin: 0;
     padding: 0;
     background: #000;
+    width: 100%;
+    height: auto; /* 高度无限制 */
   }
 
+  /* 顶部菜单 */
   .navbar {
     position: fixed;
     top: 0;
@@ -22,14 +26,17 @@
     z-index: 10;
   }
 
+  /* 内容区域高度不限制 */
   .content {
     padding-top: 70px;
+    width: 100%;
+    height: auto; /* 高度无限制 */
   }
 
-  /* 视频宽度最大化，高度不限制 */
+  /* 视频宽度最大化，高度自动 */
   video, iframe {
     width: 100%;
-    height: auto; /* 高度自动，不限制 */
+    height: auto; /* 高度不限制 */
     display: block;
     background: #000;
   }
@@ -42,9 +49,7 @@
 
 <div class="content">
 
-  <video src="https://dogegoog.com/967711711.mp4" controls playsinline webkit-playsinline x5-playsinline     allowfullscreen
-    webkitallowfullscreen
-    mozallowfullscreen>></video>
+  <video src="https://dogegoog.com/967711711.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
 
   <video src="video2.mp4" controls playsinline webkit-playsinline x5-playsinline></video>
 
