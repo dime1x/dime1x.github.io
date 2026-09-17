@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>人物导航</title>
+  <style>
+    body { font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+  display: flex;
+  justify-content: center; }
+
+.container {
+  width: 80%; /* 页面内容宽度 */
+  max-width: 1200px; /* 最大宽度 */
+  margin: 20px auto;
+}
+
+
+    h1 { text-align: center; }
+    .category { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .category h2 { margin: 0 0 10px; font-size: 20px; }
+    .keywords { display: flex; flex-wrap: wrap; gap: 10px; }
+    .keywords a { 
+      display: inline-block; 
+      padding: 8px 12px; 
+      background: #0078d7; 
+      color: #fff; 
+      text-decoration: none; 
+      border-radius: 5px; 
+      transition: background 0.3s;
+    }
+    .keywords a:hover { background: #005a9e; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>热门话题导航</h1>
+
+  <!-- Finance 金融 -->
+  <div class="category">
+    <h2>💰 Finance 金融</h2>
+    <div class="keywords">
+      <a href="#">Stocks</a><a href="#">Nvidia</a><a href="#">Tesla</a><a href="#">Apple</a><a href="#">Amazon</a><a href="#">Microsoft</a><a href="#">Meta</a><a href="#">Google</a><a href="#">AMD</a><a href="#">Micron</a><a href="#">Broadcom</a>
+      <a href="#">Crypto</a><a href="#">Bitcoin</a><a href="#">Ethereum</a><a href="#">Solana</a><a href="#">XRP</a><a href="#">Dogecoin</a><a href="#">Shiba Inu</a><a href="#">DeFi</a><a href="#">NFT</a>
+      <a href="#">Markets</a><a href="#">S&P 500</a><a href="#">Nasdaq</a><a href="#">Dow Jones</a><a href="#">VIX</a><a href="#">DXY</a><a href="#">Treasury Yield</a>
+      <a href="#">Commodities</a><a href="#">Gold</a><a href="#">Silver</a><a href="#">Oil</a><a href="#">Natural Gas</a><a href="#">Copper</a>
+      <a href="#">Banking</a><a href="#">JPMorgan</a><a href="#">Goldman Sachs</a><a href="#">BlackRock</a><a href="#">Bank of America</a><a href="#">HSBC</a>
+      <a href="#">Economy</a><a href="#">Fed</a><a href="#">Interest Rates</a><a href="#">Inflation</a><a href="#">Jobs</a><a href="#">GDP</a><a href="#">Tariffs</a>
+    </div>
+  </div>
+
+  <!-- Technology 科技 -->
+  <div class="category">
+    <h2>🤖 Technology 科技</h2>
+    <div class="keywords">
+      <a href="#">AI</a><a href="#">OpenAI</a><a href="#">ChatGPT</a><a href="#">Gemini</a><a href="#">Claude</a><a href="#">Anthropic</a><a href="#">DeepMind</a><a href="#">AI Agents</a><a href="#">AI Research</a>
+      <a href="#">Semiconductors</a><a href="#">Nvidia</a><a href="#">AMD</a><a href="#">Intel</a><a href="#">Micron</a><a href="#">SK Hynix</a><a href="#">TSMC</a><a href="#">Samsung</a>
+      <a href="#">Big Tech</a><a href="#">Apple</a><a href="#">Google</a><a href="#">Microsoft</a><a href="#">Amazon</a><a href="#">Meta</a>
+      <a href="#">Robotics</a><a href="#">Tesla Optimus</a><a href="#">Humanoid Robots</a><a href="#">Robotaxi</a><a href="#">Robotics</a>
+      <a href="#">Cybersecurity</a><a href="#">Hacking</a><a href="#">Data Breach</a><a href="#">Ransomware</a><a href="#">Cyber Attack</a><a href="#">Cybersecurity</a>
+    </div>
+  </div>
+
+  <!-- World News 国际 -->
+  <div class="category">
+    <h2>🌍 World News 国际</h2>
+    <div class="keywords">
+      <a href="#">USA</a><a href="#">China</a><a href="#">Japan</a><a href="#">South Korea</a><a href="#">India</a><a href="#">Taiwan</a>
+      <a href="#">Europe</a><a href="#">UK</a>
+      <a href="#">Russia</a><a href="#">Ukraine</a>
+      <a href="#">Middle East</a><a href="#">Israel</a><a href="#">Iran</a>
+    </div>
+  </div>
+
+
+  <!-- Politics 政治 -->
+  <div class="category"><h2>🏛️ Politics 政治</h2>
+    <div class="keywords">
+      <a href="#">Election</a><a href="#">Polls</a><a href="#">Campaign</a>
+      <a href="#">President</a><a href="#">Congress</a><a href="#">White House</a><a href="#">Senate</a><a href="#">House</a>
+      <a href="#">Supreme Court</a>
+      <a href="#">Immigration</a>
+      <a href="#">Trade Policy</a><a href="#">Tariffs</a><a href="#">Regulation</a><a href="#">Taxes</a>
+    </div>
+  </div>
+
+  <!-- Sports 体育 -->
+  <div class="category"><h2>⚽ Sports 体育</h2>
+    <div class="keywords">
+      <a href="#">Football</a><a href="#">FIFA</a><a href="#">Premier League</a><a href="#">Champions League</a><a href="#">World Cup</a>
+      <a href="#">NBA</a><a href="#">NFL</a><a href="#">MLB</a>
+      <a href="#">Tennis</a><a href="#">Wimbledon</a><a href="#">US Open</a><a href="#">Australian Open</a><a href="#">French Open</a>
+      <a href="#">Olympics</a><a href="#">Formula 1</a><a href="#">UFC</a>
+    </div>
+  </div>
+
+  <!-- Entertainment 娱乐 -->
+  <div class="category"><h2>🎬 Entertainment 娱乐</h2>
+    <div class="keywords">
+      <a href="#">Movies</a><a href="#">Hollywood</a><a href="#">Disney</a><a href="#">Marvel</a><a href="#">DC</a>
+      <a href="#">TV Shows</a><a href="#">Netflix</a>
+      <a href="#">Celebrity</a>
+      <a href="#">Music</a><a href="#">Grammy</a>
+      <a href="#">Oscars</a>
+    </div>
+  </div>
+
+  <!-- Gaming 游戏 -->
+  <div class="category"><h2>🎮 Gaming 游戏</h2>
+    <div class="keywords">
+      <a href="#">PlayStation</a><a href="#">Xbox</a><a href="#">Nintendo</a><a href="#">Switch</a><a href="#">Steam</a>
+      <a href="#">GTA</a><a href="#">Fortnite</a><a href="#">Minecraft</a><a href="#">Call of Duty</a><a href="#">Pokémon</a>
+      <a href="#">Esports</a>
+    </div>
+  </div>
+
+  <!-- Social Media 社交媒体 -->
+  <div class="category"><h2>📱 Social Media 社交媒体</h2>
+    <div class="keywords">
+      <a href="#">Facebook</a><a href="#">Instagram</a><a href="#">X</a>
+      <a href="#">YouTube</a><a href="#">TikTok</a>
+    </div>
+  </div>
+
+  <!-- Consumer 消费 -->
+  <div class="category"><h2>🛍️ Consumer 消费</h2>
+    <div class="keywords">
+      <a href="#">iPhone</a><a href="#">Samsung</a><a href="#">Google Pixel</a>
+      <a href="#">Amazon</a><a href="#">Walmart</a><a href="#">Costco</a>
+      <a href="#">Tesla</a><a href="#">Toyota</a><a href="#">BYD</a><a href="#">Cars</a>
+      <a href="#">Nike</a><a href="#">Adidas</a><a href="#">Fashion</a>
+      <a href="#">Food</a>
+    </div>
+ </div>
+
+ <!-- 🔬 Science 科学 -->
+  <div class="category"><h2>🔬 Science 科学</h2>
+    <div class="keywords">
+      <a href="#">Space</a><a href="#">NASA</a><a href="#">SpaceX</a><a href="#">Starlink</a><a href="#">Moon</a><a href="#">Mars</a><a href="#">Astronomy</a><a href="#">Black Hole</a>
+      <a href="#">Physics</a><a href="#">Quantum Computing</a>
+      <a href="#">Biology</a><a href="#">Medicine</a>
+      <a href="#">Climate</a>
+      <a href="#">Discovery</a>
+    </div>
+  </div>
+
+  <!-- ✈️ Travel 旅行 -->
+  <div class="category"><h2>✈️ Travel 旅行</h2>
+    <div class="keywords">
+      <a href="#">Travel</a>
+      <a href="#">Flights</a>
+      <a href="#">Hotels</a>
+      <a href="#">Japan</a><a href="#">Europe</a>
+    </div>
+  </div>
+
+  <!-- 🌦️ Weather 天气 -->
+  <div class="category"><h2>🌦️ Weather 天气</h2>
+    <div class="keywords">
+      <a href="#">Hurricane</a><a href="#">Typhoon</a><a href="#">Storm</a><a href="#">Tornado</a>
+      <a href="#">Heatwave</a>
+      <a href="#">Earthquake</a><a href="#">Flood</a><a href="#">Wildfire</a>
+    </div>
+  </div>
+
+  <!-- 🔥 Breaking News 突发事件 -->
+  <div class="category"><h2>🔥 Breaking News 突发事件</h2>
+    <div class="keywords">
+      <a href="#">Breaking News</a>
+      <a href="#">Fire</a><a href="#">Explosion</a><a href="#">Accident</a>
+      <a href="#">Crime</a><a href="#">Missing</a><a href="#">Arrest</a>
+      <a href="#">Attack</a><a href="#">Emergency</a>
+    </div>
+  </div>
+
+  <!-- 👤 人物 -->
+  <div class="category"><h2>👤 人物</h2>
+    <div class="keywords">
+      <a href="#">Trump</a><a href="#">Xi Jinping</a><a href="#">Putin</a><a href="#">Narendra Modi</a>
+      <a href="#">Elon Musk</a><a href="#">Jeff Bezos</a><a href="#">Mark Zuckerberg</a><a href="#">Bill Gates</a>
+      <a href="#">Sam Altman</a><a href="#">Jensen Huang</a><a href="#">Tim Cook</a><a href="#">Sundar Pichai</a>
+      <a href="#">Tom Cruise</a><a href="#">Brad Pitt</a><a href="#">Zendaya</a>
+      <a href="#">Taylor Swift</a><a href="#">Drake</a><a href="#">Beyoncé</a><a href="#">The Weeknd</a>
+      <a href="#">Cristiano Ronaldo</a><a href="#">Messi</a><a href="#">LeBron James</a><a href="#">Caitlin Clark</a>
+      <a href="#">Mbappé</a><a href="#">Haaland</a><a href="#">Neymar</a>
+      <a href="#">Stephen Curry</a><a href="#">Luka Dončić</a>
+      <a href="#">MrBeast</a><a href="#">Kai Cenat</a><a href="#">Logan Paul</a><a href="#">PewDiePie</a><a href="#">IShowSpeed</a>
+      <a href="#">Charli D'Amelio</a><a href="#">Khaby Lame</a>
+      <a href="#">Kendall Jenner</a><a href="#">Gigi Hadid</a>
+      <a href="#">Christopher Nolan</a><a href="#">James Cameron</a>
+    </div>
+  </div>
+
+  <!-- 继续展开 Politics, Sports, Entertainment, Gaming, Social Media, Consumer, Science, Travel, Weather, Breaking News -->
+  <!-- 为了简洁，这里省略，但你可以复制上面的结构，把剩下的分类都加进去 -->
+</div>
+</body>
+</html>
