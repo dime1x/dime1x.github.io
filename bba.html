@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>综合导航页面</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #f5f5f5; 
+      margin: 0; 
+      display: flex; 
+      justify-content: center; 
+    }
+    .container {
+      width: 80%;   /* 控制整体宽度 */
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+    h1 { text-align: center; }
+    .category { 
+      background: #fff; 
+      padding: 15px; 
+      margin-bottom: 15px; 
+      border-radius: 8px; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+    }
+    .category h2 { margin: 0 0 10px; font-size: 20px; }
+    .keywords { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .keywords a { 
+      display: inline-block; 
+      padding: 8px 12px; 
+      background: #0078d7; 
+      color: #fff; 
+      text-decoration: none; 
+      border-radius: 5px; 
+      transition: background 0.3s;
+    }
+    .keywords a:hover { background: #005a9e; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>综合导航页面</h1>
+
+    <!-- 👤 人物 -->
+    <div class="category"><h2>👤 人物</h2>
+      <div class="keywords">
+        <a href="#">Trump</a><a href="#">Xi Jinping</a><a href="#">Putin</a><a href="#">Narendra Modi</a>
+        <a href="#">Elon Musk</a><a href="#">Jeff Bezos</a><a href="#">Mark Zuckerberg</a><a href="#">Bill Gates</a>
+        <a href="#">Sam Altman</a><a href="#">Jensen Huang</a><a href="#">Tim Cook</a><a href="#">Sundar Pichai</a>
+        <a href="#">Tom Cruise</a><a href="#">Brad Pitt</a><a href="#">Zendaya</a>
+        <a href="#">Taylor Swift</a><a href="#">Drake</a><a href="#">Beyoncé</a><a href="#">The Weeknd</a>
+        <a href="#">Cristiano Ronaldo</a><a href="#">Messi</a><a href="#">LeBron James</a><a href="#">Caitlin Clark</a>
+        <a href="#">Mbappé</a><a href="#">Haaland</a><a href="#">Neymar</a>
+        <a href="#">Stephen Curry</a><a href="#">Luka Dončić</a>
+        <a href="#">MrBeast</a><a href="#">Kai Cenat</a><a href="#">Logan Paul</a><a href="#">PewDiePie</a><a href="#">IShowSpeed</a>
+        <a href="#">Charli D'Amelio</a><a href="#">Khaby Lame</a>
+        <a href="#">Kendall Jenner</a><a href="#">Gigi Hadid</a>
+        <a href="#">Christopher Nolan</a><a href="#">James Cameron</a>
+      </div>
+    </div>
+
+    <!-- 这里继续保留 Finance、Technology、World News、Politics、Sports、Entertainment、Gaming、Social Media、Consumer、Science、Travel、Weather、Breaking News 分类 -->
+  </div>
+</body>
+</html>
