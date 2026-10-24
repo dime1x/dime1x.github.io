@@ -1,197 +1,291 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Hot Topic</title>
-  <style>
-    body { font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  margin: 0;
-  display: flex;
-  justify-content: center; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Trends Dynamic Search & Chart</title>
+    <!-- Include Google Trends Embed Script -->
+    <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3882_RC01/embed_loader.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
 
-.container {
-  width: 80%; /* 页面内容宽度 */
-  max-width: 1200px; /* 最大宽度 */
-  margin: 20px auto;
-}
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
 
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
 
-    h1 { text-align: center; }
-    .category { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .category h2 { margin: 0 0 10px; font-size: 20px; }
-    .keywords { display: flex; flex-wrap: wrap; gap: 10px; }
-    .keywords a { 
-      display: inline-block; 
-      padding: 8px 12px; 
-      background: #0078d7; 
-      color: #fff; 
-      text-decoration: none; 
-      border-radius: 5px; 
-      transition: background 0.3s;
-    }
-    .keywords a:hover { background: #005a9e; }
-  </style>
+        /* Search Box Area */
+        .search-box {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 300px;
+            padding: 10px 14px;
+            font-size: 14px;
+            border: 1px solid #dadce0;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #1a73e8;
+        }
+
+        .search-btn {
+            background-color: #1a73e8;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-btn:hover {
+            background-color: #1557b0;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        /* Time Range Button Group */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background-color: #f1f3f4;
+            color: #3c4043;
+            border: 1px solid #dadce0;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #e8eaed;
+        }
+
+        .btn.active {
+            background-color: #1a73e8;
+            color: #ffffff;
+            border-color: #1a73e8;
+        }
+
+        /* Chart Container */
+        .chart-wrapper {
+            position: relative;
+            min-height: 500px; 
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .chart-panel {
+            display: none; 
+            width: 100%;
+            height: 500px; 
+            position: relative;
+        }
+
+        .chart-panel.active {
+            display: block; 
+        }
+
+        .loading-notice {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .chart-panel iframe {
+            width: 100% !important;
+            height: 500px !important;
+            border: none !important;
+            position: relative;
+            z-index: 2;
+        }
+    </style>
 </head>
 <body>
+
 <div class="container">
-  <h1>Hot Topic</h1>
+    <h1>Google Trends Dynamic Search</h1>
 
-  <!-- Finance 金融 -->
-  <div class="category">
-    <h2>💰 Finance</h2>
-    <div class="keywords">
-      <a href="Stocks.html">Stocks</a>
-<a href="Nvidia.html">Nvidia</a>
-<a href="Tesla.html">Tesla</a>
-<a href="Apple.html">Apple</a>
-<a href="Amazon.html">Amazon</a>
-<a href="Microsoft.html">Microsoft</a>
-<a href="Meta.html">Meta</a>
-<a href="Google.html">Google</a>
-<a href="AMD.html">AMD</a>
-<a href="Micron.html">Micron</a>
-<a href="Broadcom.html">Broadcom</a>
-
-<a href="Crypto.html">Crypto</a>
-<a href="Bitcoin.html">Bitcoin</a>
-<a href="Ethereum.html">Ethereum</a>
-
-<a href="Markets.html">Markets</a>
-<a href="S&P_500.html">S&P 500</a>
-<a href="Nasdaq.html">Nasdaq</a>
-<a href="Dow_Jones.html">Dow Jones</a>
-<a href="VIX.html">VIX</a>
-<a href="DXY.html">DXY</a>
-
-
-<a href="Gold.html">Gold</a>
-<a href="Silver.html">Silver</a>
-<a href="Oil.html">Oil</a>
-
-
-<a href="Banking.html">Banking</a>
-<a href="JPMorgan.html">JPMorgan</a>
-<a href="Goldman.html">Goldman</a>
-<a href="BlackRock.html">BlackRock</a>
-<a href="Bank_of_America.html">Bank of America</a>
-<a href="HSBC.html">HSBC</a>
-
-<a href="Economy.html">Economy</a>
-<a href="Fed.html">Fed</a>
-<a href="Jobs.html">Jobs</a>
-<a href="GDP.html">GDP</a>
-<a href="Tariffs.html">Tariffs</a>
+    <!-- Search Input & Button -->
+    <div class="search-box">
+        <input type="text" id="keyword-input" class="search-input" placeholder="Enter keyword, e.g., AI, Python..." value="AI">
+        <button class="search-btn" onclick="handleSearch()">Generate Trend</button>
     </div>
-  </div>
 
-  <!-- Technology 科技 -->
-  <div class="category">
-    <h2>🤖 Technology</h2>
-    <div class="keywords">
-<a href="AI.html">AI</a>
-<a href="OpenAI.html">OpenAI</a>
-<a href="ChatGPT.html">ChatGPT</a>
-<a href="Gemini.html">Gemini</a>
-<a href="Claude.html">Claude</a>
-<a href="Anthropic.html">Anthropic</a>
-<a href="DeepMind.html">DeepMind</a>
-<a href="AI_Agents.html">AI Agents</a>
-<a href="AI_Research.html">AI Research</a>
+    <!-- Dynamic Subtitle -->
+    <div id="subtitle" class="subtitle">Current Keyword: <strong id="kw-display">AI</strong></div>
 
+    <!-- Time Range Buttons (Past 5 years is default active) -->
+    <div id="button-group" class="button-group">
+        <button class="btn" onclick="switchTimeTab('t1', 'now 1-H', this)">Past 1 hour</button>
+        <button class="btn" onclick="switchTimeTab('t2', 'now 4-H', this)">Past 4 hours</button>
+        <button class="btn" onclick="switchTimeTab('t3', 'now 1-d', this)">Past 1 day</button>
+        <button class="btn" onclick="switchTimeTab('t4', 'now 7-d', this)">Past 7 days</button>
+        <button class="btn" onclick="switchTimeTab('t5', 'today 1-m', this)">Past 30 days</button>
+        <button class="btn" onclick="switchTimeTab('t6', 'today 3-m', this)">Past 90 days</button>
+        <button class="btn" onclick="switchTimeTab('t7', 'today 12-m', this)">Past 12 months</button>
+        <button class="btn active" onclick="switchTimeTab('t8', 'today 5-y', this)">Past 5 years</button>
+        <button class="btn" onclick="switchTimeTab('t9', 'all', this)">2004 - Present</button>
+    </div>
 
-<a href="Nvidia.html">Nvidia</a>
-<a href="AMD.html">AMD</a>
-<a href="Intel.html">Intel</a>
-<a href="Micron.html">Micron</a>
-<a href="Samsung.html">Samsung</a>
-
-<a href="Big_Tech.html">Big Tech</a>
-<a href="Apple.html">Apple</a>
-<a href="Google.html">Google</a>
-<a href="Microsoft.html">Microsoft</a>
-<a href="Amazon.html">Amazon</a>
-<a href="Meta.html">Meta</a>
-
-
+    <!-- Chart Panels Container (t8 is default active) -->
+    <div id="chart-wrapper" class="chart-wrapper">
+        <div id="t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t1"></div></div>
+        <div id="t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t2"></div></div>
+        <div id="t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t3"></div></div>
+        <div id="t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t4"></div></div>
+        <div id="t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t5"></div></div>
+        <div id="t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t6"></div></div>
+        <div id="t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t7"></div></div>
+        <div id="t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-t8"></div></div>
+        <div id="t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t9"></div></div>
+    </div>
 </div>
-  </div>
 
-  <!-- World News 国际 -->
-  <div class="category">
-    <h2>🌍 World News </h2>
-    <div class="keywords">
-<a href="USA.html">USA</a>
-<a href="China.html">China</a>
-<a href="Japan.html">Japan</a>
-<a href="Europe.html">Europe</a>
-<a href="Russia.html">Russia</a>
+<script type="text/javascript">
+    let currentKeyword = "AI"; 
+    let loadedTabs = {}; 
 
+    // Safe check for Google SDK readiness
+    function checkTrendsLoaded(callback) {
+        if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+            callback();
+        } else {
+            let retries = 0;
+            const timer = setInterval(() => {
+                retries++;
+                if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+                    clearInterval(timer);
+                    callback();
+                } else if (retries > 100) {
+                    clearInterval(timer);
+                    alert("Google Trends script loading timed out. Please check your network connection.");
+                }
+            }, 100);
+        }
+    }
 
-    </div>
-  </div>
+    // Render chart for specified tab (hl=zh-CN forces Chinese inside the chart)
+    function renderTrendsChart(tabId, timeParam) {
+        const encodedKw = encodeURIComponent(currentKeyword);
+        const cacheKey = `${currentKeyword}_${tabId}`;
+        if (loadedTabs[cacheKey]) return; 
 
+        checkTrendsLoaded(() => {
+            const targetElem = document.getElementById(`embed-${tabId}`);
+            targetElem.innerHTML = "";
 
-  <!-- Politics 政治 -->
-  <div class="category"><h2>🏛️ Politics </h2>
-    <div class="keywords">
-<a href="Election.html">Election</a>
-<a href="Polls.html">Polls</a>
-<a href="Campaign.html">Campaign</a>
+            try {
+                trends.embed.renderExploreWidgetTo(
+                    targetElem,
+                    "TIMESERIES",
+                    {
+                        "comparisonItem": [
+                            { "keyword": currentKeyword, "geo": "", "time": timeParam }
+                        ],
+                        "category": 0,
+                        "property": ""
+                    },
+                    {
+                        "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                        "guestPath": "https://trends.google.com:443/trends/embed/"
+                    }
+                );
+                loadedTabs[cacheKey] = true;
+            } catch (err) {
+                console.error("Chart rendering failed:", err);
+            }
+        });
+    }
 
-<a href="President.html">President</a>
+    // Triggered when clicking "Generate Trend" button
+    function handleSearch() {
+        const inputVal = document.getElementById('keyword-input').value.trim();
+        if (!inputVal) {
+            alert("Please enter a valid search keyword!");
+            return;
+        }
 
-<a href="White_House.html">White House</a>
-<a href="Tariffs.html">Tariffs</a>
-<a href="Taxes.html">Taxes</a>
+        currentKeyword = inputVal;
+        document.getElementById('kw-display').innerText = currentKeyword;
 
-    </div>
-  </div>
+        // Reset Tab state to "Past 5 years" (t8)
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        buttons[7].classList.add('active'); // Index 7 corresponds to t8 (Past 5 years)
 
-  <!-- Sports 体育 -->
-  <div class="category"><h2>⚽ Sports </h2>
-    <div class="keywords">
-<a href="Football.html">Football</a>
-<a href="FIFA.html">FIFA</a>
+        const panels = document.querySelectorAll('.chart-panel');
+        panels.forEach(panel => panel.classList.remove('active'));
+        document.getElementById('t8').classList.add('active');
 
+        // Load chart for new keyword with 5 years range
+        renderTrendsChart('t8', 'today 5-y');
+    }
 
-<a href="NBA.html">NBA</a>
-<a href="NFL.html">NFL</a>
-<a href="MLB.html">MLB</a>
+    // Switch time tab
+    function switchTimeTab(tabId, timeParam, btnElement) {
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
 
-<a href="UFC.html">UFC</a>
+        const panels = document.querySelectorAll('.chart-panel');
+        panels.forEach(panel => panel.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
 
-    </div>
-  </div>
+        renderTrendsChart(tabId, timeParam);
+    }
 
+    // Automatically render chart for "AI" (Past 5 years) on page load
+    window.addEventListener('load', () => {
+        renderTrendsChart('t8', 'today 5-y');
+    });
+</script>
 
-
-  <!-- 👤 People -->
-  <div class="category"><h2>👤 People </h2>
-    <div class="keywords">
-<a href="Trump.html">Trump</a>
-<a href="Xi_Jinping.html">Xi Jinping</a>
-<a href="Putin.html">Putin</a>
-
-<a href="Elon_Musk.html">Elon Musk</a>
-
-       </div>
-  </div>
-
-  <!-- 继续展开 Politics, Sports, Entertainment, Gaming, Social Media, Consumer, Science, Travel, Weather, Breaking News -->
-  <!-- 为了简洁，这里省略，但你可以复制上面的结构，把剩下的分类都加进去 -->
-
-
-
-<footer id="globalfooter" class="mgn-footer " style="text-align: center;">
-	<div style="border: 0px solid black; "><a href="/about" class="footer-menu__link">About</a> <a href="/terms-of-service" class="footer-menu__link">Terms of Service</a>  <a href="/privacy-policy" class="footer-menu__link">Privacy Policy</a></div>
-	<div class="footer__copyrite">
-		© 2026 dogegoog.com — All rights reserved.
-	</div>
-</footer>
-
-
-
-</div>
 </body>
 </html>
