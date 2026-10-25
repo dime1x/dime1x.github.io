@@ -1,77 +1,644 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ai news</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 20px; }
-    .news-item { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; }
-    .news-item img { max-width: 200px; float: left; margin-right: 15px; border-radius: 5px; }
-    .news-item h2 { margin: 0; font-size: 20px; }
-    .news-item a { text-decoration: none; color: #0078d7; }
-    .news-item p { margin-top: 10px; }
-
-.container {
-  width: 80%; /* 页面内容宽度 */
-  max-width: 1200px; /* 最大宽度 */
-  margin: 20px auto;
-}
-
-
-  </style>
-</head>
-<body>
-<div class="container">
-  <h1>ai news </h1>
-  <div id="rss-feed"></div>
-
-  <script>
-    async function loadRSS() {
-      const rssUrl = "https://www.google.com/alerts/feeds/10619545482363893166/6571512132745122456"; // Yahoo RSS源
-      const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
-      const data = await response.json();
-
-      const container = document.getElementById("rss-feed");
-      data.items.forEach(item => {
-        // 尝试不同字段获取图片
-        let imgSrc = item.enclosure?.link || item.thumbnail || null;
-
-        // 如果还没有，尝试从 content 中提取第一张 <img>
-        if (!imgSrc && item.content) {
-          const match = item.content.match(/<img[^>]+src="([^">]+)"/i);
-          if (match) {
-            imgSrc = match[1];
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="https://trendchart.ai/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="trendchart.ai - Search & Visualize Google Trends Data">
+    <meta property="og:description" content="Explore live keyword search trends with interactive charts and analytics.">
+    <title>trendchart - Google Trends Visualizer & Keyword Discovery</title>
+    <!-- Google Trends Embed Script -->
+    <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3882_RC01/embed_loader.js"></script>
+    <!-- Tailwind CSS CDN for modern responsive UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef6ff',
+                            100: '#e0eefe',
+                            500: '#1a73e8',
+                            600: '#1557b0',
+                            700: '#104494',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
         }
 
-        const div = document.createElement("div");
-        div.className = "news-item";
-        div.innerHTML = `
+        /* Fixed height and iframe scaling to remove bottom whitespace */
+        .chart-wrapper {
+            position: relative;
+            height: 420px;
+            background-color: #ffffff;
+            border-left: none;
+            border-right: none;
+            border-radius: 0 !important;
+        }
 
-          <h2><a href="${item.link}" target="_blank">${item.title}</a></h2>
-          <p>${item.description}</p>
-        `;
-        container.appendChild(div);
-      });
-    }
-    loadRSS();
-  </script>
+        .chart-panel {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
 
+        .chart-panel.active {
+            display: block;
+        }
 
-<footer id="globalfooter" class="mgn-footer " style="text-align: center;">
+        .chart-panel iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+            position: relative;
+            z-index: 2;
+        }
 
+        .loading-notice {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
 
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <!-- Brand Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="switchPage('home')">
+                    <div class="w-9 h-9 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                        📈
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">trend<span class="text-brand-500">chart</span></span>
+                </div>
 
-	<div style="border: 0px solid black; "><a href="/about" class="footer-menu__link">About</a> <a href="/terms-of-service" class="footer-menu__link">Terms of Service</a>  <a href="/privacy-policy" class="footer-menu__link">Privacy Policy</a></div>
+                <!-- Navigation Links -->
+                <nav class="flex space-x-2 sm:space-x-4">
+                    <button id="nav-home" onclick="switchPage('home')" class="px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        Home
+                    </button>
+                    <button id="nav-explore" onclick="openCategoryPage('ai')" class="px-4 py-2 rounded-full text-sm font-semibold transition-all bg-brand-500 text-white shadow-sm">
+                        Explore
+                    </button>
+                    <button id="nav-finance" onclick="switchPage('finance')" class="px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        Finance
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
 
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
 
+        <!-- PAGE 1: HOME PAGE (Search & Chart) -->
+        <section id="page-home" class="hidden space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <h1 class="text-3xl font-extrabold text-slate-900 sm:text-4xl tracking-tight">Explore Search Trends Worldwide</h1>
+                <p class="text-slate-500 text-sm sm:text-base">Track interest over time with real-time analytics powered by Google Trends data[cite: 1].</p>
+            </div>
 
-	<div class="footer__copyrite">
-		© 2026 dogegoog.com — All rights reserved.
-	</div>
+            <!-- Search Box Area -->
+            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-2xl mx-auto">
+                <form onsubmit="event.preventDefault(); handleSearch();" class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-grow">
+                        <input type="text" id="keyword-input" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-800 text-sm transition" placeholder="Enter keyword, e.g. AI, Crypto, Tesla..." value="AI">
+                    </div>
+                    <button type="submit" class="bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white px-6 py-3 rounded-xl font-semibold text-sm transition shadow-sm whitespace-nowrap flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        Generate Trend
+                    </button>
+                </form>
+            </div>
 
+            <!-- Dashboard Wrapper -->
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm py-5 space-y-5 overflow-hidden">
+                <!-- Subtitle Indicator -->
+                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-4 gap-2 px-4 sm:px-6">
+                    <div class="text-sm font-medium text-slate-600">
+                        Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-md text-base border border-slate-200">AI</span>
+                    </div>
+                    <span class="text-xs text-slate-400 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">Data Source: Google Trends (Global)[cite: 1]</span>
+                </div>
 
-</footer>
-  </div>
+                <!-- Time Range Tabs -->
+                <div id="button-group" class="flex flex-wrap gap-2 justify-center sm:justify-start px-4 sm:px-6">
+                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t1', 'now 1-H', this)">Past 1 hour</button>
+                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t2', 'now 4-H', this)">Past 4 hours</button>
+                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t3', 'now 1-d', this)">Past 1 day</button>
+                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t4', 'now 7-d', this)">Past 7 days</button>
+                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t5', 'today 1-m', this)">Past 30 days</button>
+                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t6', 'today 3-m', this)">Past 90 days</button>
+                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t7', 'today 12-m', this)">Past 12 months</button>
+                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchTimeTab('t8', 'today 5-y', this)">Past 5 years</button>
+                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t9', 'all', this)">2004 - Present</button>
+                </div>
+
+                <!-- Google Chart Panels Container -->
+                <div id="chart-wrapper" class="chart-wrapper border-t border-b border-slate-200">
+                    <div id="t1" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t1" class="w-full h-full"></div></div>
+                    <div id="t2" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t2" class="w-full h-full"></div></div>
+                    <div id="t3" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t3" class="w-full h-full"></div></div>
+                    <div id="t4" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t4" class="w-full h-full"></div></div>
+                    <div id="t5" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t5" class="w-full h-full"></div></div>
+                    <div id="t6" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t6" class="w-full h-full"></div></div>
+                    <div id="t7" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t7" class="w-full h-full"></div></div>
+                    <div id="t8" class="chart-panel active"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t8" class="w-full h-full"></div></div>
+                    <div id="t9" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t9" class="w-full h-full"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: CATEGORY DETAIL PAGE (AI & Multi-Category Switcher View) -->
+        <section id="page-category-detail" class="block space-y-6">
+            <!-- Category Switcher Bar -->
+            <div class="flex flex-wrap gap-2 justify-center pb-2 border-b border-slate-200">
+                <button onclick="openCategoryPage('ai')" id="cat-btn-ai" class="px-4 py-2 rounded-full text-xs font-bold transition bg-brand-500 text-white shadow-sm">🤖 AI & Tech</button>
+                <button onclick="openCategoryPage('finance')" id="cat-btn-finance" class="px-4 py-2 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">💎 Finance & Markets</button>
+                <button onclick="openCategoryPage('media')" id="cat-btn-media" class="px-4 py-2 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🎬 Entertainment & Media</button>
+                <button onclick="openCategoryPage('commerce')" id="cat-btn-commerce" class="px-4 py-2 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🛒 E-Commerce & Retail</button>
+            </div>
+
+            <!-- Header Info for Category -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-2">
+                <h2 id="cat-detail-title" class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2"></h2>
+                <p id="cat-detail-desc" class="text-slate-500 text-sm"></p>
+            </div>
+
+            <!-- Expanded Keyword Cards Grid -->
+            <div id="cat-detail-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <!-- Dynamic Keyword Cards Loaded Here -->
+            </div>
+
+            <!-- 动态图表展示区（点击任意关键字卡片，下方直接加载对应图表） -->
+            <div id="dynamic-embed-container" class="bg-white border border-slate-200 rounded-2xl shadow-sm py-5 space-y-5 overflow-hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-4 gap-2 px-4 sm:px-6">
+                    <div class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        🔥 Selected Trend: <span id="dynamic-kw-display" class="bg-brand-50 text-brand-600 px-2.5 py-0.5 rounded-md text-sm border border-brand-100">ChatGPT</span>
+                    </div>
+                    <span class="text-xs text-slate-400 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">Google Trends Live Embed[cite: 1]</span>
+                </div>
+
+                <!-- 图表时间段按钮 -->
+                <div id="dynamic-button-group" class="flex flex-wrap gap-2 justify-center sm:justify-start px-4 sm:px-6">
+                    <button class="dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t1', 'now 1-H', this)">Past 1 hour</button>
+                    <button class="dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t2', 'now 4-H', this)">Past 4 hours</button>
+                    <button class="dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t3', 'now 1-d', this)">Past 1 day</button>
+                    <button class="dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t4', 'now 7-d', this)">Past 7 days</button>
+                    <button class="dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t5', 'today 1-m', this)">Past 30 days</button>
+                    <button class="dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t6', 'today 3-m', this)">Past 90 days</button>
+                    <button class="dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t7', 'today 12-m', this)">Past 12 months</button>
+                    <button class="dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchDynamicTimeTab('dyn-t8', 'today 5-y', this)">Past 5 years</button>
+                    <button class="dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t9', 'all', this)">2004 - Present</button>
+                </div>
+
+                <!-- 图表多面板容器 -->
+                <div class="chart-wrapper border-t border-b border-slate-200">
+                    <div id="dyn-t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t1" class="w-full h-full"></div></div>
+                    <div id="dyn-t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t2" class="w-full h-full"></div></div>
+                    <div id="dyn-t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t3" class="w-full h-full"></div></div>
+                    <div id="dyn-t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t4" class="w-full h-full"></div></div>
+                    <div id="dyn-t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t5" class="w-full h-full"></div></div>
+                    <div id="dyn-t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t6" class="w-full h-full"></div></div>
+                    <div id="dyn-t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t7" class="w-full h-full"></div></div>
+                    <div id="dyn-t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t8" class="w-full h-full"></div></div>
+                    <div id="dyn-t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t9" class="w-full h-full"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 3: FINANCE PAGE -->
+        <section id="page-finance" class="hidden space-y-8">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Finance & Market Insights</h2>
+                <p class="text-slate-500 text-sm sm:text-base">Explore targeted financial keywords, macroeconomic indexes, and crypto trends.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+                    <div>
+                        <span class="text-2xl">🪙</span>
+                        <h3 class="font-bold text-slate-900 text-lg mt-2">Cryptocurrency</h3>
+                        <p class="text-xs text-slate-500 mt-1">Track Bitcoin, Ethereum, and digital asset market adoption trends over time.</p>
+                    </div>
+                    <button onclick="exploreKeywordHome('Bitcoin, Ethereum')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                        View Crypto Trends ↗
+                    </button>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+                    <div>
+                        <span class="text-2xl">📊</span>
+                        <h3 class="font-bold text-slate-900 text-lg mt-2">Global Stocks</h3>
+                        <p class="text-xs text-slate-500 mt-1">Monitor public interest in major stock indices like S&P 500, NASDAQ, and top tech equities.</p>
+                    </div>
+                    <button onclick="exploreKeywordHome('S&P 500, NASDAQ')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                        View Stock Trends ↗
+                    </button>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+                    <div>
+                        <span class="text-2xl">🏦</span>
+                        <h3 class="font-bold text-slate-900 text-lg mt-2">Macro Economy</h3>
+                        <p class="text-xs text-slate-500 mt-1">Analyze global search behaviors surrounding inflation, interest rates, and banking policies.</p>
+                    </div>
+                    <button onclick="exploreKeywordHome('Inflation, Interest Rate')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                        View Macro Trends ↗
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Links Section -->
+    <footer class="bg-white border-t border-slate-200 py-6">
+        <div class="max-w-6xl mx-auto px-4 text-center space-y-3">
+            <div class="flex justify-center space-x-6 text-sm text-slate-500">
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Privacy</a>
+                <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Terms</a>
+                <a href="https://support.google.com/trends/?hl=zh-CN" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
+            </div>
+            <p class="text-xs text-slate-400">© trendchart. Powered by Google Trends Embed API[cite: 1].</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Controller -->
+    <script type="text/javascript">
+        let currentKeyword = "AI"; 
+        let currentTabId = "t8";
+        let currentTimeParam = "today 5-y";
+        let loadedTabs = {}; 
+
+        // 动态图表（分类详情页内）的相关状态
+        let currentDynamicKeyword = "ChatGPT";
+        let currentDynamicTabId = "dyn-t8";
+        let currentDynamicTimeParam = "today 5-y";
+        let dynamicLoadedTabs = {};
+
+        // Category Database with Expanded Keywords
+        const categoryData = {
+            ai: {
+                title: "🤖 AI & Next-Gen Technology",
+                description: "Deep dive into artificial intelligence, machine learning algorithms, and next-generation tech innovations.",
+                keywords: [
+                    { name: "ChatGPT", desc: "OpenAI's flagship conversational AI model." },
+                    { name: "Claude", desc: "Anthropic's advanced AI assistant framework." },
+                    { name: "NVIDIA", desc: "GPU hardware titan driving AI computing." },
+                    { name: "Midjourney", desc: "Leading text-to-image generative platform." },
+                    { name: "Python", desc: "Primary programming language for data & ML." },
+                    { name: "Gemini", desc: "Google's multimodal AI intelligence model." },
+                    { name: "Sora", desc: "OpenAI's text-to-video generative model." },
+                    { name: "DeepSeek", desc: "High-performance open-weight LLM series." },
+                    { name: "LLM", desc: "Large Language Models core technology." },
+                    { name: "Copilot", desc: "Microsoft AI assistant integration suite." }
+                ]
+            },
+            finance: {
+                title: "💎 Finance & Markets",
+                description: "Explore global investment trends, macroeconomic indicators, and digital asset markets.",
+                keywords: [
+                    { name: "Bitcoin", desc: "Dominant decentralized digital currency." },
+                    { name: "Gold", desc: "Traditional inflation hedge & safe asset." },
+                    { name: "Stock Market", desc: "Global macroeconomic investment sentiment." },
+                    { name: "Federal Reserve", desc: "US monetary policy & interest rate decisions." },
+                    { name: "Ethereum", desc: "Leading smart contract blockchain platform." },
+                    { name: "NASDAQ", desc: "Tech-heavy US stock market index." },
+                    { name: "S&P 500", desc: "Top 500 US publicly traded enterprise index." },
+                    { name: "Real Estate", desc: "Housing market & property investment demand." },
+                    { name: "Inflation", desc: "Consumer price index & purchasing power tracker." },
+                    { name: "Crude Oil", desc: "Global commodity energy benchmark." }
+                ]
+            },
+            media: {
+                title: "🎬 Entertainment & Media",
+                description: "Discover viral pop culture trends, music streaming, esports, and digital entertainment.",
+                keywords: [
+                    { name: "Netflix", desc: "Global streaming movie & TV series network." },
+                    { name: "Spotify", desc: "World-leading audio streaming platform." },
+                    { name: "Gaming", desc: "Video game releases, esports, & consoles." },
+                    { name: "Anime", desc: "Japanese animation culture & series." },
+                    { name: "YouTube", desc: "Global video sharing & content creation hub." },
+                    { name: "TikTok", desc: "Short-form mobile video algorithm platform." },
+                    { name: "Twitch", desc: "Live game streaming & interactive broadcasting." },
+                    { name: "PlayStation", desc: "Sony interactive console gaming ecosystem." }
+                ]
+            },
+            commerce: {
+                title: "🛒 E-Commerce & Retail",
+                description: "Analyze online shopping consumer behavior, retail sales peaks, and storefront software.",
+                keywords: [
+                    { name: "Amazon", desc: "Global online shopping marketplace demand." },
+                    { name: "Shopify", desc: "Independent e-commerce storefront platform." },
+                    { name: "Black Friday", desc: "Seasonal shopping deal spike patterns." },
+                    { name: "eBay", desc: "Global online auction & consumer resale hub." },
+                    { name: "Cyber Monday", desc: "Post-Thanksgiving online discount event." },
+                    { name: "Dropshipping", desc: "Direct-to-consumer order fulfillment model." }
+                ]
+            }
+        };
+
+        // Page Navigation Switcher
+        function switchPage(page) {
+            const homeSec = document.getElementById('page-home');
+            const catDetailSec = document.getElementById('page-category-detail');
+            const financeSec = document.getElementById('page-finance');
+            
+            const navHome = document.getElementById('nav-home');
+            const navExplore = document.getElementById('nav-explore');
+            const navFinance = document.getElementById('nav-finance');
+
+            // Reset all pages & nav classes
+            homeSec.className = "hidden space-y-6";
+            catDetailSec.className = "hidden space-y-6";
+            financeSec.className = "hidden space-y-8";
+
+            const defaultNavClass = "px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+            const activeNavClass = "px-4 py-2 rounded-full text-sm font-semibold transition-all bg-brand-500 text-white shadow-sm";
+
+            navHome.className = defaultNavClass;
+            navExplore.className = defaultNavClass;
+            navFinance.className = defaultNavClass;
+
+            if (page === 'home') {
+                homeSec.className = "block space-y-6";
+                navHome.className = activeNavClass;
+            } else if (page === 'category-detail') {
+                catDetailSec.className = "block space-y-6";
+                navExplore.className = activeNavClass;
+            } else if (page === 'finance') {
+                financeSec.className = "block space-y-8";
+                navFinance.className = activeNavClass;
+            }
+        }
+
+        // Open Category Detail Page with Expanded Keywords
+        function openCategoryPage(catKey) {
+            const catInfo = categoryData[catKey];
+            if (!catInfo) return;
+
+            // Update Active State of Category Buttons
+            ['ai', 'finance', 'media', 'commerce'].forEach(k => {
+                const btn = document.getElementById(`cat-btn-${k}`);
+                if (btn) {
+                    if (k === catKey) {
+                        btn.className = "px-4 py-2 rounded-full text-xs font-bold transition bg-brand-500 text-white shadow-sm";
+                    } else {
+                        btn.className = "px-4 py-2 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50";
+                    }
+                }
+            });
+
+            document.getElementById('cat-detail-title').innerText = catInfo.title;
+            document.getElementById('cat-detail-desc').innerText = catInfo.description;
+
+            const gridContainer = document.getElementById('cat-detail-grid');
+            gridContainer.innerHTML = "";
+
+            catInfo.keywords.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500 transition cursor-pointer flex flex-col justify-between space-y-2 group";
+                // 点击卡片任意位置，直接在下方加载对应关键字图表
+                card.onclick = () => selectDynamicKeyword(item.name);
+                card.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-base group-hover:text-brand-500 transition">${item.name}</h4>
+                        <p class="text-xs text-slate-500 mt-1">${item.desc}</p>
+                    </div>
+                    <div class="text-xs font-semibold text-brand-500 flex items-center gap-1 pt-1">
+                        View Trend ↗
+                    </div>
+                `;
+                gridContainer.appendChild(card);
+            });
+
+            // 默认选中该分类下的第一个关键字加载图表
+            if (catInfo.keywords.length > 0) {
+                selectDynamicKeyword(catInfo.keywords[0].name);
+            }
+
+            switchPage('category-detail');
+        }
+
+        // 点击分类页卡片时切换下方图表
+        function selectDynamicKeyword(keyword) {
+            currentDynamicKeyword = keyword;
+            document.getElementById('dynamic-kw-display').innerText = keyword;
+            dynamicLoadedTabs = {}; // 切换关键字时重置缓存
+
+            // 重置时间按钮状态为默认的 5 年
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('dyn-t8').classList.add('active');
+
+            currentDynamicTabId = 'dyn-t8';
+            currentDynamicTimeParam = 'today 5-y';
+
+            renderDynamicTrendsChart(currentDynamicTabId, currentDynamicTimeParam);
+        }
+
+        // Safe poll check for Google SDK readiness
+        function checkTrendsLoaded(callback) {
+            if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+                callback();
+            } else {
+                let retries = 0;
+                const timer = setInterval(() => {
+                    retries++;
+                    if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+                        clearInterval(timer);
+                        callback();
+                    } else if (retries > 100) {
+                        clearInterval(timer);
+                        console.warn("Google Trends script loading timed out.");
+                    }
+                }, 100);
+            }
+        }
+
+        // Render Google Trends embed chart for Home
+        function renderTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentKeyword);
+            const cacheKey = `${currentKeyword}_${tabId}`;
+
+            if (loadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = ""; 
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    loadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Render Google Trends embed chart for Dynamic Section in Category Detail Page
+        function renderDynamicTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentDynamicKeyword);
+            const cacheKey = `${currentDynamicKeyword}_${tabId}`;
+
+            if (dynamicLoadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = ""; 
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentDynamicKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    dynamicLoadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Dynamic Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Handle Search Form Submit on Home
+        function handleSearch() {
+            const inputVal = document.getElementById('keyword-input').value.trim();
+            if (!inputVal) return;
+
+            currentKeyword = inputVal;
+            document.getElementById('kw-display').innerText = currentKeyword;
+            loadedTabs = {}; 
+
+            const buttons = document.querySelectorAll('.time-btn');
+            buttons.forEach(btn => {
+                btn.className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#page-home .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('t8').classList.add('active');
+
+            currentTabId = 't8';
+            currentTimeParam = 'today 5-y';
+
+            renderTrendsChart(currentTabId, currentTimeParam);
+        }
+
+        // Finance page explore keyword to Home
+        function exploreKeywordHome(keyword) {
+            document.getElementById('keyword-input').value = keyword;
+            switchPage('home');
+            handleSearch();
+        }
+
+        // Switch Time Tabs for Home
+        function switchTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.time-btn');
+            buttons.forEach(btn => {
+                btn.className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#page-home .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentTabId = tabId;
+            currentTimeParam = timeParam;
+
+            renderTrendsChart(tabId, timeParam);
+        }
+
+        // Switch Time Tabs for Dynamic Section in Category Detail Page
+        function switchDynamicTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "dynamic-time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentDynamicTabId = tabId;
+            currentDynamicTimeParam = timeParam;
+
+            renderDynamicTrendsChart(tabId, timeParam);
+        }
+
+        // Initial Load Event
+        window.addEventListener('load', () => {
+            openCategoryPage('ai');
+            renderTrendsChart('t8', 'today 5-y');
+        });
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NCYS6Q44WF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-NCYS6Q44WF');
+    </script>
 </body>
 </html>
