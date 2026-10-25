@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta property="og:image" content="https://trendchart.ai/og-image.jpg">
-
-<!-- 建议补充图片尺寸，方便 Facebook 提前预留展示空间 -->
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:type" content="website">
-<meta property="og:title" content="trendchart.ai - Search & Visualize Google Trends Data">
-<meta property="og:description" content="Explore live keyword search trends with interactive charts and analytics.">
+    <meta property="og:image" content="https://trendchart.ai/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="trendchart.ai - Search & Visualize Google Trends Data">
+    <meta property="og:description" content="Explore live keyword search trends with interactive charts and analytics.">
+    <meta name="keywords" content="AI trends, artificial intelligence trends, generative AI, AI agents">
     <title>trendchart - Google Trends Visualizer & Keyword Discovery</title>
     <!-- Google Trends Embed Script -->
     <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3882_RC01/embed_loader.js"></script>
@@ -40,10 +39,10 @@
             color: #1e293b;
         }
 
-        /* Fixed height and iframe scaling to remove bottom whitespace */
+        /* 图表高度设为 440px，防止 Google 趋势自带的顶部栏被遮挡 */
         .chart-wrapper {
             position: relative;
-            height: 420px;
+            height: 440px;
             background-color: #ffffff;
             border-left: none;
             border-right: none;
@@ -75,7 +74,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #64748b;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             z-index: 1;
         }
@@ -85,25 +84,25 @@
 
     <!-- Top Navigation Bar -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-14 items-center">
                 <!-- Brand Logo -->
                 <div class="flex items-center gap-2 cursor-pointer" onclick="switchPage('home')">
-                    <div class="w-9 h-9 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                    <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
                         📈
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-slate-900">trend<span class="text-brand-500">chart</span></span>
+                    <span class="text-lg font-bold tracking-tight text-slate-900">trend<span class="text-brand-500">chart</span></span>
                 </div>
 
                 <!-- Navigation Links -->
-                <nav class="flex space-x-2 sm:space-x-4">
-                    <button id="nav-home" onclick="switchPage('home')" class="px-4 py-2 rounded-full text-sm font-semibold transition-all bg-brand-500 text-white shadow-sm">
+                <nav class="flex space-x-2">
+                    <button id="nav-home" onclick="switchPage('home')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm">
                         Home
                     </button>
-                    <button id="nav-explore" onclick="switchPage('explore')" class="px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                    <button id="nav-explore" onclick="switchPage('explore')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
                         Explore
                     </button>
-                    <button id="nav-finance" onclick="switchPage('finance')" class="px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                    <button id="nav-finance" onclick="switchPage('finance')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
                         Finance
                     </button>
                 </nav>
@@ -112,490 +111,165 @@
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-grow w-full">
 
         <!-- PAGE 1: HOME PAGE (Search & Chart) -->
-        <section id="page-home" class="block space-y-6">
-            <div class="text-center max-w-2xl mx-auto space-y-2">
-                <h1 class="text-3xl font-extrabold text-slate-900 sm:text-4xl tracking-tight">Explore Search Trends Worldwide</h1>
-                <p class="text-slate-500 text-sm sm:text-base">Track interest over time with real-time analytics powered by Google Trends data.</p>
+        <section id="page-home" class="block space-y-4">
+            <div class="text-center max-w-2xl mx-auto space-y-1">
+                <h1 class="text-2xl font-extrabold text-slate-900 sm:text-3xl tracking-tight">Explore Search Trends Worldwide</h1>
+                <p class="text-slate-500 text-xs sm:text-sm">Track interest over time with real-time analytics.</p>
             </div>
 
             <!-- Search Box Area -->
-            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-2xl mx-auto">
-                <form onsubmit="event.preventDefault(); handleSearch();" class="flex flex-col sm:flex-row gap-3">
+            <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-sm max-w-xl mx-auto">
+                <form onsubmit="event.preventDefault(); handleSearch();" class="flex flex-col sm:flex-row gap-2">
                     <div class="relative flex-grow">
-                        <input type="text" id="keyword-input" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-800 text-sm transition" placeholder="Enter keyword, e.g. AI, Crypto, Tesla..." value="AI">
+                        <input type="text" id="keyword-input" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-800 text-xs transition" placeholder="Enter keyword, e.g. AI, Crypto..." value="AI">
                     </div>
-                    <button type="submit" class="bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white px-6 py-3 rounded-xl font-semibold text-sm transition shadow-sm whitespace-nowrap flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        Generate Trend
+                    <button type="submit" class="bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white px-5 py-2.5 rounded-lg font-semibold text-xs transition shadow-sm whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        Generate
                     </button>
                 </form>
             </div>
 
             <!-- Dashboard Wrapper -->
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm py-5 space-y-5 overflow-hidden">
-                <!-- Subtitle Indicator -->
-                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-4 gap-2 px-4 sm:px-6">
-                    <div class="text-sm font-medium text-slate-600">
-                        Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-md text-base border border-slate-200">AI</span>
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                    <div class="text-xs font-medium text-slate-600">
+                        Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-sm border border-slate-200">AI</span>
                     </div>
-                    <span class="text-xs text-slate-400 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">Data Source: Google Trends (Global)</span>
                 </div>
 
                 <!-- Time Range Tabs -->
-                <div id="button-group" class="flex flex-wrap gap-2 justify-center sm:justify-start px-4 sm:px-6">
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t1', 'now 1-H', this)">Past 1 hour</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t2', 'now 4-H', this)">Past 4 hours</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t3', 'now 1-d', this)">Past 1 day</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t4', 'now 7-d', this)">Past 7 days</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t5', 'today 1-m', this)">Past 30 days</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t6', 'today 3-m', this)">Past 90 days</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t7', 'today 12-m', this)">Past 12 months</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchTimeTab('t8', 'today 5-y', this)">Past 5 years</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t9', 'all', this)">2004 - Present</button>
+                <div id="button-group" class="flex flex-wrap gap-1.5 justify-center sm:justify-start px-4">
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t1', 'now 1-H', this)">1h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t2', 'now 4-H', this)">4h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t3', 'now 1-d', this)">1d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t4', 'now 7-d', this)">7d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t5', 'today 1-m', this)">30d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t6', 'today 3-m', this)">90d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t7', 'today 12-m', this)">12m</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchTimeTab('t8', 'today 5-y', this)">5y</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t9', 'all', this)">All</button>
                 </div>
 
                 <!-- Google Chart Panels Container -->
                 <div id="chart-wrapper" class="chart-wrapper border-t border-b border-slate-200">
-                    <div id="t1" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t1" class="w-full h-full"></div></div>
-                    <div id="t2" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t2" class="w-full h-full"></div></div>
-                    <div id="t3" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t3" class="w-full h-full"></div></div>
-                    <div id="t4" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t4" class="w-full h-full"></div></div>
-                    <div id="t5" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t5" class="w-full h-full"></div></div>
-                    <div id="t6" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t6" class="w-full h-full"></div></div>
-                    <div id="t7" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t7" class="w-full h-full"></div></div>
-                    <div id="t8" class="chart-panel active"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t8" class="w-full h-full"></div></div>
-                    <div id="t9" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t9" class="w-full h-full"></div></div>
+                    <div id="t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t1" class="w-full h-full"></div></div>
+                    <div id="t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t2" class="w-full h-full"></div></div>
+                    <div id="t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t3" class="w-full h-full"></div></div>
+                    <div id="t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t4" class="w-full h-full"></div></div>
+                    <div id="t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t5" class="w-full h-full"></div></div>
+                    <div id="t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t6" class="w-full h-full"></div></div>
+                    <div id="t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t7" class="w-full h-full"></div></div>
+                    <div id="t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-t8" class="w-full h-full"></div></div>
+                    <div id="t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t9" class="w-full h-full"></div></div>
                 </div>
             </div>
         </section>
 
-        <!-- PAGE 2: EXPLORE KEYWORDS (Curated Gallery Page) -->
-        <section id="page-explore" class="hidden space-y-8">
-            <div class="text-center max-w-2xl mx-auto space-y-2">
-                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Curated Trend Preset Library</h2>
-                <p class="text-slate-500 text-sm sm:text-base">Click any category title to open official Google Trends comparison, or pick a keyword below.</p>
+        <!-- PAGE 2: EXPLORE PAGE (各大分类扩充到每组30个热门关键字) -->
+        <section id="page-category-detail" class="hidden space-y-3">
+            <!-- Top Category Switcher Bar -->
+            <div class="flex flex-wrap gap-1.5 justify-center sm:justify-start pb-2 border-b border-slate-200">
+                <button onclick="openCategoryPage('ai')" id="cat-btn-ai" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-brand-500 text-white shadow-sm">🤖 AI & Tech</button>
+                <button onclick="openCategoryPage('finance')" id="cat-btn-finance" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">💎 Finance</button>
+                <button onclick="openCategoryPage('media')" id="cat-btn-media" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🎬 Media</button>
+                <button onclick="openCategoryPage('commerce')" id="cat-btn-commerce" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🛒 Commerce</button>
+                <button onclick="openCategoryPage('science')" id="cat-btn-science" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🚀 Science & Space</button>
+                <button onclick="openCategoryPage('health')" id="cat-btn-health" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">💪 Health & Wellness</button>
+                <button onclick="openCategoryPage('auto')" id="cat-btn-auto" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🚗 Automotive & EV</button>
+                <button onclick="openCategoryPage('travel')" id="cat-btn-travel" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">✈️ Travel & Lifestyle</button>
             </div>
 
-            <!-- Categories Grid -->
-            <div class="space-y-8">
-                <!-- Category 1: AI & Emerging Tech -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trendchart.ai/ai.html" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>🤖</span> AI & Next-Gen Technology <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
+            <!-- Desktop Split Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                
+                <!-- LEFT COLUMN -->
+                <div class="lg:col-span-5 space-y-3">
+                    <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm space-y-1">
+                        <h2 id="cat-detail-title" class="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2"></h2>
+                        <p id="cat-detail-desc" class="text-slate-500 text-xs leading-relaxed"></p>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3 group">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">ChatGPT</h4>
-                                <p class="text-xs text-slate-500 mt-1">OpenAI's flagship conversational AI model.</p>
-                            </div>
-                            <button onclick="exploreKeyword('ChatGPT')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
+
+                    <!-- Compact Keyword Cards Grid (每组扩充至30个关键字，带滚动条) -->
+                    <div id="cat-detail-grid" class="grid grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1"></div>
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div id="dynamic-embed-container" class="lg:col-span-7 bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                        <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                            🔥 Selected: <span id="dynamic-kw-display" class="bg-brand-50 text-brand-600 px-2 py-0.5 rounded text-xs border border-brand-100">ChatGPT</span>
                         </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3 group">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Claude</h4>
-                                <p class="text-xs text-slate-500 mt-1">Anthropic's advanced AI assistant framework.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Claude')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3 group">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">NVIDIA</h4>
-                                <p class="text-xs text-slate-500 mt-1">GPU hardware titan driving the AI computing surge.</p>
-                            </div>
-                            <button onclick="exploreKeyword('NVIDIA')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3 group">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Midjourney</h4>
-                                <p class="text-xs text-slate-500 mt-1">Leading text-to-image generative platform.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Midjourney')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3 group">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Python</h4>
-                                <p class="text-xs text-slate-500 mt-1">Primary programming language for data & ML.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Python')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
+                    </div>
+
+                    <div id="dynamic-button-group" class="flex flex-wrap gap-1.5 justify-center px-4">
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t1', 'now 1-H', this)">1h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t2', 'now 4-H', this)">4h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t3', 'now 1-d', this)">1d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t4', 'now 7-d', this)">7d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t5', 'today 1-m', this)">30d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t6', 'today 3-m', this)">90d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t7', 'today 12-m', this)">12m</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchDynamicTimeTab('dyn-t8', 'today 5-y', this)">5y</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t9', 'all', this)">All</button>
+                    </div>
+
+                    <div class="chart-wrapper border-t border-b border-slate-200" style="height: 420px;">
+                        <div id="dyn-t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t1" class="w-full h-full"></div></div>
+                        <div id="dyn-t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t2" class="w-full h-full"></div></div>
+                        <div id="dyn-t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t3" class="w-full h-full"></div></div>
+                        <div id="dyn-t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t4" class="w-full h-full"></div></div>
+                        <div id="dyn-t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t5" class="w-full h-full"></div></div>
+                        <div id="dyn-t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t6" class="w-full h-full"></div></div>
+                        <div id="dyn-t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t7" class="w-full h-full"></div></div>
+                        <div id="dyn-t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t8" class="w-full h-full"></div></div>
+                        <div id="dyn-t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t9" class="w-full h-full"></div></div>
                     </div>
                 </div>
 
-                <!-- Category 2: Finance & Markets -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Bitcoin,Gold,Stock%20Market,Federal%20Reserve&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>💎</span> Finance & Markets <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Bitcoin</h4>
-                                <p class="text-xs text-slate-500 mt-1">Dominant decentralized digital currency.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Bitcoin')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Gold</h4>
-                                <p class="text-xs text-slate-500 mt-1">Traditional inflation hedge & safe-haven asset.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Gold')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Stock Market</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global macroeconomic investment sentiment.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Stock Market')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Federal Reserve</h4>
-                                <p class="text-xs text-slate-500 mt-1">US monetary policy & interest rate decisions.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Federal Reserve')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 3: Entertainment & Media -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Netflix,Spotify,Gaming,Anime&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>🎬</span> Entertainment & Media <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Netflix</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global streaming movie & TV series network.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Netflix')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Spotify</h4>
-                                <p class="text-xs text-slate-500 mt-1">World-leading audio streaming platform.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Spotify')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Gaming</h4>
-                                <p class="text-xs text-slate-500 mt-1">Video game releases, esports, & consoles.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Gaming')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Anime</h4>
-                                <p class="text-xs text-slate-500 mt-1">Japanese animation culture & series worldwide.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Anime')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 4: E-Commerce & Retail -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Amazon,Shopify,Black%20Friday&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>🛒</span> E-Commerce & Retail <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Amazon</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global online shopping marketplace demand.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Amazon')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Shopify</h4>
-                                <p class="text-xs text-slate-500 mt-1">Independent e-commerce storefront platform.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Shopify')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Black Friday</h4>
-                                <p class="text-xs text-slate-500 mt-1">Seasonal shopping deal spike patterns.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Black Friday')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 5: Science & Space -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=SpaceX,NASA,Quantum%20Computing,Fusion%20Energy&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>🚀</span> Science & Space <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">SpaceX</h4>
-                                <p class="text-xs text-slate-500 mt-1">Private aerospace manufacturing & space transport.</p>
-                            </div>
-                            <button onclick="exploreKeyword('SpaceX')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">NASA</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global space exploration and astronomical discoveries.</p>
-                            </div>
-                            <button onclick="exploreKeyword('NASA')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Quantum Computing</h4>
-                                <p class="text-xs text-slate-500 mt-1">Next-gen computational physics & processors.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Quantum Computing')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Fusion Energy</h4>
-                                <p class="text-xs text-slate-500 mt-1">Clean, limitless future nuclear power research.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Fusion Energy')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 6: Health & Fitness -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Yoga,Meditation,Biohacking,Longevity&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>💪</span> Health & Wellness <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Yoga</h4>
-                                <p class="text-xs text-slate-500 mt-1">Mind-body practice for flexibility & balance.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Yoga')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Meditation</h4>
-                                <p class="text-xs text-slate-500 mt-1">Mental wellness, mindfulness, & stress relief.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Meditation')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Biohacking</h4>
-                                <p class="text-xs text-slate-500 mt-1">Optimizing human performance & biology.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Biohacking')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Longevity</h4>
-                                <p class="text-xs text-slate-500 mt-1">Anti-aging science and extended healthspan.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Longevity')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 7: Automotive & EV -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Tesla,Rivian,Electric%20Vehicle,Autonomous%20Driving&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>🚗</span> Automotive & EV <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Tesla</h4>
-                                <p class="text-xs text-slate-500 mt-1">Pioneer of electric cars and clean energy storage.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Tesla')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Electric Vehicle</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global transition to battery-powered transport.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Electric Vehicle')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Rivian</h4>
-                                <p class="text-xs text-slate-500 mt-1">Adventure electric trucks and commercial vans.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Rivian')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Autonomous Driving</h4>
-                                <p class="text-xs text-slate-500 mt-1">Self-driving software & robotic mobility tech.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Autonomous Driving')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 8: Travel & Lifestyle -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Airbnb,Tokyo,Digital%20Nomad,Travel&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>✈️</span> Travel & Lifestyle <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Airbnb</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global vacation rentals and unique stays.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Airbnb')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Tokyo</h4>
-                                <p class="text-xs text-slate-500 mt-1">World-class tourism & cultural hotspot.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Tokyo')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Digital Nomad</h4>
-                                <p class="text-xs text-slate-500 mt-1">Location-independent remote work lifestyle.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Digital Nomad')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Travel</h4>
-                                <p class="text-xs text-slate-500 mt-1">Broad worldwide vacation and tourism interest.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Travel')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
         <!-- PAGE 3: FINANCE PAGE -->
-        <section id="page-finance" class="hidden space-y-8">
-            <div class="text-center max-w-2xl mx-auto space-y-2">
-                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Finance & Market Insights</h2>
-                <p class="text-slate-500 text-sm sm:text-base">Explore targeted financial keywords, macroeconomic indexes, and crypto trends.</p>
+        <section id="page-finance" class="hidden space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-1">
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Finance & Market Insights</h2>
+                <p class="text-slate-500 text-xs sm:text-sm">Explore targeted financial keywords, macroeconomic indexes, and crypto trends.</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
                     <div>
-                        <span class="text-2xl">🪙</span>
-                        <h3 class="font-bold text-slate-900 text-lg mt-2">Cryptocurrency</h3>
-                        <p class="text-xs text-slate-500 mt-1">Track Bitcoin, Ethereum, and digital asset market adoption trends over time.</p>
+                        <span class="text-xl">🪙</span>
+                        <h3 class="font-bold text-slate-900 text-base mt-1.5">Cryptocurrency</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Track Bitcoin, Ethereum, and digital asset market adoption trends over time.</p>
                     </div>
-                    <button onclick="exploreKeyword('Bitcoin, Ethereum')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                    <button onclick="exploreKeywordHome('Bitcoin, Ethereum')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
                         View Crypto Trends ↗
                     </button>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
                     <div>
-                        <span class="text-2xl">📊</span>
-                        <h3 class="font-bold text-slate-900 text-lg mt-2">Global Stocks</h3>
-                        <p class="text-xs text-slate-500 mt-1">Monitor public interest in major stock indices like S&P 500, NASDAQ, and top tech equities.</p>
+                        <span class="text-xl">📊</span>
+                        <h3 class="font-bold text-slate-900 text-base mt-1.5">Global Stocks</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Monitor public interest in major stock indices like S&P 500, NASDAQ, and top tech equities.</p>
                     </div>
-                    <button onclick="exploreKeyword('S&P 500, NASDAQ')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                    <button onclick="exploreKeywordHome('S&P 500, NASDAQ')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
                         View Stock Trends ↗
                     </button>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
                     <div>
-                        <span class="text-2xl">🏦</span>
-                        <h3 class="font-bold text-slate-900 text-lg mt-2">Macro Economy</h3>
-                        <p class="text-xs text-slate-500 mt-1">Analyze global search behaviors surrounding inflation, interest rates, and banking policies.</p>
+                        <span class="text-xl">🏦</span>
+                        <h3 class="font-bold text-slate-900 text-base mt-1.5">Macro Economy</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Analyze global search behaviors surrounding inflation, interest rates, and banking policies.</p>
                     </div>
-                    <button onclick="exploreKeyword('Inflation, Interest Rate')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                    <button onclick="exploreKeywordHome('Inflation, Interest Rate')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
                         View Macro Trends ↗
                     </button>
                 </div>
@@ -605,14 +279,14 @@
     </main>
 
     <!-- Footer Links Section -->
-    <footer class="bg-white border-t border-slate-200 py-6">
-        <div class="max-w-6xl mx-auto px-4 text-center space-y-3">
-            <div class="flex justify-center space-x-6 text-sm text-slate-500">
+    <footer class="bg-white border-t border-slate-200 py-4">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <div class="flex justify-center space-x-6 text-xs text-slate-500">
                 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Privacy</a>
                 <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Terms</a>
                 <a href="https://support.google.com/trends/?hl=zh-CN" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
             </div>
-            <p class="text-xs text-slate-400">© trendchart. Powered by Google Trends Embed API.</p>
+            <p class="text-[11px] text-slate-400">© trendchart. Powered by Google Trends Embed API.</p>
         </div>
     </footer>
 
@@ -623,45 +297,396 @@
         let currentTimeParam = "today 5-y";
         let loadedTabs = {}; 
 
+        let currentDynamicKeyword = "ChatGPT";
+        let currentDynamicTabId = "dyn-t8";
+        let currentDynamicTimeParam = "today 5-y";
+        let dynamicLoadedTabs = {};
+
+        // 8 大分类，每个分类精确扩充至 30 个热门关键字
+        const categoryData = {
+            ai: {
+                title: "🤖 AI & Next-Gen Technology",
+                description: "OpenAI's flagship conversational AI, advanced LLM models, and computing surge.",
+                keywords: [
+                    { name: "ChatGPT", desc: "OpenAI's flagship conversational AI model." },
+                    { name: "Claude", desc: "Anthropic's advanced AI assistant framework." },
+                    { name: "NVIDIA", desc: "GPU hardware titan driving the AI computing surge." },
+                    { name: "Midjourney", desc: "Leading text-to-image generative platform." },
+                    { name: "Python", desc: "Primary programming language for data & ML." },
+                    { name: "Gemini", desc: "Google's multimodal state-of-the-art AI model." },
+                    { name: "DeepSeek", desc: "High-performance open-source reasoning model." },
+                    { name: "LLaMA", desc: "Meta's foundational open-weights LLM family." },
+                    { name: "Stable Diffusion", desc: "Open-source latent text-to-image generator." },
+                    { name: "Hugging Face", desc: "The AI community and model repository platform." },
+                    { name: "OpenAI", desc: "Pioneering artificial intelligence research lab." },
+                    { name: "Machine Learning", desc: "Core algorithms and data-driven prediction models." },
+                    { name: "Neural Network", desc: "Computing systems inspired by biological brains." },
+                    { name: "Large Language Model", desc: "Deep learning models trained on vast text data." },
+                    { name: "Artificial Intelligence", desc: "The overarching science of machine intelligence." },
+                    { name: "AI Agents", desc: "Autonomous software entities powered by LLMs." },
+                    { name: "PyTorch", desc: "Open source machine learning framework by Meta." },
+                    { name: "TensorFlow", desc: "End-to-end open source machine learning platform." },
+                    { name: "GitHub Copilot", desc: "AI pair programmer boosting developer productivity." },
+                    { name: "Cursor", desc: "The AI-first code editor for rapid development." },
+                    { name: "Perplexity", desc: "Conversational AI answer engine and search tool." },
+                    { name: "Sora", desc: "OpenAI text-to-video generative model." },
+                    { name: "Runway", desc: "Creative toolkit and generative video platform." },
+                    { name: "Mistral AI", desc: "European open-weights language model leader." },
+                    { name: "Vector Database", desc: "Specialized storage for embeddings and AI search." },
+                    { name: "RAG", desc: "Retrieval-augmented generation for accurate AI." },
+                    { name: "Autonomous Driving", desc: "Self-driving software and robotic perception." },
+                    { name: "Quantum Computing", desc: "Next-gen computational physics & processors." },
+                    { name: "Edge AI", desc: "Running machine learning models locally on devices." },
+                    { name: "Cybersecurity", desc: "Protecting systems and networks from digital threats." }
+                ]
+            },
+            finance: {
+                title: "💎 Finance & Markets",
+                description: "Dominant decentralized digital currencies, gold, and macroeconomic trends.",
+                keywords: [
+                    { name: "Bitcoin", desc: "Dominant decentralized digital currency." },
+                    { name: "Ethereum", desc: "Leading smart contract and DeFi blockchain." },
+                    { name: "Gold", desc: "Traditional inflation hedge & safe-haven asset." },
+                    { name: "Stock Market", desc: "Global macroeconomic investment sentiment." },
+                    { name: "Federal Reserve", desc: "US monetary policy & interest rate decisions." },
+                    { name: "S&P 500", desc: "Benchmark US stock market performance index." },
+                    { name: "Solana", desc: "High-throughput smart contract blockchain network." },
+                    { name: "Inflation", desc: "Economic price level changes and purchasing power." },
+                    { name: "Interest Rate", desc: "Cost of borrowing set by central banks." },
+                    { name: "NASDAQ", desc: "Tech-heavy US stock market exchange index." },
+                    { name: "Dow Jones", desc: "Price-weighted stock market index of 30 US companies." },
+                    { name: "Crypto", desc: "Decentralized digital assets and token networks." },
+                    { name: "Binance", desc: "Global cryptocurrency exchange platform." },
+                    { name: "USDT", desc: "Leading stablecoin pegged to the US dollar." },
+                    { name: "Ripple", desc: "Digital payment protocol and XRP cryptocurrency." },
+                    { name: "Cardano", desc: "Proof-of-stake blockchain network platform." },
+                    { name: "Real Estate", desc: "Property market investment and housing trends." },
+                    { name: "Venture Capital", desc: "Private equity funding for high-growth startups." },
+                    { name: "ETF", desc: "Exchange-traded funds tracking indexes or assets." },
+                    { name: "Wall Street", desc: "The financial heart of New York markets." },
+                    { name: "Recession", desc: "Period of temporary economic decline." },
+                    { name: "Asset Management", desc: "Professional management of investments and funds." },
+                    { name: "Fintech", desc: "Technology competing with traditional financial services." },
+                    { name: "BlackRock", desc: "World's largest asset management corporation." },
+                    { name: "US Dollar", desc: "World's primary reserve currency and forex benchmark." },
+                    { name: "Forex", desc: "Decentralized global market for trading currencies." },
+                    { name: "Bonds", desc: "Fixed-income debt security investments." },
+                    { name: "MicroStrategy", desc: "Business intelligence firm holding massive Bitcoin." },
+                    { name: "DeFi", desc: "Decentralized finance applications on blockchains." },
+                    { name: "NFT", desc: "Unique digital identifiers recorded on blockchains." }
+                ]
+            },
+            media: {
+                title: "🎬 Entertainment & Media",
+                description: "Global streaming networks, gaming releases, and anime culture.",
+                keywords: [
+                    { name: "Netflix", desc: "Global streaming movie & TV series network." },
+                    { name: "Spotify", desc: "World-leading audio streaming platform." },
+                    { name: "Gaming", desc: "Video game releases, esports, & consoles." },
+                    { name: "Anime", desc: "Japanese animation culture & series worldwide." },
+                    { name: "YouTube", desc: "World's largest video sharing & creator platform." },
+                    { name: "Steam", desc: "Premier digital distribution PC gaming platform." },
+                    { name: "PlayStation", desc: "Sony's flagship home video game console." },
+                    { name: "Marvel", desc: "Global cinematic superhero franchise and comics." },
+                    { name: "Disney+", desc: "Subscription streaming service for family content." },
+                    { name: "TikTok", desc: "Short-form video social media entertainment app." },
+                    { name: "Twitch", desc: "Live streaming platform for gamers and creators." },
+                    { name: "Xbox", desc: "Microsoft's video game brand and console family." },
+                    { name: "Nintendo Switch", desc: "Popular hybrid home video game console." },
+                    { name: "Hollywood", desc: "The center of the American motion picture industry." },
+                    { name: "HBO Max", desc: "Premium television and movie streaming service." },
+                    { name: "Paramount+", desc: "Global digital subscription video streaming service." },
+                    { name: "Cyberpunk 2077", desc: "Open-world action-adventure RPG video game." },
+                    { name: "Grand Theft Auto", desc: "Acclaimed open-world gaming blockbuster franchise." },
+                    { name: "Elden Ring", desc: "Award-winning action RPG developed by FromSoftware." },
+                    { name: "League of Legends", desc: "Massively popular multiplayer online battle arena game." },
+                    { name: "Minecraft", desc: "Sandbox video game of creativity and survival." },
+                    { name: "Fortnite", desc: "Online battle royale video game phenomenon." },
+                    { name: "Apple TV+", desc: "Original film and series streaming platform." },
+                    { name: "SoundCloud", desc: "Online audio distribution and music sharing platform." },
+                    { name: "Podcast", desc: "Episodic digital audio talk shows and programs." },
+                    { name: "Manga", desc: "Japanese comic books and graphic novels." },
+                    { name: "K-Pop", desc: "South Korean popular music cultural wave." },
+                    { name: "Box Office", desc: "The revenue generated by cinemas for movie releases." },
+                    { name: "Oscar Awards", desc: "Academy Awards honoring cinematic achievements." },
+                    { name: "Grammy Awards", desc: "Prestige recognition for outstanding music recordings." }
+                ]
+            },
+            commerce: {
+                title: "🛒 E-Commerce & Retail",
+                description: "Global shopping marketplace demand and seasonal deal spikes.",
+                keywords: [
+                    { name: "Amazon", desc: "Global online shopping marketplace demand." },
+                    { name: "Shopify", desc: "Independent e-commerce storefront platform." },
+                    { name: "Black Friday", desc: "Seasonal shopping deal spike patterns." },
+                    { name: "Temu", desc: "Rapidly growing cross-border discount marketplace." },
+                    { name: "Shein", desc: "Fast-fashion global online retailer." },
+                    { name: "AliExpress", desc: "Global retail online marketplace from Alibaba." },
+                    { name: "Walmart", desc: "Massive multinational retail corporation." },
+                    { name: "EBay", desc: "Online auction and shopping consumer marketplace." },
+                    { name: "Cyber Monday", desc: "Online shopping promotional event following Thanksgiving." },
+                    { name: "Target", desc: "Major US discount department store retailer." },
+                    { name: "Costco", desc: "Multinational membership-only warehouse club." },
+                    { name: "Stripe", desc: "Online payment processing platform for internet commerce." },
+                    { name: "PayPal", desc: "Digital wallet and online money transfer service." },
+                    { name: "Alibaba", desc: "Global B2B and consumer e-commerce powerhouse." },
+                    { name: "JD.com", desc: "Chinese technology and online retail giant." },
+                    { name: "IKEA", desc: "Multinational group that designs and sells ready furniture." },
+                    { name: "Zara", desc: "Fast fashion apparel retailer brand." },
+                    { name: "Nike", desc: "Global athletic footwear and apparel designer." },
+                    { name: "Lululemon", desc: "Athletic apparel retailer for active lifestyles." },
+                    { name: "Sephora", desc: "Multinational chain of personal care and beauty stores." },
+                    { name: "Best Buy", desc: "Consumer electronics retail corporation." },
+                    { name: "Etsy", desc: "Online marketplace focused on handmade and vintage items." },
+                    { name: "Wayfair", desc: "E-commerce company selling home goods and furniture." },
+                    { name: "ASOS", desc: "Online British fashion and cosmetic retailer." },
+                    { name: "Rakuten", desc: "Japanese electronic commerce and retailing company." },
+                    { name: "Mercado Libre", desc: "Latin America's leading e-commerce ecosystem." },
+                    { name: "Shopee", desc: "Pan-regional e-commerce platform in Southeast Asia." },
+                    { name: "Zalando", desc: "European online fashion and lifestyle retailer." },
+                    { name: "Prime Day", desc: "Annual massive shopping event hosted by Amazon." },
+                    { name: "Supply Chain", desc: "System of organizations and resources moving products." }
+                ]
+            },
+            science: {
+                title: "🚀 Science & Space",
+                description: "Private aerospace manufacturing, astronomical discoveries, and quantum tech.",
+                keywords: [
+                    { name: "SpaceX", desc: "Private aerospace manufacturing & space transport." },
+                    { name: "NASA", desc: "Global space exploration and astronomical discoveries." },
+                    { name: "Quantum Computing", desc: "Next-gen computational physics & processors." },
+                    { name: "Fusion Energy", desc: "Clean, limitless future nuclear power research." },
+                    { name: "James Webb Telescope", desc: "Deep space infrared observatory capturing the universe." },
+                    { name: "Mars Rover", desc: "Martian surface exploration and astrobiology." },
+                    { name: "CRISPR", desc: "Advanced gene-editing and biotechnology tool." },
+                    { name: "Black Hole", desc: "Regions of spacetime exhibiting gravitational singularity." },
+                    { name: "Superconductor", desc: "Materials exhibiting zero electrical resistance." },
+                    { name: "Particle Accelerator", desc: "Machines propelling charged particles to high speeds." },
+                    { name: "CERN", desc: "European organization for nuclear research and physics." },
+                    { name: "Dark Matter", desc: "Hypothetical matter accounting for cosmic mass." },
+                    { name: "Exoplanet", desc: "Planets located outside our solar system." },
+                    { name: "Astrobiology", desc: "Study of life origin and evolution in the universe." },
+                    { name: "Stem Cell", desc: "Biological cells with capability to differentiate." },
+                    { name: "Synthetic Biology", desc: "Designing and engineering artificial biological parts." },
+                    { name: "mRNA Vaccine", desc: "Advanced vaccination technology using genetic instructions." },
+                    { name: "Neuralink", desc: "Brain-computer interface technology developer." },
+                    { name: "Blue Origin", desc: "American privately funded aerospace manufacturer." },
+                    { name: "Artemis Program", desc: "NASA-led lunar exploration flight mission." },
+                    { name: "Hubble Telescope", desc: "Space telescope observing optical and ultraviolet light." },
+                    { name: "Gravitational Waves", desc: "Ripples in spacetime caused by massive cosmic events." },
+                    { name: "Nanotechnology", desc: "Manipulation of matter on an atomic and molecular scale." },
+                    { name: "Cloning", desc: "Process of producing genetically identical biological entities." },
+                    { name: "Photosynthesis", desc: "Natural process converting light into chemical energy." },
+                    { name: "Seismology", desc: "Scientific study of earthquakes and wave propagation." },
+                    { name: "Climatology", desc: "Scientific study of climate and long-term weather patterns." },
+                    { name: "Bioinformatics", desc: "Using computational tools to analyze biological data." },
+                    { name: "Renewable Energy", desc: "Clean power harnessed from infinite natural resources." },
+                    { name: "Geothermal", desc: "Thermal energy generated and stored in the Earth." }
+                ]
+            },
+            health: {
+                title: "💪 Health & Wellness",
+                description: "Mind-body practice, mental wellness, biohacking, and anti-aging science.",
+                keywords: [
+                    { name: "Yoga", desc: "Mind-body practice for flexibility & balance." },
+                    { name: "Meditation", desc: "Mental wellness, mindfulness, & stress relief." },
+                    { name: "Biohacking", desc: "Optimizing human performance & biology." },
+                    { name: "Longevity", desc: "Anti-aging science and extended healthspan." },
+                    { name: "Intermittent Fasting", desc: "Popular dietary timing for metabolic health." },
+                    { name: "Mindfulness", desc: "Psychological process of bringing attention to present." },
+                    { name: "CrossFit", desc: "High-intensity functional fitness training." },
+                    { name: "Mental Health", desc: "Emotional, psychological, and social well-being." },
+                    { name: "Nutrition", desc: "Science of food nutrients and their physiological effects." },
+                    { name: "Sleep Hygiene", desc: "Habits and practices conducive to sleeping well." },
+                    { name: "Pilates", desc: "Low-impact exercise strengthening core and posture." },
+                    { name: "Running", desc: "Aerobic cardiovascular endurance sport and exercise." },
+                    { name: "Marathon", desc: "Long-distance endurance running race of 42.195 km." },
+                    { name: "Protein", desc: "Macronutrient vital for muscle growth and repair." },
+                    { name: "Hydration", desc: "Maintaining adequate body water levels for health." },
+                    { name: "Ketogenic Diet", desc: "Low-carb, high-fat diet for metabolic balance." },
+                    { name: "Veganism", desc: "Plant-based lifestyle avoiding animal products." },
+                    { name: "Mental Clarity", desc: "Sharp focus, cognitive alertness, and brain function." },
+                    { name: "Cardio", desc: "Aerobic exercises improving heart and lung capacity." },
+                    { name: "Weight Training", desc: "Resistance workouts building muscle mass and strength." },
+                    { name: "Sauna", desc: "Heat therapy for relaxation and cardiovascular health." },
+                    { name: "Cold Plunge", desc: "Cold water immersion for recovery and resilience." },
+                    { name: "Supplements", desc: "Vitamins and minerals supporting daily nutrition." },
+                    { name: "Gut Health", desc: "Microbiome balance affecting digestion and immunity." },
+                    { name: "Holistic Health", desc: "Comprehensive approach to physical and mental wellness." },
+                    { name: "Aromatherapy", desc: "Essential oil therapy for psychological well-being." },
+                    { name: "Tai Chi", desc: "Internal Chinese martial art practiced for health." },
+                    { name: "Physical Therapy", desc: "Rehabilitation treatment for movement disorders." },
+                    { name: "Immune System", desc: "Biological defenses protecting against pathogens." },
+                    { name: "Stress Relief", desc: "Techniques and habits to lower anxiety and tension." }
+                ]
+            },
+            auto: {
+                title: "🚗 Automotive & EV",
+                description: "Electric cars, clean energy storage, and self-driving software mobility.",
+                keywords: [
+                    { name: "Tesla", desc: "Pioneer of electric cars and clean energy storage." },
+                    { name: "Electric Vehicle", desc: "Global transition to battery-powered transport." },
+                    { name: "Rivian", desc: "Adventure electric trucks and commercial vans." },
+                    { name: "Autonomous Driving", desc: "Self-driving software & robotic mobility tech." },
+                    { name: "BYD", desc: "Leading global new energy vehicle manufacturer." },
+                    { name: "Porsche", desc: "Luxury sports car manufacturer and electric models." },
+                    { name: "Formula 1", desc: "Premier international motorsport racing championship." },
+                    { name: "Ferrari", desc: "Legendary Italian luxury sports car brand." },
+                    { name: "Lamborghini", desc: "High-performance luxury supercar manufacturer." },
+                    { name: "BMW", desc: "German multinational luxury vehicle and engine maker." },
+                    { name: "Mercedes-Benz", desc: "Automotive brand known for luxury and innovation." },
+                    { name: "Audi", desc: "German luxury vehicle manufacturer brand." },
+                    { name: "Ford", desc: "American multinational automobile manufacturer." },
+                    { name: "Toyota", desc: "Japanese multinational automotive manufacturer." },
+                    { name: "Hyundai", desc: "South Korean multinational automotive manufacturer." },
+                    { name: "Lucid Motors", desc: "Luxury electric vehicle technology company." },
+                    { name: "NIO", desc: "Pioneering Chinese smart electric vehicle company." },
+                    { name: "XPeng", desc: "Chinese electric vehicle manufacturer focused on AI." },
+                    { name: "Supercharger", desc: "Fast-charging network for electric vehicles." },
+                    { name: "Solid-State Battery", desc: "Next-gen energy storage with solid electrolytes." },
+                    { name: "Hybrid Car", desc: "Vehicles combining internal combustion and electric motors." },
+                    { name: "Autonomous Car", desc: "Driverless robotic vehicles navigating via sensors." },
+                    { name: "Waymo", desc: "Autonomous driving technology development company." },
+                    { name: "Volkswagen", desc: "Major German automotive manufacturing group." },
+                    { name: "Aston Martin", desc: "British manufacturer of luxury sports cars." },
+                    { name: "Maserati", desc: "Italian luxury vehicle manufacturing company." },
+                    { name: "McLaren", desc: "British automotive manufacturer of luxury supercars." },
+                    { name: "Le Mans", desc: "World's oldest active endurance sports car race." },
+                    { name: "WRC", desc: "World Rally Championship motor racing series." },
+                    { name: "Motoring", desc: "General enthusiasm and industry of motor vehicles." }
+                ]
+            },
+            travel: {
+                title: "✈️ Travel & Lifestyle",
+                description: "Global vacation rentals, world-class tourism, and remote work lifestyle.",
+                keywords: [
+                    { name: "Airbnb", desc: "Global vacation rentals and unique stays." },
+                    { name: "Tokyo", desc: "World-class tourism & cultural hotspot." },
+                    { name: "Digital Nomad", desc: "Location-independent remote work lifestyle." },
+                    { name: "Travel", desc: "Broad worldwide vacation and tourism interest." },
+                    { name: "Kyoto", desc: "Historic Japanese cultural tourism destination." },
+                    { name: "Iceland", desc: "Nordic nature, auroras, and adventure tourism." },
+                    { name: "Booking.com", desc: "Global online travel reservation platform." },
+                    { name: "Solo Travel", desc: "Independent personal travel and exploration." },
+                    { name: "Paris", desc: "Iconic European cultural and romance travel destination." },
+                    { name: "New York", desc: "Vibrant global metropolis and tourism hub." },
+                    { name: "Bali", desc: "Indonesian island known for tropical beauty and retreats." },
+                    { name: "Swiss Alps", desc: "Mountain range popular for skiing and alpine tourism." },
+                    { name: "Expedia", desc: "Online travel aggregator and booking website." },
+                    { name: "TripAdvisor", desc: "Travel platform providing reviews and bookings." },
+                    { name: "Maldives", desc: "Tropical nation of luxury island resort atolls." },
+                    { name: "Patagonia", desc: "Remote natural region at the southern tip of South America." },
+                    { name: "Glamping", desc: "Luxury camping experience combining nature and comfort." },
+                    { name: "Ecotourism", desc: "Responsible travel to natural areas conserving the environment." },
+                    { name: "Backpacking", desc: "Low-cost independent international travel style." },
+                    { name: "Luxury Travel", desc: "High-end exclusive vacation experiences and resorts." },
+                    { name: "Road Trip", desc: "Long-distance journey traveled by automobile." },
+                    { name: "Santorini", desc: "Stunning Greek island destination in the Aegean Sea." },
+                    { name: "Dubai", desc: "Global tourism, shopping, and modern architecture hub." },
+                    { name: "Venice", desc: "Historic Italian canal city and tourism landmark." },
+                    { name: "Rome", desc: "Ancient Italian capital rich in history and art." },
+                    { name: "Seoul", desc: "Dynamic South Korean capital of pop culture and tech." },
+                    { name: "Bangkok", desc: "Vibrant Thai metropolis famous for culture and street life." },
+                    { name: "Barcelona", desc: "Spanish coastal city known for art and architecture." },
+                    { name: "Hokkaido", desc: "Northern Japanese island famous for snow and nature." },
+                    { name: "Adventure Travel", desc: "Exploration involving unusual or remote destinations." }
+                ]
+            }
+        };
+
         // Page Navigation Switcher
         function switchPage(page) {
             const homeSec = document.getElementById('page-home');
-            const exploreSec = document.getElementById('page-explore');
+            const catDetailSec = document.getElementById('page-category-detail');
             const financeSec = document.getElementById('page-finance');
             
             const navHome = document.getElementById('nav-home');
             const navExplore = document.getElementById('nav-explore');
             const navFinance = document.getElementById('nav-finance');
 
-            // Reset all pages & nav classes
-            homeSec.className = "hidden space-y-6";
-            exploreSec.className = "hidden space-y-8";
-            financeSec.className = "hidden space-y-8";
+            homeSec.className = "hidden space-y-4";
+            catDetailSec.className = "hidden space-y-3";
+            financeSec.className = "hidden space-y-6";
 
-            const defaultNavClass = "px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
-            const activeNavClass = "px-4 py-2 rounded-full text-sm font-semibold transition-all bg-brand-500 text-white shadow-sm";
+            const defaultNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+            const activeNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm";
 
             navHome.className = defaultNavClass;
             navExplore.className = defaultNavClass;
             navFinance.className = defaultNavClass;
 
             if (page === 'home') {
-                homeSec.className = "block space-y-6";
+                homeSec.className = "block space-y-4";
                 navHome.className = activeNavClass;
             } else if (page === 'explore') {
-                exploreSec.className = "block space-y-8";
+                catDetailSec.className = "block space-y-3";
                 navExplore.className = activeNavClass;
             } else if (page === 'finance') {
-                financeSec.className = "block space-y-8";
+                financeSec.className = "block space-y-6";
                 navFinance.className = activeNavClass;
             }
         }
 
-        // Handle direct keyword click from Explore Gallery
-        function exploreKeyword(keyword) {
-            document.getElementById('keyword-input').value = keyword;
-            switchPage('home');
-            handleSearch();
+        // Open Category Detail Page (Explore Page)
+        function openCategoryPage(catKey) {
+            const catInfo = categoryData[catKey];
+            if (!catInfo) return;
+
+            ['ai', 'finance', 'media', 'commerce', 'science', 'health', 'auto', 'travel'].forEach(k => {
+                const btn = document.getElementById(`cat-btn-${k}`);
+                if (btn) {
+                    if (k === catKey) {
+                        btn.className = "px-3 py-1.5 rounded-full text-xs font-bold transition bg-brand-500 text-white shadow-sm";
+                    } else {
+                        btn.className = "px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50";
+                    }
+                }
+            });
+
+            document.getElementById('cat-detail-title').innerText = catInfo.title;
+            document.getElementById('cat-detail-desc').innerText = catInfo.description;
+
+            const gridContainer = document.getElementById('cat-detail-grid');
+            gridContainer.innerHTML = "";
+
+            catInfo.keywords.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded-lg border border-slate-200 shadow-sm hover:shadow hover:border-brand-500 transition cursor-pointer flex flex-col justify-between space-y-1 group";
+                card.onclick = () => selectDynamicKeyword(item.name);
+                card.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-xs group-hover:text-brand-500 transition truncate">${item.name}</h4>
+                        <p class="text-[10px] text-slate-500 line-clamp-1">${item.desc}</p>
+                    </div>
+                `;
+                gridContainer.appendChild(card);
+            });
+
+            if (catInfo.keywords.length > 0) {
+                selectDynamicKeyword(catInfo.keywords[0].name);
+            }
+        }
+
+        // Select dynamic keyword from category grid
+        function selectDynamicKeyword(keyword) {
+            currentDynamicKeyword = keyword;
+            document.getElementById('dynamic-kw-display').innerText = keyword;
+            dynamicLoadedTabs = {}; 
+
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('dyn-t8').classList.add('active');
+
+            currentDynamicTabId = 'dyn-t8';
+            currentDynamicTimeParam = 'today 5-y';
+
+            renderDynamicTrendsChart(currentDynamicTabId, currentDynamicTimeParam);
         }
 
         // Safe poll check for Google SDK readiness
@@ -683,7 +708,7 @@
             }
         }
 
-        // Render Google Trends embed chart with pure English parameter (`hl=en`)
+        // Render Google Trends embed chart for Home
         function renderTrendsChart(tabId, timeParam) {
             const encodedKw = encodeURIComponent(currentKeyword);
             const cacheKey = `${currentKeyword}_${tabId}`;
@@ -694,7 +719,7 @@
                 const targetElem = document.getElementById(`embed-${tabId}`);
                 if (!targetElem) return;
 
-                targetElem.innerHTML = ""; // Clear loader placeholder
+                targetElem.innerHTML = ""; 
 
                 try {
                     trends.embed.renderExploreWidgetTo(
@@ -719,23 +744,58 @@
             });
         }
 
-        // Handle Search Form Submit
+        // Render Google Trends embed chart for Dynamic Section
+        function renderDynamicTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentDynamicKeyword);
+            const cacheKey = `${currentDynamicKeyword}_${tabId}`;
+
+            if (dynamicLoadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = ""; 
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentDynamicKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    dynamicLoadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Dynamic Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Handle Search Form Submit on Home
         function handleSearch() {
             const inputVal = document.getElementById('keyword-input').value.trim();
             if (!inputVal) return;
 
             currentKeyword = inputVal;
             document.getElementById('kw-display').innerText = currentKeyword;
-            loadedTabs = {}; // Reset chart cache for new search term
+            loadedTabs = {}; 
 
-            // Reset Time Tabs to Default (Past 5 years - t8)
             const buttons = document.querySelectorAll('.time-btn');
             buttons.forEach(btn => {
-                btn.className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
             });
-            buttons[7].className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+            buttons[7].className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
 
-            const panels = document.querySelectorAll('.chart-panel');
+            const panels = document.querySelectorAll('#page-home .chart-panel');
             panels.forEach(panel => panel.classList.remove('active'));
             document.getElementById('t8').classList.add('active');
 
@@ -745,15 +805,22 @@
             renderTrendsChart(currentTabId, currentTimeParam);
         }
 
-        // Switch Time Tabs
+        // Finance page explore keyword to Home
+        function exploreKeywordHome(keyword) {
+            document.getElementById('keyword-input').value = keyword;
+            switchPage('home');
+            handleSearch();
+        }
+
+        // Switch Time Tabs for Home
         function switchTimeTab(tabId, timeParam, btnElement) {
             const buttons = document.querySelectorAll('.time-btn');
             buttons.forEach(btn => {
-                btn.className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
             });
-            btnElement.className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+            btnElement.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
 
-            const panels = document.querySelectorAll('.chart-panel');
+            const panels = document.querySelectorAll('#page-home .chart-panel');
             panels.forEach(panel => panel.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
 
@@ -763,20 +830,40 @@
             renderTrendsChart(tabId, timeParam);
         }
 
-        // Initial Load Event
+        // Switch Time Tabs for Dynamic Section
+        function switchDynamicTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentDynamicTabId = tabId;
+            currentDynamicTimeParam = timeParam;
+
+            renderDynamicTrendsChart(tabId, timeParam);
+        }
+
+        // Initial Load Event (默认打开 Home 页面)
         window.addEventListener('load', () => {
+            switchPage('home');
+            openCategoryPage('ai'); // 预加载 Explore 页面的默认分类
             renderTrendsChart('t8', 'today 5-y');
         });
     </script>
 
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NCYS6Q44WF"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NCYS6Q44WF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-NCYS6Q44WF');
-</script>
+      gtag('config', 'G-NCYS6Q44WF');
+    </script>
 </body>
 </html>
