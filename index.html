@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrendsExplorer - Google Trends Visualizer & Keyword Discovery</title>
+    <title>trendchat - Google Trends Visualizer & Keyword Discovery</title>
     <!-- Google Trends Embed Script -->
     <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3882_RC01/embed_loader.js"></script>
     <!-- Tailwind CSS CDN for modern responsive UI -->
@@ -37,6 +37,9 @@
             position: relative;
             height: 420px;
             background-color: #ffffff;
+            border-left: none;
+            border-right: none;
+            border-radius: 0 !important;
         }
 
         .chart-panel {
@@ -81,7 +84,7 @@
                     <div class="w-9 h-9 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">
                         📈
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-slate-900">Trends<span class="text-brand-500">Explorer</span></span>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">trend<span class="text-brand-500">chart</span></span>
                 </div>
 
                 <!-- Navigation Links -->
@@ -90,7 +93,10 @@
                         Home
                     </button>
                     <button id="nav-explore" onclick="switchPage('explore')" class="px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
-                        Explore Keywords
+                        Explore
+                    </button>
+                    <button id="nav-finance" onclick="switchPage('finance')" class="px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        Finance
                     </button>
                 </nav>
             </div>
@@ -121,9 +127,9 @@
             </div>
 
             <!-- Dashboard Wrapper -->
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-4 sm:p-6 space-y-5">
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm py-5 space-y-5 overflow-hidden">
                 <!-- Subtitle Indicator -->
-                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-4 gap-2">
+                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-4 gap-2 px-4 sm:px-6">
                     <div class="text-sm font-medium text-slate-600">
                         Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-md text-base border border-slate-200">AI</span>
                     </div>
@@ -131,7 +137,7 @@
                 </div>
 
                 <!-- Time Range Tabs -->
-                <div id="button-group" class="flex flex-wrap gap-2 justify-center sm:justify-start">
+                <div id="button-group" class="flex flex-wrap gap-2 justify-center sm:justify-start px-4 sm:px-6">
                     <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t1', 'now 1-H', this)">Past 1 hour</button>
                     <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t2', 'now 4-H', this)">Past 4 hours</button>
                     <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t3', 'now 1-d', this)">Past 1 day</button>
@@ -144,7 +150,7 @@
                 </div>
 
                 <!-- Google Chart Panels Container -->
-                <div id="chart-wrapper" class="chart-wrapper border border-slate-200 rounded-xl overflow-hidden p-1">
+                <div id="chart-wrapper" class="chart-wrapper border-t border-b border-slate-200">
                     <div id="t1" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t1" class="w-full h-full"></div></div>
                     <div id="t2" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t2" class="w-full h-full"></div></div>
                     <div id="t3" class="chart-panel"><div class="loading-notice">Loading Google Trends chart...</div><div id="embed-t3" class="w-full h-full"></div></div>
@@ -357,6 +363,49 @@
             </div>
         </section>
 
+        <!-- PAGE 3: FINANCE PAGE -->
+        <section id="page-finance" class="hidden space-y-8">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Finance & Market Insights</h2>
+                <p class="text-slate-500 text-sm sm:text-base">Explore targeted financial keywords, macroeconomic indexes, and crypto trends.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+                    <div>
+                        <span class="text-2xl">🪙</span>
+                        <h3 class="font-bold text-slate-900 text-lg mt-2">Cryptocurrency</h3>
+                        <p class="text-xs text-slate-500 mt-1">Track Bitcoin, Ethereum, and digital asset market adoption trends over time.</p>
+                    </div>
+                    <button onclick="exploreKeyword('Bitcoin, Ethereum')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                        View Crypto Trends ↗
+                    </button>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+                    <div>
+                        <span class="text-2xl">📊</span>
+                        <h3 class="font-bold text-slate-900 text-lg mt-2">Global Stocks</h3>
+                        <p class="text-xs text-slate-500 mt-1">Monitor public interest in major stock indices like S&P 500, NASDAQ, and top tech equities.</p>
+                    </div>
+                    <button onclick="exploreKeyword('S&P 500, NASDAQ')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                        View Stock Trends ↗
+                    </button>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+                    <div>
+                        <span class="text-2xl">🏦</span>
+                        <h3 class="font-bold text-slate-900 text-lg mt-2">Macro Economy</h3>
+                        <p class="text-xs text-slate-500 mt-1">Analyze global search behaviors surrounding inflation, interest rates, and banking policies.</p>
+                    </div>
+                    <button onclick="exploreKeyword('Inflation, Interest Rate')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                        View Macro Trends ↗
+                    </button>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- Footer Links Section -->
@@ -367,7 +416,7 @@
                 <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Terms</a>
                 <a href="https://support.google.com/trends/?hl=zh-CN" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
             </div>
-            <p class="text-xs text-slate-400">© TrendsExplorer. Powered by Google Trends Embed API.</p>
+            <p class="text-xs text-slate-400">© trendchat. Powered by Google Trends Embed API.</p>
         </div>
     </footer>
 
@@ -382,25 +431,33 @@
         function switchPage(page) {
             const homeSec = document.getElementById('page-home');
             const exploreSec = document.getElementById('page-explore');
+            const financeSec = document.getElementById('page-finance');
+            
             const navHome = document.getElementById('nav-home');
             const navExplore = document.getElementById('nav-explore');
+            const navFinance = document.getElementById('nav-finance');
+
+            // Reset all pages & nav classes
+            homeSec.className = "hidden space-y-6";
+            exploreSec.className = "hidden space-y-8";
+            financeSec.className = "hidden space-y-8";
+
+            const defaultNavClass = "px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+            const activeNavClass = "px-4 py-2 rounded-full text-sm font-semibold transition-all bg-brand-500 text-white shadow-sm";
+
+            navHome.className = defaultNavClass;
+            navExplore.className = defaultNavClass;
+            navFinance.className = defaultNavClass;
 
             if (page === 'home') {
-                homeSec.classList.remove('hidden');
-                homeSec.classList.add('block');
-                exploreSec.classList.add('hidden');
-                exploreSec.classList.remove('block');
-
-                navHome.className = "px-4 py-2 rounded-full text-sm font-semibold transition-all bg-brand-500 text-white shadow-sm";
-                navExplore.className = "px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
-            } else {
-                exploreSec.classList.remove('hidden');
-                exploreSec.classList.add('block');
-                homeSec.classList.add('hidden');
-                homeSec.classList.remove('block');
-
-                navExplore.className = "px-4 py-2 rounded-full text-sm font-semibold transition-all bg-brand-500 text-white shadow-sm";
-                navHome.className = "px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+                homeSec.className = "block space-y-6";
+                navHome.className = activeNavClass;
+            } else if (page === 'explore') {
+                exploreSec.className = "block space-y-8";
+                navExplore.className = activeNavClass;
+            } else if (page === 'finance') {
+                financeSec.className = "block space-y-8";
+                navFinance.className = activeNavClass;
             }
         }
 
