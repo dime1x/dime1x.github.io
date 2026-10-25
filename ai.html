@@ -38,10 +38,10 @@
             color: #1e293b;
         }
 
-        /* Fixed height and iframe scaling to remove bottom whitespace */
+        /* 修复：将高度从 360px 调高至 440px，防止 Google 趋势自带的顶部栏（全球、时间、网页搜索等）被遮挡 */
         .chart-wrapper {
             position: relative;
-            height: 360px;
+            height: 440px;
             background-color: #ffffff;
             border-left: none;
             border-right: none;
@@ -216,7 +216,8 @@
                     </div>
 
                     <!-- Chart Multi-panel Container -->
-                    <div class="chart-wrapper border-t border-b border-slate-200" style="height: 330px;">
+                    <!-- 修复：将行内样式 height 从 330px 调高至 420px -->
+                    <div class="chart-wrapper border-t border-b border-slate-200" style="height: 420px;">
                         <div id="dyn-t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t1" class="w-full h-full"></div></div>
                         <div id="dyn-t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t2" class="w-full h-full"></div></div>
                         <div id="dyn-t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t3" class="w-full h-full"></div></div>
@@ -285,7 +286,7 @@
                 <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Terms</a>
                 <a href="https://support.google.com/trends/?hl=zh-CN" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
             </div>
-            <p class="text-[11px] text-slate-400">© trendchat. Powered by Google Trends Embed API.</p>
+            <p class="text-[11px] text-slate-400">© trendchart. Powered by Google Trends Embed API.</p>
         </div>
     </footer>
 
