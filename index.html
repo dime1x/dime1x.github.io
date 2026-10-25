@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta property="og:image" content="https://trendchart.ai/og-image.jpg">
-
-<!-- 建议补充图片尺寸，方便 Facebook 提前预留展示空间 -->
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:type" content="website">
-<meta property="og:title" content="trendchart.ai - Search & Visualize Google Trends Data">
-<meta property="og:description" content="Explore live keyword search trends with interactive charts and analytics.">
+    <meta property="og:image" content="https://trendchart.ai/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="trendchart.ai - Search & Visualize Google Trends Data">
+    <meta property="og:description" content="Explore live keyword search trends with interactive charts and analytics.">
     <title>trendchart - Google Trends Visualizer & Keyword Discovery</title>
     <!-- Google Trends Embed Script -->
     <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3882_RC01/embed_loader.js"></script>
@@ -43,7 +41,7 @@
         /* Fixed height and iframe scaling to remove bottom whitespace */
         .chart-wrapper {
             position: relative;
-            height: 420px;
+            height: 360px;
             background-color: #ffffff;
             border-left: none;
             border-right: none;
@@ -75,7 +73,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #64748b;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             z-index: 1;
         }
@@ -85,25 +83,25 @@
 
     <!-- Top Navigation Bar -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-14 items-center">
                 <!-- Brand Logo -->
                 <div class="flex items-center gap-2 cursor-pointer" onclick="switchPage('home')">
-                    <div class="w-9 h-9 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                    <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
                         📈
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-slate-900">trend<span class="text-brand-500">chart</span></span>
+                    <span class="text-lg font-bold tracking-tight text-slate-900">trend<span class="text-brand-500">chart</span></span>
                 </div>
 
                 <!-- Navigation Links -->
-                <nav class="flex space-x-2 sm:space-x-4">
-                    <button id="nav-home" onclick="switchPage('home')" class="px-4 py-2 rounded-full text-sm font-semibold transition-all bg-brand-500 text-white shadow-sm">
+                <nav class="flex space-x-2">
+                    <button id="nav-home" onclick="switchPage('home')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
                         Home
                     </button>
-                    <button id="nav-explore" onclick="switchPage('explore')" class="px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                    <button id="nav-explore" onclick="openCategoryPage('ai')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm">
                         Explore
                     </button>
-                    <button id="nav-finance" onclick="switchPage('finance')" class="px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                    <button id="nav-finance" onclick="switchPage('finance')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
                         Finance
                     </button>
                 </nav>
@@ -112,49 +110,48 @@
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-grow w-full">
 
         <!-- PAGE 1: HOME PAGE (Search & Chart) -->
-        <section id="page-home" class="block space-y-6">
-            <div class="text-center max-w-2xl mx-auto space-y-2">
-                <h1 class="text-3xl font-extrabold text-slate-900 sm:text-4xl tracking-tight">Explore Search Trends Worldwide</h1>
-                <p class="text-slate-500 text-sm sm:text-base">Track interest over time with real-time analytics powered by Google Trends data.</p>
+        <section id="page-home" class="hidden space-y-4">
+            <div class="text-center max-w-2xl mx-auto space-y-1">
+                <h1 class="text-2xl font-extrabold text-slate-900 sm:text-3xl tracking-tight">Explore Search Trends Worldwide</h1>
+                <p class="text-slate-500 text-xs sm:text-sm">Track interest over time with real-time analytics powered by Google Trends data[cite: 1].</p>
             </div>
 
             <!-- Search Box Area -->
-            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-2xl mx-auto">
-                <form onsubmit="event.preventDefault(); handleSearch();" class="flex flex-col sm:flex-row gap-3">
+            <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-sm max-w-xl mx-auto">
+                <form onsubmit="event.preventDefault(); handleSearch();" class="flex flex-col sm:flex-row gap-2">
                     <div class="relative flex-grow">
-                        <input type="text" id="keyword-input" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-800 text-sm transition" placeholder="Enter keyword, e.g. AI, Crypto, Tesla..." value="AI">
+                        <input type="text" id="keyword-input" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-800 text-xs transition" placeholder="Enter keyword, e.g. AI, Crypto..." value="AI">
                     </div>
-                    <button type="submit" class="bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white px-6 py-3 rounded-xl font-semibold text-sm transition shadow-sm whitespace-nowrap flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        Generate Trend
+                    <button type="submit" class="bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white px-5 py-2.5 rounded-lg font-semibold text-xs transition shadow-sm whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        Generate
                     </button>
                 </form>
             </div>
 
             <!-- Dashboard Wrapper -->
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm py-5 space-y-5 overflow-hidden">
-                <!-- Subtitle Indicator -->
-                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-4 gap-2 px-4 sm:px-6">
-                    <div class="text-sm font-medium text-slate-600">
-                        Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-md text-base border border-slate-200">AI</span>
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                    <div class="text-xs font-medium text-slate-600">
+                        Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-sm border border-slate-200">AI</span>
                     </div>
-                    <span class="text-xs text-slate-400 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">Data Source: Google Trends (Global)</span>
+                    <span class="text-[10px] text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200">Google Trends (Global)[cite: 1]</span>
                 </div>
 
                 <!-- Time Range Tabs -->
-                <div id="button-group" class="flex flex-wrap gap-2 justify-center sm:justify-start px-4 sm:px-6">
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t1', 'now 1-H', this)">Past 1 hour</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t2', 'now 4-H', this)">Past 4 hours</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t3', 'now 1-d', this)">Past 1 day</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t4', 'now 7-d', this)">Past 7 days</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t5', 'today 1-m', this)">Past 30 days</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t6', 'today 3-m', this)">Past 90 days</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t7', 'today 12-m', this)">Past 12 months</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchTimeTab('t8', 'today 5-y', this)">Past 5 years</button>
-                    <button class="time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t9', 'all', this)">2004 - Present</button>
+                <div id="button-group" class="flex flex-wrap gap-1.5 justify-center sm:justify-start px-4">
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t1', 'now 1-H', this)">1h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t2', 'now 4-H', this)">4h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t3', 'now 1-d', this)">1d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t4', 'now 7-d', this)">7d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t5', 'today 1-m', this)">30d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t6', 'today 3-m', this)">90d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t7', 'today 12-m', this)">12m</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchTimeTab('t8', 'today 5-y', this)">5y</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t9', 'all', this)">All</button>
                 </div>
 
                 <!-- Google Chart Panels Container -->
@@ -172,430 +169,108 @@
             </div>
         </section>
 
-        <!-- PAGE 2: EXPLORE KEYWORDS (Curated Gallery Page) -->
-        <section id="page-explore" class="hidden space-y-8">
-            <div class="text-center max-w-2xl mx-auto space-y-2">
-                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Curated Trend Preset Library</h2>
-                <p class="text-slate-500 text-sm sm:text-base">Click any category title to open official Google Trends comparison, or pick a keyword below.</p>
+        <!-- PAGE 2: CATEGORY DETAIL PAGE (Split Layout: Left = Categories & Keywords, Right = Live Chart) -->
+        <section id="page-category-detail" class="block space-y-3">
+            <!-- Top Category Switcher Bar -->
+            <div class="flex flex-wrap gap-1.5 justify-center sm:justify-start pb-2 border-b border-slate-200">
+                <button onclick="openCategoryPage('ai')" id="cat-btn-ai" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-brand-500 text-white shadow-sm">🤖 AI & Tech</button>
+                <button onclick="openCategoryPage('finance')" id="cat-btn-finance" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">💎 Finance</button>
+                <button onclick="openCategoryPage('media')" id="cat-btn-media" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🎬 Media</button>
+                <button onclick="openCategoryPage('commerce')" id="cat-btn-commerce" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🛒 Commerce</button>
             </div>
 
-            <!-- Categories Grid -->
-            <div class="space-y-8">
-                <!-- Category 1: AI & Emerging Tech -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trendchart.ai/ai.html" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>🤖</span> AI & Next-Gen Technology <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
+            <!-- Desktop Split Grid: Left Column & Right Column -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                
+                <!-- LEFT COLUMN: Category Header & Keyword Cards Grid (Col-span 5) -->
+                <div class="lg:col-span-5 space-y-3">
+                    <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm space-y-1">
+                        <h2 id="cat-detail-title" class="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2"></h2>
+                        <p id="cat-detail-desc" class="text-slate-500 text-xs leading-relaxed"></p>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3 group">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">ChatGPT</h4>
-                                <p class="text-xs text-slate-500 mt-1">OpenAI's flagship conversational AI model.</p>
-                            </div>
-                            <button onclick="exploreKeyword('ChatGPT')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3 group">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Claude</h4>
-                                <p class="text-xs text-slate-500 mt-1">Anthropic's advanced AI assistant framework.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Claude')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3 group">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">NVIDIA</h4>
-                                <p class="text-xs text-slate-500 mt-1">GPU hardware titan driving the AI computing surge.</p>
-                            </div>
-                            <button onclick="exploreKeyword('NVIDIA')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3 group">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Midjourney</h4>
-                                <p class="text-xs text-slate-500 mt-1">Leading text-to-image generative platform.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Midjourney')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3 group">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Python</h4>
-                                <p class="text-xs text-slate-500 mt-1">Primary programming language for data & ML.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Python')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
+
+                    <!-- Compact Keyword Cards Grid (Scrollable list to save vertical space) -->
+                    <div id="cat-detail-grid" class="grid grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1">
+                        <!-- Dynamic Keyword Cards Loaded Here -->
                     </div>
                 </div>
 
-                <!-- Category 2: Finance & Markets -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Bitcoin,Gold,Stock%20Market,Federal%20Reserve&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>💎</span> Finance & Markets <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
+                <!-- RIGHT COLUMN: Dynamic Chart Display Area (Col-span 7) -> Visible Above the Fold! -->
+                <div id="dynamic-embed-container" class="lg:col-span-7 bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                        <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                            🔥 Selected: <span id="dynamic-kw-display" class="bg-brand-50 text-brand-600 px-2 py-0.5 rounded text-xs border border-brand-100">ChatGPT</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200">Google Trends Embed[cite: 1]</span>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Bitcoin</h4>
-                                <p class="text-xs text-slate-500 mt-1">Dominant decentralized digital currency.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Bitcoin')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Gold</h4>
-                                <p class="text-xs text-slate-500 mt-1">Traditional inflation hedge & safe-haven asset.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Gold')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Stock Market</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global macroeconomic investment sentiment.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Stock Market')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Federal Reserve</h4>
-                                <p class="text-xs text-slate-500 mt-1">US monetary policy & interest rate decisions.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Federal Reserve')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
+
+                    <!-- Chart Time Range Buttons -->
+                    <div id="dynamic-button-group" class="flex flex-wrap gap-1.5 justify-center px-4">
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t1', 'now 1-H', this)">1h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t2', 'now 4-H', this)">4h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t3', 'now 1-d', this)">1d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t4', 'now 7-d', this)">7d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t5', 'today 1-m', this)">30d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t6', 'today 3-m', this)">90d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t7', 'today 12-m', this)">12m</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchDynamicTimeTab('dyn-t8', 'today 5-y', this)">5y</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t9', 'all', this)">All</button>
+                    </div>
+
+                    <!-- Chart Multi-panel Container -->
+                    <div class="chart-wrapper border-t border-b border-slate-200" style="height: 330px;">
+                        <div id="dyn-t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t1" class="w-full h-full"></div></div>
+                        <div id="dyn-t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t2" class="w-full h-full"></div></div>
+                        <div id="dyn-t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t3" class="w-full h-full"></div></div>
+                        <div id="dyn-t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t4" class="w-full h-full"></div></div>
+                        <div id="dyn-t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t5" class="w-full h-full"></div></div>
+                        <div id="dyn-t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t6" class="w-full h-full"></div></div>
+                        <div id="dyn-t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t7" class="w-full h-full"></div></div>
+                        <div id="dyn-t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t8" class="w-full h-full"></div></div>
+                        <div id="dyn-t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t9" class="w-full h-full"></div></div>
                     </div>
                 </div>
 
-                <!-- Category 3: Entertainment & Media -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Netflix,Spotify,Gaming,Anime&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>🎬</span> Entertainment & Media <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Netflix</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global streaming movie & TV series network.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Netflix')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Spotify</h4>
-                                <p class="text-xs text-slate-500 mt-1">World-leading audio streaming platform.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Spotify')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Gaming</h4>
-                                <p class="text-xs text-slate-500 mt-1">Video game releases, esports, & consoles.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Gaming')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Anime</h4>
-                                <p class="text-xs text-slate-500 mt-1">Japanese animation culture & series worldwide.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Anime')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 4: E-Commerce & Retail -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Amazon,Shopify,Black%20Friday&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>🛒</span> E-Commerce & Retail <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Amazon</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global online shopping marketplace demand.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Amazon')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Shopify</h4>
-                                <p class="text-xs text-slate-500 mt-1">Independent e-commerce storefront platform.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Shopify')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Black Friday</h4>
-                                <p class="text-xs text-slate-500 mt-1">Seasonal shopping deal spike patterns.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Black Friday')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 5: Science & Space -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=SpaceX,NASA,Quantum%20Computing,Fusion%20Energy&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>🚀</span> Science & Space <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">SpaceX</h4>
-                                <p class="text-xs text-slate-500 mt-1">Private aerospace manufacturing & space transport.</p>
-                            </div>
-                            <button onclick="exploreKeyword('SpaceX')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">NASA</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global space exploration and astronomical discoveries.</p>
-                            </div>
-                            <button onclick="exploreKeyword('NASA')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Quantum Computing</h4>
-                                <p class="text-xs text-slate-500 mt-1">Next-gen computational physics & processors.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Quantum Computing')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Fusion Energy</h4>
-                                <p class="text-xs text-slate-500 mt-1">Clean, limitless future nuclear power research.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Fusion Energy')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 6: Health & Fitness -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Yoga,Meditation,Biohacking,Longevity&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>💪</span> Health & Wellness <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Yoga</h4>
-                                <p class="text-xs text-slate-500 mt-1">Mind-body practice for flexibility & balance.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Yoga')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Meditation</h4>
-                                <p class="text-xs text-slate-500 mt-1">Mental wellness, mindfulness, & stress relief.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Meditation')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Biohacking</h4>
-                                <p class="text-xs text-slate-500 mt-1">Optimizing human performance & biology.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Biohacking')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Longevity</h4>
-                                <p class="text-xs text-slate-500 mt-1">Anti-aging science and extended healthspan.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Longevity')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 7: Automotive & EV -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Tesla,Rivian,Electric%20Vehicle,Autonomous%20Driving&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>🚗</span> Automotive & EV <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Tesla</h4>
-                                <p class="text-xs text-slate-500 mt-1">Pioneer of electric cars and clean energy storage.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Tesla')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Electric Vehicle</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global transition to battery-powered transport.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Electric Vehicle')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Rivian</h4>
-                                <p class="text-xs text-slate-500 mt-1">Adventure electric trucks and commercial vans.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Rivian')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Autonomous Driving</h4>
-                                <p class="text-xs text-slate-500 mt-1">Self-driving software & robotic mobility tech.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Autonomous Driving')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 8: Travel & Lifestyle -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-2">
-                        <a href="https://trends.google.com/trends/explore?q=Airbnb,Tokyo,Digital%20Nomad,Travel&hl=en" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-slate-900 hover:text-brand-500 transition inline-flex items-center gap-1.5 group">
-                            <span>✈️</span> Travel & Lifestyle <span class="text-brand-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Airbnb</h4>
-                                <p class="text-xs text-slate-500 mt-1">Global vacation rentals and unique stays.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Airbnb')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Tokyo</h4>
-                                <p class="text-xs text-slate-500 mt-1">World-class tourism & cultural hotspot.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Tokyo')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Digital Nomad</h4>
-                                <p class="text-xs text-slate-500 mt-1">Location-independent remote work lifestyle.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Digital Nomad')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-base">Travel</h4>
-                                <p class="text-xs text-slate-500 mt-1">Broad worldwide vacation and tourism interest.</p>
-                            </div>
-                            <button onclick="exploreKeyword('Travel')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                                Explore Trend ↗
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
         <!-- PAGE 3: FINANCE PAGE -->
-        <section id="page-finance" class="hidden space-y-8">
-            <div class="text-center max-w-2xl mx-auto space-y-2">
-                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Finance & Market Insights</h2>
-                <p class="text-slate-500 text-sm sm:text-base">Explore targeted financial keywords, macroeconomic indexes, and crypto trends.</p>
+        <section id="page-finance" class="hidden space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-1">
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Finance & Market Insights</h2>
+                <p class="text-slate-500 text-xs sm:text-sm">Explore targeted financial keywords, macroeconomic indexes, and crypto trends.</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
                     <div>
-                        <span class="text-2xl">🪙</span>
-                        <h3 class="font-bold text-slate-900 text-lg mt-2">Cryptocurrency</h3>
-                        <p class="text-xs text-slate-500 mt-1">Track Bitcoin, Ethereum, and digital asset market adoption trends over time.</p>
+                        <span class="text-xl">🪙</span>
+                        <h3 class="font-bold text-slate-900 text-base mt-1.5">Cryptocurrency</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Track Bitcoin, Ethereum, and digital asset market adoption trends over time.</p>
                     </div>
-                    <button onclick="exploreKeyword('Bitcoin, Ethereum')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                    <button onclick="exploreKeywordHome('Bitcoin, Ethereum')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
                         View Crypto Trends ↗
                     </button>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
                     <div>
-                        <span class="text-2xl">📊</span>
-                        <h3 class="font-bold text-slate-900 text-lg mt-2">Global Stocks</h3>
-                        <p class="text-xs text-slate-500 mt-1">Monitor public interest in major stock indices like S&P 500, NASDAQ, and top tech equities.</p>
+                        <span class="text-xl">📊</span>
+                        <h3 class="font-bold text-slate-900 text-base mt-1.5">Global Stocks</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Monitor public interest in major stock indices like S&P 500, NASDAQ, and top tech equities.</p>
                     </div>
-                    <button onclick="exploreKeyword('S&P 500, NASDAQ')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                    <button onclick="exploreKeywordHome('S&P 500, NASDAQ')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
                         View Stock Trends ↗
                     </button>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
                     <div>
-                        <span class="text-2xl">🏦</span>
-                        <h3 class="font-bold text-slate-900 text-lg mt-2">Macro Economy</h3>
-                        <p class="text-xs text-slate-500 mt-1">Analyze global search behaviors surrounding inflation, interest rates, and banking policies.</p>
+                        <span class="text-xl">🏦</span>
+                        <h3 class="font-bold text-slate-900 text-base mt-1.5">Macro Economy</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Analyze global search behaviors surrounding inflation, interest rates, and banking policies.</p>
                     </div>
-                    <button onclick="exploreKeyword('Inflation, Interest Rate')" class="w-full py-2.5 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
+                    <button onclick="exploreKeywordHome('Inflation, Interest Rate')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
                         View Macro Trends ↗
                     </button>
                 </div>
@@ -605,14 +280,14 @@
     </main>
 
     <!-- Footer Links Section -->
-    <footer class="bg-white border-t border-slate-200 py-6">
-        <div class="max-w-6xl mx-auto px-4 text-center space-y-3">
-            <div class="flex justify-center space-x-6 text-sm text-slate-500">
+    <footer class="bg-white border-t border-slate-200 py-4">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <div class="flex justify-center space-x-6 text-xs text-slate-500">
                 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Privacy</a>
                 <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Terms</a>
                 <a href="https://support.google.com/trends/?hl=zh-CN" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
             </div>
-            <p class="text-xs text-slate-400">© trendchart. Powered by Google Trends Embed API.</p>
+            <p class="text-[11px] text-slate-400">© trendchart. Powered by Google Trends Embed API[cite: 1].</p>
         </div>
     </footer>
 
@@ -623,45 +298,169 @@
         let currentTimeParam = "today 5-y";
         let loadedTabs = {}; 
 
+        // 动态图表（分类详情页内）的相关状态
+        let currentDynamicKeyword = "ChatGPT";
+        let currentDynamicTabId = "dyn-t8";
+        let currentDynamicTimeParam = "today 5-y";
+        let dynamicLoadedTabs = {};
+
+        // Category Database with Expanded Keywords
+        const categoryData = {
+            ai: {
+                title: "🤖 AI & Next-Gen Tech",
+                description: "Deep dive into artificial intelligence and next-generation tech innovations.",
+                keywords: [
+                    { name: "ChatGPT", desc: "OpenAI's flagship chatbot." },
+                    { name: "Claude", desc: "Anthropic AI assistant." },
+                    { name: "NVIDIA", desc: "GPU hardware titan." },
+                    { name: "Midjourney", desc: "Generative AI art." },
+                    { name: "Python", desc: "ML programming language." },
+                    { name: "Gemini", desc: "Google multimodal AI." },
+                    { name: "Sora", desc: "OpenAI video model." },
+                    { name: "DeepSeek", desc: "Open-weight LLM." },
+                    { name: "LLM", desc: "Large Language Models." },
+                    { name: "Copilot", desc: "Microsoft AI suite." }
+                ]
+            },
+            finance: {
+                title: "💎 Finance & Markets",
+                description: "Explore global investment trends and macroeconomic indicators.",
+                keywords: [
+                    { name: "Bitcoin", desc: "Decentralized digital currency." },
+                    { name: "Gold", desc: "Safe inflation asset." },
+                    { name: "Stock Market", desc: "Global investment sentiment." },
+                    { name: "Federal Reserve", desc: "US monetary policy." },
+                    { name: "Ethereum", desc: "Smart contract platform." },
+                    { name: "NASDAQ", desc: "Tech stock index." },
+                    { name: "S&P 500", desc: "Top 500 US enterprises." },
+                    { name: "Real Estate", desc: "Property market demand." },
+                    { name: "Inflation", desc: "Purchasing power tracker." },
+                    { name: "Crude Oil", desc: "Energy commodity benchmark." }
+                ]
+            },
+            media: {
+                title: "🎬 Entertainment & Media",
+                description: "Discover viral pop culture, music streaming, and digital entertainment.",
+                keywords: [
+                    { name: "Netflix", desc: "Streaming TV & movies." },
+                    { name: "Spotify", desc: "Audio streaming platform." },
+                    { name: "Gaming", desc: "Video games & esports." },
+                    { name: "Anime", desc: "Japanese animation series." },
+                    { name: "YouTube", desc: "Video sharing hub." },
+                    { name: "TikTok", desc: "Short video algorithm." },
+                    { name: "Twitch", desc: "Live game broadcasting." },
+                    { name: "PlayStation", desc: "Sony console gaming." }
+                ]
+            },
+            commerce: {
+                title: "🛒 E-Commerce & Retail",
+                description: "Analyze online shopping consumer behavior and storefront software.",
+                keywords: [
+                    { name: "Amazon", desc: "Global shopping marketplace." },
+                    { name: "Shopify", desc: "E-commerce platform." },
+                    { name: "Black Friday", desc: "Seasonal shopping spike." },
+                    { name: "eBay", desc: "Online auction & resale." },
+                    { name: "Cyber Monday", desc: "Online discount event." },
+                    { name: "Dropshipping", desc: "Direct fulfillment model." }
+                ]
+            }
+        };
+
         // Page Navigation Switcher
         function switchPage(page) {
             const homeSec = document.getElementById('page-home');
-            const exploreSec = document.getElementById('page-explore');
+            const catDetailSec = document.getElementById('page-category-detail');
             const financeSec = document.getElementById('page-finance');
             
             const navHome = document.getElementById('nav-home');
             const navExplore = document.getElementById('nav-explore');
             const navFinance = document.getElementById('nav-finance');
 
-            // Reset all pages & nav classes
-            homeSec.className = "hidden space-y-6";
-            exploreSec.className = "hidden space-y-8";
-            financeSec.className = "hidden space-y-8";
+            homeSec.className = "hidden space-y-4";
+            catDetailSec.className = "hidden space-y-3";
+            financeSec.className = "hidden space-y-6";
 
-            const defaultNavClass = "px-4 py-2 rounded-full text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
-            const activeNavClass = "px-4 py-2 rounded-full text-sm font-semibold transition-all bg-brand-500 text-white shadow-sm";
+            const defaultNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+            const activeNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm";
 
             navHome.className = defaultNavClass;
             navExplore.className = defaultNavClass;
             navFinance.className = defaultNavClass;
 
             if (page === 'home') {
-                homeSec.className = "block space-y-6";
+                homeSec.className = "block space-y-4";
                 navHome.className = activeNavClass;
-            } else if (page === 'explore') {
-                exploreSec.className = "block space-y-8";
+            } else if (page === 'category-detail') {
+                catDetailSec.className = "block space-y-3";
                 navExplore.className = activeNavClass;
             } else if (page === 'finance') {
-                financeSec.className = "block space-y-8";
+                financeSec.className = "block space-y-6";
                 navFinance.className = activeNavClass;
             }
         }
 
-        // Handle direct keyword click from Explore Gallery
-        function exploreKeyword(keyword) {
-            document.getElementById('keyword-input').value = keyword;
-            switchPage('home');
-            handleSearch();
+        // Open Category Detail Page with Expanded Keywords
+        function openCategoryPage(catKey) {
+            const catInfo = categoryData[catKey];
+            if (!catInfo) return;
+
+            ['ai', 'finance', 'media', 'commerce'].forEach(k => {
+                const btn = document.getElementById(`cat-btn-${k}`);
+                if (btn) {
+                    if (k === catKey) {
+                        btn.className = "px-3 py-1.5 rounded-full text-xs font-bold transition bg-brand-500 text-white shadow-sm";
+                    } else {
+                        btn.className = "px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50";
+                    }
+                }
+            });
+
+            document.getElementById('cat-detail-title').innerText = catInfo.title;
+            document.getElementById('cat-detail-desc').innerText = catInfo.description;
+
+            const gridContainer = document.getElementById('cat-detail-grid');
+            gridContainer.innerHTML = "";
+
+            catInfo.keywords.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded-lg border border-slate-200 shadow-sm hover:shadow hover:border-brand-500 transition cursor-pointer flex flex-col justify-between space-y-1 group";
+                card.onclick = () => selectDynamicKeyword(item.name);
+                card.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-xs group-hover:text-brand-500 transition truncate">${item.name}</h4>
+                        <p class="text-[10px] text-slate-500 line-clamp-1">${item.desc}</p>
+                    </div>
+                `;
+                gridContainer.appendChild(card);
+            });
+
+            if (catInfo.keywords.length > 0) {
+                selectDynamicKeyword(catInfo.keywords[0].name);
+            }
+
+            switchPage('category-detail');
+        }
+
+        // 点击分类页卡片时切换下方图表
+        function selectDynamicKeyword(keyword) {
+            currentDynamicKeyword = keyword;
+            document.getElementById('dynamic-kw-display').innerText = keyword;
+            dynamicLoadedTabs = {}; 
+
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('dyn-t8').classList.add('active');
+
+            currentDynamicTabId = 'dyn-t8';
+            currentDynamicTimeParam = 'today 5-y';
+
+            renderDynamicTrendsChart(currentDynamicTabId, currentDynamicTimeParam);
         }
 
         // Safe poll check for Google SDK readiness
@@ -683,7 +482,7 @@
             }
         }
 
-        // Render Google Trends embed chart with pure English parameter (`hl=en`)
+        // Render Google Trends embed chart for Home
         function renderTrendsChart(tabId, timeParam) {
             const encodedKw = encodeURIComponent(currentKeyword);
             const cacheKey = `${currentKeyword}_${tabId}`;
@@ -694,7 +493,7 @@
                 const targetElem = document.getElementById(`embed-${tabId}`);
                 if (!targetElem) return;
 
-                targetElem.innerHTML = ""; // Clear loader placeholder
+                targetElem.innerHTML = ""; 
 
                 try {
                     trends.embed.renderExploreWidgetTo(
@@ -719,23 +518,58 @@
             });
         }
 
-        // Handle Search Form Submit
+        // Render Google Trends embed chart for Dynamic Section in Category Detail Page
+        function renderDynamicTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentDynamicKeyword);
+            const cacheKey = `${currentDynamicKeyword}_${tabId}`;
+
+            if (dynamicLoadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = ""; 
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentDynamicKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    dynamicLoadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Dynamic Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Handle Search Form Submit on Home
         function handleSearch() {
             const inputVal = document.getElementById('keyword-input').value.trim();
             if (!inputVal) return;
 
             currentKeyword = inputVal;
             document.getElementById('kw-display').innerText = currentKeyword;
-            loadedTabs = {}; // Reset chart cache for new search term
+            loadedTabs = {}; 
 
-            // Reset Time Tabs to Default (Past 5 years - t8)
             const buttons = document.querySelectorAll('.time-btn');
             buttons.forEach(btn => {
-                btn.className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
             });
-            buttons[7].className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+            buttons[7].className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
 
-            const panels = document.querySelectorAll('.chart-panel');
+            const panels = document.querySelectorAll('#page-home .chart-panel');
             panels.forEach(panel => panel.classList.remove('active'));
             document.getElementById('t8').classList.add('active');
 
@@ -745,15 +579,22 @@
             renderTrendsChart(currentTabId, currentTimeParam);
         }
 
-        // Switch Time Tabs
+        // Finance page explore keyword to Home
+        function exploreKeywordHome(keyword) {
+            document.getElementById('keyword-input').value = keyword;
+            switchPage('home');
+            handleSearch();
+        }
+
+        // Switch Time Tabs for Home
         function switchTimeTab(tabId, timeParam, btnElement) {
             const buttons = document.querySelectorAll('.time-btn');
             buttons.forEach(btn => {
-                btn.className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
             });
-            btnElement.className = "time-btn px-3 py-1.5 rounded-full border text-xs font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+            btnElement.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
 
-            const panels = document.querySelectorAll('.chart-panel');
+            const panels = document.querySelectorAll('#page-home .chart-panel');
             panels.forEach(panel => panel.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
 
@@ -763,20 +604,39 @@
             renderTrendsChart(tabId, timeParam);
         }
 
+        // Switch Time Tabs for Dynamic Section in Category Detail Page
+        function switchDynamicTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentDynamicTabId = tabId;
+            currentDynamicTimeParam = timeParam;
+
+            renderDynamicTrendsChart(tabId, timeParam);
+        }
+
         // Initial Load Event
         window.addEventListener('load', () => {
+            openCategoryPage('ai');
             renderTrendsChart('t8', 'today 5-y');
         });
     </script>
 
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NCYS6Q44WF"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NCYS6Q44WF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-NCYS6Q44WF');
-</script>
+      gtag('config', 'G-NCYS6Q44WF');
+    </script>
 </body>
 </html>
