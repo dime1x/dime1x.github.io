@@ -7,10 +7,10 @@
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="TrendChart - 100+ AI & Tech Trends, Google Trends Visualizer">
+    <meta property="og:title" content="TrendChart - 240+ AI & Tech Trends, Google Trends Visualizer">
     <meta property="og:description" content="Explore live keyword search trends with interactive charts and analytics.">
     <meta name="keywords" content="AI trends, artificial intelligence trends, generative AI, AI agents">
-    <title>TrendChart - 100+ AI & Tech Trends, Google Trends Visualizer</title>
+    <title>TrendChart - 240+ AI & Tech Trends, Google Trends Visualizer</title>
     <!-- Google Trends Embed Script -->
     <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3882_RC01/embed_loader.js"></script>
     <!-- Tailwind CSS CDN for modern responsive UI -->
@@ -39,7 +39,6 @@
             color: #1e293b;
         }
 
-        /* 修复：将高度从 360px 调高至 440px，防止 Google 趋势自带的顶部栏（全球、时间、网页搜索等）被遮挡 */
         .chart-wrapper {
             position: relative;
             height: 440px;
@@ -56,17 +55,17 @@
             position: relative;
         }
 
-            .chart-panel.active {
-                display: block;
-            }
+        .chart-panel.active {
+            display: block;
+        }
 
-            .chart-panel iframe {
-                width: 100% !important;
-                height: 100% !important;
-                border: none !important;
-                position: relative;
-                z-index: 2;
-            }
+        .chart-panel iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+            position: relative;
+            z-index: 2;
+        }
 
         .loading-notice {
             position: absolute;
@@ -99,11 +98,8 @@
                     <button id="nav-home" onclick="switchPage('home')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
                         Home
                     </button>
-                    <button id="nav-explore" onclick="openCategoryPage('ai')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm">
-                        Explore
-                    </button>
-                    <button id="nav-finance" onclick="switchPage('finance')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
-                        Finance
+                    <button id="nav-explore" onclick="openCategoryPage('models')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm">
+                        Explore AI
                     </button>
                 </nav>
             </div>
@@ -116,7 +112,7 @@
         <!-- PAGE 1: HOME PAGE (Search & Chart) -->
         <section id="page-home" class="hidden space-y-4">
             <div class="text-center max-w-2xl mx-auto space-y-1">
-                <h1 class="text-2xl font-extrabold text-slate-900 sm:text-3xl tracking-tight">Explore Search Trends Worldwide</h1>
+                <h1 class="text-2xl font-extrabold text-slate-900 sm:text-3xl tracking-tight">Explore AI Search Trends Worldwide</h1>
                 <p class="text-slate-500 text-xs sm:text-sm">Track interest over time with real-time analytics.</p>
             </div>
 
@@ -124,7 +120,7 @@
             <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-sm max-w-xl mx-auto">
                 <form onsubmit="event.preventDefault(); handleSearch();" class="flex flex-col sm:flex-row gap-2">
                     <div class="relative flex-grow">
-                        <input type="text" id="keyword-input" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-800 text-xs transition" placeholder="Enter keyword, e.g. AI, Crypto..." value="AI">
+                        <input type="text" id="keyword-input" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-800 text-xs transition" placeholder="Enter keyword, e.g. OpenAI, Claude..." value="OpenAI">
                     </div>
                     <button type="submit" class="bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white px-5 py-2.5 rounded-lg font-semibold text-xs transition shadow-sm whitespace-nowrap flex items-center justify-center gap-1.5">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -137,7 +133,7 @@
             <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
                 <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
                     <div class="text-xs font-medium text-slate-600">
-                        Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-sm border border-slate-200">AI</span>
+                        Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-sm border border-slate-200">OpenAI</span>
                     </div>
                 </div>
 
@@ -171,12 +167,16 @@
 
         <!-- PAGE 2: CATEGORY DETAIL PAGE (Split Layout: Left = Categories & Keywords, Right = Live Chart) -->
         <section id="page-category-detail" class="block space-y-3">
-            <!-- Top Category Switcher Bar -->
+            <!-- Top Category Switcher Bar (8 AI Categories in English) -->
             <div class="flex flex-wrap gap-1.5 justify-center sm:justify-start pb-2 border-b border-slate-200">
-                <button onclick="openCategoryPage('ai')" id="cat-btn-ai" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-brand-500 text-white shadow-sm">🤖 AI & Tech</button>
-                <button onclick="openCategoryPage('finance')" id="cat-btn-finance" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">💎 Finance</button>
-                <button onclick="openCategoryPage('media')" id="cat-btn-media" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🎬 Media</button>
-                <button onclick="openCategoryPage('commerce')" id="cat-btn-commerce" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🛒 Commerce</button>
+                <button onclick="openCategoryPage('models')" id="cat-btn-models" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-brand-500 text-white shadow-sm">🤖 LLMs & Foundation Models</button>
+                <button onclick="openCategoryPage('dev')" id="cat-btn-dev" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">💻 AI Dev & Tools</button>
+                <button onclick="openCategoryPage('media')" id="cat-btn-media" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🎨 Generative Media AI</button>
+                <button onclick="openCategoryPage('hardware')" id="cat-btn-hardware" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">⚙️ AI Hardware & Chips</button>
+                <button onclick="openCategoryPage('agents')" id="cat-btn-agents" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🤖 AI Agents & Workflows</button>
+                <button onclick="openCategoryPage('robotics')" id="cat-btn-robotics" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🚗 Robotics & Autonomy</button>
+                <button onclick="openCategoryPage('biotech')" id="cat-btn-biotech" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🧬 Biotech & Science AI</button>
+                <button onclick="openCategoryPage('security')" id="cat-btn-security" class="px-3 py-1.5 rounded-full text-xs font-bold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">🔒 AI Security & Core Concepts</button>
             </div>
 
             <!-- Desktop Split Grid: Left Column & Right Column -->
@@ -189,17 +189,17 @@
                         <p id="cat-detail-desc" class="text-slate-500 text-xs leading-relaxed"></p>
                     </div>
 
-                    <!-- Compact Keyword Cards Grid (Scrollable list to save vertical space) -->
+                    <!-- Compact Keyword Cards Grid (Scrollable list for 30 items) -->
                     <div id="cat-detail-grid" class="grid grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1">
                         <!-- Dynamic Keyword Cards Loaded Here -->
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN: Dynamic Chart Display Area (Col-span 7) -> Visible Above the Fold! -->
+                <!-- RIGHT COLUMN: Dynamic Chart Display Area (Col-span 7) -->
                 <div id="dynamic-embed-container" class="lg:col-span-7 bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
                     <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
                         <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                            🔥 Selected: <span id="dynamic-kw-display" class="bg-brand-50 text-brand-600 px-2 py-0.5 rounded text-xs border border-brand-100">ChatGPT</span>
+                            🔥 Selected: <span id="dynamic-kw-display" class="bg-brand-50 text-brand-600 px-2 py-0.5 rounded text-xs border border-brand-100">OpenAI</span>
                         </div>
                     </div>
 
@@ -217,7 +217,6 @@
                     </div>
 
                     <!-- Chart Multi-panel Container -->
-                    <!-- 修复：将行内样式 height 从 330px 调高至 420px -->
                     <div class="chart-wrapper border-t border-b border-slate-200" style="height: 420px;">
                         <div id="dyn-t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t1" class="w-full h-full"></div></div>
                         <div id="dyn-t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t2" class="w-full h-full"></div></div>
@@ -231,49 +230,6 @@
                     </div>
                 </div>
 
-            </div>
-        </section>
-
-        <!-- PAGE 3: FINANCE PAGE -->
-        <section id="page-finance" class="hidden space-y-6">
-            <div class="text-center max-w-2xl mx-auto space-y-1">
-                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Finance & Market Insights</h2>
-                <p class="text-slate-500 text-xs sm:text-sm">Explore targeted financial keywords, macroeconomic indexes, and crypto trends.</p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                    <div>
-                        <span class="text-xl">🪙</span>
-                        <h3 class="font-bold text-slate-900 text-base mt-1.5">Cryptocurrency</h3>
-                        <p class="text-[11px] text-slate-500 mt-1">Track Bitcoin, Ethereum, and digital asset market adoption trends over time.</p>
-                    </div>
-                    <button onclick="exploreKeywordHome('Bitcoin, Ethereum')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                        View Crypto Trends ↗
-                    </button>
-                </div>
-
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                    <div>
-                        <span class="text-xl">📊</span>
-                        <h3 class="font-bold text-slate-900 text-base mt-1.5">Global Stocks</h3>
-                        <p class="text-[11px] text-slate-500 mt-1">Monitor public interest in major stock indices like S&P 500, NASDAQ, and top tech equities.</p>
-                    </div>
-                    <button onclick="exploreKeywordHome('S&P 500, NASDAQ')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                        View Stock Trends ↗
-                    </button>
-                </div>
-
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3">
-                    <div>
-                        <span class="text-xl">🏦</span>
-                        <h3 class="font-bold text-slate-900 text-base mt-1.5">Macro Economy</h3>
-                        <p class="text-[11px] text-slate-500 mt-1">Analyze global search behaviors surrounding inflation, interest rates, and banking policies.</p>
-                    </div>
-                    <button onclick="exploreKeywordHome('Inflation, Interest Rate')" class="w-full py-2 bg-slate-50 hover:bg-brand-500 hover:text-white border border-slate-200 hover:border-brand-500 rounded-lg text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-1">
-                        View Macro Trends ↗
-                    </button>
-                </div>
             </div>
         </section>
 
@@ -293,35 +249,280 @@
 
     <!-- JavaScript Controller -->
     <script type="text/javascript">
-        let currentKeyword = "AI"; 
+        let currentKeyword = "OpenAI"; 
         let currentTabId = "t8";
         let currentTimeParam = "today 5-y";
         let loadedTabs = {}; 
 
-        // 动态图表（分类详情页内）的相关状态
-        let currentDynamicKeyword = "ChatGPT";
+        let currentDynamicKeyword = "OpenAI";
         let currentDynamicTabId = "dyn-t8";
         let currentDynamicTimeParam = "today 5-y";
         let dynamicLoadedTabs = {};
 
-        // Category Database with Expanded Keywords
+        // 8 AI Categories with 30 keywords each (Titles & Descriptions in English)
         const categoryData = {
-            ai: {
-                title: "🤖 AI & Next-Gen Tech",
-                description: "Deep dive into artificial intelligence and next-generation tech innovations.",
+            models: {
+                title: "🤖 LLMs & Foundation Models",
+                description: "Explore leading artificial intelligence foundational models and research laboratories.",
                 keywords: [
-                    { name: "Groq", desc: "Ultra-fast LPU inference tech." },
-                    { name: "Hugging Face", desc: "AI model & dataset hub." },
-                    { name: "Stable Diffusion", desc: "Open-source image generator." },
-                    { name: "Perplexity", desc: "Conversational AI search engine." },
                     { name: "OpenAI", desc: "Leading AI research laboratory." },
+                    { name: "Google Gemini", desc: "Google multimodal AI ecosystem." },
+                    { name: "Claude 3.5", desc: "Advanced Anthropic reasoning model." },
+                    { name: "Llama", desc: "Meta's open foundation models." },
                     { name: "Anthropic", desc: "AI safety and research company." },
                     { name: "Mistral AI", desc: "European open-weights AI pioneer." },
-                    { name: "Llama", desc: "Meta's open foundation models." },
-                    { name: "AI Agent", desc: "Autonomous task-execution systems." },
-                    { name: "Quantum Computing", desc: "Next-gen computational paradigm." },
-                    // --- 补充的 100 个关键字 ---
+                    { name: "Qwen", desc: "Alibaba open-source LLM family." },
                     { name: "AGI", desc: "Artificial General Intelligence." },
+                    { name: "GPT-4o", desc: "OpenAI omni multimodal model." },
+                    { name: "Grok", desc: "xAI conversational assistant." },
+                    { name: "Baichuan", desc: "Chinese open-weight language model." },
+                    { name: "GLM", desc: "Zhipu AI general language model." },
+                    { name: "Yi", desc: "01.AI high-performance LLM." },
+                    { name: "DeepSeek", desc: "High-performance reasoning model." },
+                    { name: "Perplexity", desc: "Conversational AI search engine." },
+                    { name: "Microsoft Copilot", desc: "Enterprise AI assistant suite." },
+                    { name: "Apple Intelligence", desc: "Apple on-device AI features." },
+                    { name: "Falcon", desc: "Open-source foundational model." },
+                    { name: "Cohere", desc: "Enterprise NLP platform." },
+                    { name: "Vicuna", desc: "Open-source chat model based on Llama." },
+                    { name: "Gemma", desc: "Google lightweight open model." },
+                    { name: "Phi-3", desc: "Microsoft efficient small language model." },
+                    { name: "Command R", desc: "Cohere model optimized for RAG." },
+                    { name: "ERNIE Bot", desc: "Baidu generative language model." },
+                    { name: "Hunyuan", desc: "Tencent foundation language model." },
+                    { name: "SenseChat", desc: "SenseTime large language model." },
+                    { name: "Minimax", desc: "General-purpose AI foundation model." },
+                    { name: "Moonshot", desc: "Kimi Chat underlying technology." },
+                    { name: "Jamba", desc: "SSM-Transformer hybrid architecture." },
+                    { name: "WizardLM", desc: "Evol-instruct open-source LLM." }
+                ]
+            },
+            dev: {
+                title: "💻 AI Dev & Tools",
+                description: "Discover developer tools, coding assistants, and agent orchestration frameworks.",
+                keywords: [
+                    { name: "GitHub Copilot", desc: "AI pair programmer for developers." },
+                    { name: "Cursor", desc: "AI-first code editor." },
+                    { name: "LangChain", desc: "Framework for LLM applications." },
+                    { name: "AutoGPT", desc: "Autonomous AI agent framework." },
+                    { name: "Hugging Face", desc: "AI model & dataset hub." },
+                    { name: "Ollama", desc: "Run LLMs locally on your device." },
+                    { name: "vLLM", desc: "High-throughput LLM serving engine." },
+                    { name: "LlamaIndex", desc: "Data framework for LLM apps." },
+                    { name: "Windsurf", desc: "Autonomous AI coding IDE." },
+                    { name: "Codeium", desc: "Free AI coding assistant." },
+                    { name: "Tabnine", desc: "AI assistant for software teams." },
+                    { name: "Bolt.new", desc: "In-browser full-stack AI builder." },
+                    { name: "v0", desc: "Generative UI system by Vercel." },
+                    { name: "Replit Agent", desc: "Autonomous software development tool." },
+                    { name: "Aider", desc: "AI command-line coding assistant." },
+                    { name: "Supermaven", desc: "Ultra-fast AI code completion." },
+                    { name: "PyTorch", desc: "Popular deep learning framework." },
+                    { name: "TensorFlow", desc: "Google machine learning library." },
+                    { name: "Jupyter", desc: "Interactive data science notebooks." },
+                    { name: "Scikit-Learn", desc: "Python machine learning library." },
+                    { name: "Keras", desc: "Deep learning API for humans." },
+                    { name: "Groq", desc: "Ultra-fast LPU inference tech." },
+                    { name: "CUDA", desc: "NVIDIA parallel computing platform." },
+                    { name: "Flowise", desc: "Drag-and-drop LLM orchestration UI." },
+                    { name: "AnythingLLM", desc: "Full-stack private knowledge base app." },
+                    { name: "Open WebUI", desc: "Powerful Web UI for Ollama/LLMs." },
+                    { name: "Continue", desc: "Open-source AI code assistant." },
+                    { name: "Braintrust", desc: "LLM evaluation & experimentation platform." },
+                    { name: "Weights & Biases", desc: "ML experiment tracking platform." },
+                    { name: "LangSmith", desc: "Debugging and monitoring for LLM apps." }
+                ]
+            },
+            media: {
+                title: "🎨 Generative Media AI",
+                description: "Track generative video, audio, image, and music creation platforms.",
+                keywords: [
+                    { name: "Stable Diffusion", desc: "Open-source image generator." },
+                    { name: "Midjourney", desc: "Generative AI art platform." },
+                    { name: "ElevenLabs", desc: "AI voice generation & cloning." },
+                    { name: "Runway", desc: "Generative video production suite." },
+                    { name: "Suno", desc: "AI music and song generator." },
+                    { name: "Kling AI", desc: "Advanced generative video model." },
+                    { name: "HeyGen", desc: "AI video translation & avatars." },
+                    { name: "Pika", desc: "AI video generation platform." },
+                    { name: "Udio", desc: "AI music creation platform." },
+                    { name: "Synthesia", desc: "AI video creation with avatars." },
+                    { name: "Luma Dream Machine", desc: "3D & video generation tool." },
+                    { name: "Civitai", desc: "Hub for generative AI art models." },
+                    { name: "Sora", desc: "OpenAI text-to-video model." },
+                    { name: "Adobe Firefly", desc: "Commercial-safe creative generative AI." },
+                    { name: "Topaz Video AI", desc: "AI-powered video enhancement tool." },
+                    { name: "Leonardo.ai", desc: "Game assets & stunning image generator." },
+                    { name: "Hedra", desc: "Character animation & talking avatars." },
+                    { name: "Magnific AI", desc: "AI image upscaler & detail refiner." },
+                    { name: "Stable Video Diffusion", desc: "Generative video diffusion model." },
+                    { name: "Krea AI", desc: "Real-time AI painting & canvas." },
+                    { name: "Bark", desc: "Audio text-to-speech generative model." },
+                    { name: "Riffusion", desc: "Music generation through images." },
+                    { name: "Viggle AI", desc: "3D character motion transfer tool." },
+                    { name: "AnimateDiff", desc: "Bring static images to life framework." },
+                    { name: "Fooocus", desc: "Midjourney-like open-source image tool." },
+                    { name: "ComfyUI", desc: "Node-based SD visual workflow GUI." },
+                    { name: "DeepFaceLab", desc: "Leading deepfake & face swap software." },
+                    { name: "Mubert", desc: "Real-time AI generated music for creators." },
+                    { name: "Clipdrop", desc: "Clipboard image processing & removal." },
+                    { name: "ElevenLabs Dubbing", desc: "AI video translation & dubbing." }
+                ]
+            },
+            hardware: {
+                title: "⚙️ AI Hardware & Chips",
+                description: "Analyze next-gen accelerators, silicon chips, and supercomputing infrastructure.",
+                keywords: [
+                    { name: "NVIDIA Blackwell", desc: "Next-gen AI accelerator architecture." },
+                    { name: "TPU", desc: "Google Tensor Processing Unit." },
+                    { name: "AMD Instinct", desc: "AMD AI accelerator hardware." },
+                    { name: "Data Center", desc: "Large-scale server infrastructure." },
+                    { name: "Quantum Computing", desc: "Next-gen computational paradigm." },
+                    { name: "ASIC", desc: "Application-specific integrated circuit." },
+                    { name: "Edge AI", desc: "Artificial intelligence on local devices." },
+                    { name: "Neuromorphic Computing", desc: "Brain-mimicking hardware chips." },
+                    { name: "RISC-V", desc: "Open standard instruction architecture." },
+                    { name: "Supercomputer", desc: "High-performance parallel computing." },
+                    { name: "Liquid Cooling", desc: "Advanced thermal management tech." },
+                    { name: "HBM3e", desc: "High-bandwidth memory for AI chips." },
+                    { name: "NVIDIA H100", desc: "Flagship AI training GPU." },
+                    { name: "NVIDIA B200", desc: "Ultra-scale flagship AI processor." },
+                    { name: "Intel Gaudi 3", desc: "Intel deep learning accelerator." },
+                    { name: "AWS Trainium", desc: "Amazon custom AI training chip." },
+                    { name: "AWS Inferentia", desc: "Amazon custom AI inference chip." },
+                    { name: "Google Axion", desc: "Google ARM-based datacenter CPU." },
+                    { name: "Microsoft Maia", desc: "Microsoft custom AI accelerator chip." },
+                    { name: "Meta MTIA", desc: "Meta training and inference accelerator." },
+                    { name: "Cerebras WSE", desc: "Wafer-scale AI processor." },
+                    { name: "Graphcore", desc: "Intelligence processing unit technology." },
+                    { name: "SiFive", desc: "Leading RISC-V processor IP vendor." },
+                    { name: "Immersion Cooling", desc: "Datacenter liquid immersion cooling." },
+                    { name: "Optical Interconnect", desc: "High-speed optical networking for AI." },
+                    { name: "Silicon Photonics", desc: "Optical data transmission technology." },
+                    { name: "PCIe 5.0", desc: "High-speed bus transfer standard." },
+                    { name: "In-Memory Computing", desc: "Processing data directly in memory." },
+                    { name: "Power Grid for AI", desc: "High-voltage power supply for datacenters." },
+                    { name: "Smarter Datacenter", desc: "Automated AI datacenter operations." }
+                ]
+            },
+            agents: {
+                title: "🤖 AI Agents & Workflows",
+                description: "Explore multi-agent automation frameworks and low-code orchestration tools.",
+                keywords: [
+                    { name: "Agentic Workflow", desc: "Multi-step autonomous agent loops." },
+                    { name: "CrewAI", desc: "Framework for multi-agent systems." },
+                    { name: "AutoGen", desc: "Microsoft multi-agent programming." },
+                    { name: "Dify", desc: "Open-source LLM app platform." },
+                    { name: "Make.com", desc: "Visual automation for AI workflows." },
+                    { name: "Zapier AI", desc: "AI-powered workflow automation." },
+                    { name: "Coze", desc: "ByteDance bot creation platform." },
+                    { name: "BabyAGI", desc: "Task-driven autonomous agent." },
+                    { name: "MetaGPT", desc: "Multi-agent software company simulation." },
+                    { name: "ChatDev", desc: "Virtual software company powered by LLMs." },
+                    { name: "FlowiseAI", desc: "No-code drag-and-drop LLM agents." },
+                    { name: "SuperAGI", desc: "Developer-first open-source agent framework." },
+                    { name: "AgentGPT", desc: "Autonomous AI agents in the browser." },
+                    { name: "Semantic Kernel", desc: "Microsoft AI orchestration SDK." },
+                    { name: "LangGraph", desc: "Stateful, multi-actor application framework." },
+                    { name: "Promptflow", desc: "Microsoft LLM workflow development tool." },
+                    { name: "Jinja2", desc: "LLM prompt template rendering engine." },
+                    { name: "n8n AI", desc: "Open-source workflow automation with AI nodes." },
+                    { name: "Voiceflow", desc: "Conversational AI agent design platform." },
+                    { name: "Function Calling", desc: "LLM tool calling and external API integration." },
+                    { name: "ToolBench", desc: "Open benchmark for agent tool-use." },
+                    { name: "Rasa", desc: "Open-source conversational AI framework." },
+                    { name: "Dialogflow", desc: "Google conversational interaction platform." },
+                    { name: "RAG Flow", desc: "Open-source RAG engine based on deep docs." },
+                    { name: "Pinecone", desc: "Managed vector database service." },
+                    { name: "Milvus", desc: "Distributed open-source vector database." },
+                    { name: "Qdrant", desc: "High-performance vector search engine." },
+                    { name: "Chroma", desc: "AI-native open-source vector database." },
+                    { name: "Weaviate", desc: "Open-source vector search engine." },
+                    { name: "Elasticsearch Vector", desc: "Enterprise search with vector capabilities." }
+                ]
+            },
+            robotics: {
+                title: "🚗 Robotics & Autonomy",
+                description: "Monitor self-driving systems, humanoid robots, and mechanical automation.",
+                keywords: [
+                    { name: "Tesla FSD", desc: "Full Self-Driving neural network." },
+                    { name: "Humanoid Robot", desc: "Bipedal general-purpose robots." },
+                    { name: "Boston Dynamics", desc: "Advanced robotics engineering." },
+                    { name: "Figure AI", desc: "General-purpose humanoid robots." },
+                    { name: "Optimus", desc: "Tesla humanoid robot project." },
+                    { name: "Autonomous Driving", desc: "Self-driving vehicle technology." },
+                    { name: "Spatial Computing", desc: "Immersive 3D computing tech." },
+                    { name: "Apple Vision Pro", desc: "Mixed reality headset." },
+                    { name: "Meta Quest", desc: "Virtual reality hardware ecosystem." },
+                    { name: "Waymo", desc: "Alphabet autonomous driving subsidiary." },
+                    { name: "Baidu Apollo", desc: "Baidu open autonomous driving platform." },
+                    { name: "Xiaomi CyberOne", desc: "Xiaomi humanoid bipedal robot." },
+                    { name: "Unitree H1", desc: "Unitree full-size humanoid robot." },
+                    { name: "Agility Robotics", desc: "Creator of Digit logistics humanoid." },
+                    { name: "Sanctuary AI", desc: "General-purpose human-like intelligence." },
+                    { name: "Fourier Intelligence", desc: "General humanoid robot developer." },
+                    { name: "Apptronik", desc: "Creator of Apollo general humanoid." },
+                    { name: "XPeng AeroHT", desc: "Flying car and smart driving developer." },
+                    { name: "Huawei ADS", desc: "Huawei autonomous driving system." },
+                    { name: "Momenta", desc: "Leading autonomous driving brain startup." },
+                    { name: "LiDAR", desc: "Laser scanning perception hardware." },
+                    { name: "SLAM", desc: "Simultaneous localization and mapping." },
+                    { name: "BEV Perception", desc: "Bird's eye view multi-sensor fusion." },
+                    { name: "End-to-End Autonomous Driving", desc: "End-to-end neural driving model." },
+                    { name: "RoboTaxi", desc: "Commercial driverless taxi service." },
+                    { name: "Delivery Robot", desc: "Last-mile autonomous delivery bots." },
+                    { name: "Exo-skeleton", desc: "Robotic suits for human rehabilitation." },
+                    { name: "Industrial Robot", desc: "Factory automation robotic arms." },
+                    { name: "XR Interaction", desc: "Natural gesture and eye tracking in XR." },
+                    { name: "Neural Interface", desc: "Brain-computer interfaces for VR." }
+                ]
+            },
+            biotech: {
+                title: "🧬 Biotech & Science AI",
+                description: "Track AI applications in protein folding, gene editing, and life sciences.",
+                keywords: [
+                    { name: "AlphaFold", desc: "AI protein structure prediction." },
+                    { name: "CRISPR", desc: "Gene editing technology." },
+                    { name: "Synthetic Biology", desc: "Engineering biological systems." },
+                    { name: "Biotech AI", desc: "AI applications in biology & medicine." },
+                    { name: "Longevity Tech", desc: "Anti-aging and life extension science." },
+                    { name: "Neuralink", desc: "Brain-computer interface company." },
+                    { name: "AI Drug Discovery", desc: "AI-powered pharmaceutical R&D." },
+                    { name: "mRNA Vaccine AI", desc: "AI-optimized mRNA vaccine design." },
+                    { name: "Single-cell RNA sequencing AI", desc: "AI analysis for single-cell genomics." },
+                    { name: "DeepMind GNoME", desc: "AI prediction for novel crystal materials." },
+                    { name: "Fusion Energy AI", desc: "AI control for magnetic confinement fusion." },
+                    { name: "Climate AI", desc: "AI-driven climate modeling and prediction." },
+                    { name: "AlphaZero", desc: "Reinforcement learning for scientific discovery." },
+                    { name: "OpenBCI", desc: "Open-source brain-computer interface platform." },
+                    { name: "Synchron", desc: "Endovascular brain-computer interface." },
+                    { name: "Blackrock Neurotech", desc: "Implantable microelectrode array BCI." },
+                    { name: "Insilico Medicine", desc: "Generative AI-driven drug discovery." },
+                    { name: "Schrodinger", desc: "Physics and AI simulation software for drugs." },
+                    { name: "Recursion Pharmaceuticals", desc: "Automated biology lab powered by AI." },
+                    { name: "Generate Biomedicines", desc: "Machine-generated protein therapeutics." },
+                    { name: "Absci", desc: "Generative AI integrated wet-lab platform." },
+                    { name: "Prime Medicine", desc: "Prime editing clinical development." },
+                    { name: "Editas Medicine", desc: "Gene editing therapeutics development." },
+                    { name: "Carbon Capture AI", desc: "AI optimization for carbon capture." },
+                    { name: "Smart Grid AI", desc: "AI for clean energy grid optimization." },
+                    { name: "Materials Informatics", desc: "AI accelerated material discovery." },
+                    { name: "Bio-computing", desc: "Biological computing & DNA data storage." },
+                    { name: "Precision Medicine", desc: "Big-data driven personalized diagnosis." },
+                    { name: "Digital Twin of Human", desc: "Human body digital twins for trials." },
+                    { name: "Proteomics AI", desc: "AI analysis for large-scale proteomics." }
+                ]
+            },
+            security: {
+                title: "🔒 AI Security & Core Concepts",
+                description: "Examine foundational concepts, model optimization, and cyber defense AI.",
+                keywords: [
+                    { name: "AGI", desc: "Artificial General Intelligence." },
+                    { name: "Cybersecurity AI", desc: "AI-driven threat detection & defense." },
+                    { name: "Synthetic Data", desc: "AI-generated training datasets." },
+                    { name: "Model Quantization", desc: "Reducing model memory footprint." },
+                    { name: "Prompt Engineering", desc: "Optimizing AI prompt inputs." },
+                    { name: "RAG", desc: "Retrieval-Augmented Generation." },
                     { name: "Machine Learning", desc: "Core AI statistical algorithms." },
                     { name: "Deep Learning", desc: "Multi-layered neural networks." },
                     { name: "Neural Network", desc: "Brain-inspired computing models." },
@@ -331,143 +532,21 @@
                     { name: "Transformer", desc: "Attention-based neural architecture." },
                     { name: "Diffusion Model", desc: "Generative noise-reduction model." },
                     { name: "GAN", desc: "Generative Adversarial Networks." },
-                    { name: "RAG", desc: "Retrieval-Augmented Generation." },
                     { name: "Vector Database", desc: "High-dim embeddings storage." },
                     { name: "Fine-tuning", desc: "Customizing pre-trained models." },
-                    { name: "Prompt Engineering", desc: "Optimizing AI prompt inputs." },
                     { name: "Embedding", desc: "Numerical representation of data." },
                     { name: "Tokenization", desc: "Splitting text for LLMs." },
                     { name: "Parameters", desc: "Model weight metrics." },
                     { name: "Open Source AI", desc: "Publicly accessible model weights." },
-                    { name: "Synthetic Data", desc: "AI-generated training datasets." },
-                    { name: "Model Quantization", desc: "Reducing model memory footprint." },
-                    { name: "PyTorch", desc: "Popular deep learning framework." },
-                    { name: "TensorFlow", desc: "Google machine learning library." },
-                    { name: "LangChain", desc: "Framework for LLM applications." },
-                    { name: "LlamaIndex", desc: "Data framework for LLM apps." },
-                    { name: "Ollama", desc: "Run LLMs locally on your device." },
-                    { name: "vLLM", desc: "High-throughput LLM serving engine." },
-                    { name: "CUDA", desc: "NVIDIA parallel computing platform." },
-                    { name: "Jupyter", desc: "Interactive data science notebooks." },
-                    { name: "Scikit-Learn", desc: "Python machine learning library." },
-                    { name: "Keras", desc: "Deep learning API for humans." },
-                    { name: "Google Gemini", desc: "Google multimodal AI ecosystem." },
-                    { name: "Microsoft Copilot", desc: "Enterprise AI assistant suite." },
-                    { name: "Apple Intelligence", desc: "Apple on-device AI features." },
-                    { name: "Grok", desc: "xAI conversational assistant." },
-                    { name: "Claude 3.5", desc: "Advanced Anthropic reasoning model." },
-                    { name: "GPT-4o", desc: "OpenAI omni multimodal model." },
-                    { name: "Qwen", desc: "Alibaba open-source LLM family." },
-                    { name: "Baichuan", desc: "Chinese open-weight language model." },
-                    { name: "GLM", desc: "Zhipu AI general language model." },
-                    { name: "Yi", desc: "01.AI high-performance LLM." },
-                    { name: "GitHub Copilot", desc: "AI pair programmer for developers." },
-                    { name: "Cursor", desc: "AI-first code editor." },
-                    { name: "Windsurf", desc: "Autonomous AI coding IDE." },
-                    { name: "Codeium", desc: "Free AI coding assistant." },
-                    { name: "Tabnine", desc: "AI assistant for software teams." },
-                    { name: "Bolt.new", desc: "In-browser full-stack AI builder." },
-                    { name: "v0", desc: "Generative UI system by Vercel." },
-                    { name: "Replit Agent", desc: "Autonomous software development tool." },
-                    { name: "Aider", desc: "AI command-line coding assistant." },
-                    { name: "Supermaven", desc: "Ultra-fast AI code completion." },
-                    { name: "ElevenLabs", desc: "AI voice generation & cloning." },
-                    { name: "Runway", desc: "Generative video production suite." },
-                    { name: "Pika", desc: "AI video generation platform." },
-                    { name: "Suno", desc: "AI music and song generator." },
-                    { name: "Udio", desc: "AI music creation platform." },
-                    { name: "HeyGen", desc: "AI video translation & avatars." },
-                    { name: "Synthesia", desc: "AI video creation with avatars." },
-                    { name: "Kling AI", desc: "Advanced generative video model." },
-                    { name: "Luma Dream Machine", desc: "3D & video generation tool." },
-                    { name: "Civitai", desc: "Hub for generative AI art models." },
-                    { name: "AutoGPT", desc: "Autonomous AI agent framework." },
-                    { name: "BabyAGI", desc: "Task-driven autonomous agent." },
-                    { name: "CrewAI", desc: "Framework for multi-agent systems." },
-                    { name: "AutoGen", desc: "Microsoft multi-agent programming." },
-                    { name: "Dify", desc: "Open-source LLM app development platform." },
-                    { name: "Flowise", desc: "Drag-and-drop LLM orchestration UI." },
-                    { name: "Make.com", desc: "Visual automation for AI workflows." },
-                    { name: "Zapier AI", desc: "AI-powered workflow automation." },
-                    { name: "Coze", desc: "ByteDance bot creation platform." },
-                    { name: "Agentic Workflow", desc: "Multi-step autonomous agent loops." },
-                    { name: "NVIDIA Blackwell", desc: "Next-gen AI accelerator architecture." },
-                    { name: "AMD Instinct", desc: "AMD AI accelerator hardware." },
-                    { name: "TPU", desc: "Google Tensor Processing Unit." },
-                    { name: "ASIC", desc: "Application-specific integrated circuit." },
-                    { name: "Edge AI", desc: "Artificial intelligence on local devices." },
-                    { name: "Neuromorphic Computing", desc: "Brain-mimicking hardware chips." },
-                    { name: "RISC-V", desc: "Open standard instruction set architecture." },
-                    { name: "Supercomputer", desc: "High-performance parallel computing." },
-                    { name: "Data Center", desc: "Large-scale server infrastructure." },
-                    { name: "Liquid Cooling", desc: "Advanced thermal management tech." },
-                    { name: "Spatial Computing", desc: "Immersive 3D computing tech." },
-                    { name: "Apple Vision Pro", desc: "Mixed reality headset." },
-                    { name: "Meta Quest", desc: "Virtual reality hardware ecosystem." },
-                    { name: "Neuralink", desc: "Brain-computer interface company." },
-                    { name: "Cybersecurity AI", desc: "AI-driven threat detection & defense." },
-                    { name: "Autonomous Driving", desc: "Self-driving vehicle technology." },
-                    { name: "Tesla FSD", desc: "Full Self-Driving neural network." },
-                    { name: "Robotics", desc: "Mechanical automation & AI bodies." },
-                    { name: "Humanoid Robot", desc: "Bipedal general-purpose robots." },
-                    { name: "Boston Dynamics", desc: "Advanced robotics engineering." },
-                    { name: "Figure AI", desc: "General-purpose humanoid robots." },
-                    { name: "Optimus", desc: "Tesla humanoid robot project." },
-                    { name: "Biotech AI", desc: "AI applications in biology & medicine." },
-                    { name: "AlphaFold", desc: "AI protein structure prediction." },
-                    { name: "CRISPR", desc: "Gene editing technology." },
-                    { name: "Synthetic Biology", desc: "Engineering biological systems." },
-                    { name: "Longevity Tech", desc: "Anti-aging and life extension science." },
-                    { name: "Nuclear Fusion", desc: "Clean limitless energy research." },
-                    { name: "Solid State Battery", desc: "Next-gen high-density energy storage." },
-                    { name: "SpaceX Starship", desc: "Next-gen heavy-lift orbital rocket." },
-                    { name: "Commercial Spaceflight", desc: "Private space travel & satellite tech." },
-                    { name: "Web3", desc: "Decentralized internet infrastructure." },
-                    { name: "Blockchain", desc: "Distributed ledger technology." },
-                    { name: "Zero Knowledge Proof", desc: "Cryptographic privacy protocol." },
-                    { name: "Decentralized AI", desc: "Blockchain-powered AI computation." }
-                ]
-            },
-            finance: {
-                title: "💎 Finance & Markets",
-                description: "Explore global investment trends and macroeconomic indicators.",
-                keywords: [
-                    { name: "Bitcoin", desc: "Decentralized digital currency." },
-                    { name: "Gold", desc: "Safe inflation asset." },
-                    { name: "Stock Market", desc: "Global investment sentiment." },
-                    { name: "Federal Reserve", desc: "US monetary policy." },
-                    { name: "Ethereum", desc: "Smart contract platform." },
-                    { name: "NASDAQ", desc: "Tech stock index." },
-                    { name: "S&P 500", desc: "Top 500 US enterprises." },
-                    { name: "Real Estate", desc: "Property market demand." },
-                    { name: "Inflation", desc: "Purchasing power tracker." },
-                    { name: "Crude Oil", desc: "Energy commodity benchmark." }
-                ]
-            },
-            media: {
-                title: "🎬 Entertainment & Media",
-                description: "Discover viral pop culture, music streaming, and digital entertainment.",
-                keywords: [
-                    { name: "Netflix", desc: "Streaming TV & movies." },
-                    { name: "Spotify", desc: "Audio streaming platform." },
-                    { name: "Gaming", desc: "Video games & esports." },
-                    { name: "Anime", desc: "Japanese animation series." },
-                    { name: "YouTube", desc: "Video sharing hub." },
-                    { name: "TikTok", desc: "Short video algorithm." },
-                    { name: "Twitch", desc: "Live game broadcasting." },
-                    { name: "PlayStation", desc: "Sony console gaming." }
-                ]
-            },
-            commerce: {
-                title: "🛒 E-Commerce & Retail",
-                description: "Analyze online shopping consumer behavior and storefront software.",
-                keywords: [
-                    { name: "Amazon", desc: "Global shopping marketplace." },
-                    { name: "Shopify", desc: "E-commerce platform." },
-                    { name: "Black Friday", desc: "Seasonal shopping spike." },
-                    { name: "eBay", desc: "Online auction & resale." },
-                    { name: "Cyber Monday", desc: "Online discount event." },
-                    { name: "Dropshipping", desc: "Direct fulfillment model." }
+                    { name: "AI Alignment", desc: "Ensuring AI goals match human values." },
+                    { name: "AI Safety", desc: "Safety governance & red-teaming for AI." },
+                    { name: "Deepfake Detection", desc: "Detecting synthetic media and watermarks." },
+                    { name: "Zero Trust AI", desc: "Zero trust security for AI systems." },
+                    { name: "Adversarial Attack", desc: "Robustness testing against attacks." },
+                    { name: "Federated Learning", desc: "Privacy-preserving decentralized training." },
+                    { name: "Differential Privacy", desc: "Mathematical privacy guarantees." },
+                    { name: "EU AI Act", desc: "European AI regulation and compliance." },
+                    { name: "Model Explanability", desc: "White-box auditing and XAI." }
                 ]
             }
         };
@@ -476,22 +555,18 @@
         function switchPage(page) {
             const homeSec = document.getElementById('page-home');
             const catDetailSec = document.getElementById('page-category-detail');
-            const financeSec = document.getElementById('page-finance');
             
             const navHome = document.getElementById('nav-home');
             const navExplore = document.getElementById('nav-explore');
-            const navFinance = document.getElementById('nav-finance');
 
             homeSec.className = "hidden space-y-4";
             catDetailSec.className = "hidden space-y-3";
-            financeSec.className = "hidden space-y-6";
 
             const defaultNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
             const activeNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm";
 
             navHome.className = defaultNavClass;
             navExplore.className = defaultNavClass;
-            navFinance.className = defaultNavClass;
 
             if (page === 'home') {
                 homeSec.className = "block space-y-4";
@@ -499,9 +574,6 @@
             } else if (page === 'category-detail') {
                 catDetailSec.className = "block space-y-3";
                 navExplore.className = activeNavClass;
-            } else if (page === 'finance') {
-                financeSec.className = "block space-y-6";
-                navFinance.className = activeNavClass;
             }
         }
 
@@ -510,7 +582,7 @@
             const catInfo = categoryData[catKey];
             if (!catInfo) return;
 
-            ['ai', 'finance', 'media', 'commerce'].forEach(k => {
+            ['models', 'dev', 'media', 'hardware', 'agents', 'robotics', 'biotech', 'security'].forEach(k => {
                 const btn = document.getElementById(`cat-btn-${k}`);
                 if (btn) {
                     if (k === catKey) {
@@ -547,7 +619,7 @@
             switchPage('category-detail');
         }
 
-        // 点击分类页卡片时切换下方图表
+        // Select dynamic keyword from category grid
         function selectDynamicKeyword(keyword) {
             currentDynamicKeyword = keyword;
             document.getElementById('dynamic-kw-display').innerText = keyword;
@@ -685,13 +757,6 @@
             renderTrendsChart(currentTabId, currentTimeParam);
         }
 
-        // Finance page explore keyword to Home
-        function exploreKeywordHome(keyword) {
-            document.getElementById('keyword-input').value = keyword;
-            switchPage('home');
-            handleSearch();
-        }
-
         // Switch Time Tabs for Home
         function switchTimeTab(tabId, timeParam, btnElement) {
             const buttons = document.querySelectorAll('.time-btn');
@@ -730,7 +795,7 @@
 
         // Initial Load Event
         window.addEventListener('load', () => {
-            openCategoryPage('ai');
+            openCategoryPage('models');
             renderTrendsChart('t8', 'today 5-y');
         });
     </script>
