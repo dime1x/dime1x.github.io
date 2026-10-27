@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="https://trendchart.ai/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TrendChart - 240+ AI & Tech Trends, Google Trends Visualizer">
+    <meta property="og:description" content="Explore live keyword search trends with interactive charts and analytics.">
+    <meta name="keywords" content="AI trends, artificial intelligence trends, generative AI, AI agents">
+    <title>TrendChart - 240+ AI & Tech Trends, Google Trends Visualizer</title>
+    <!-- Google Trends Embed Script -->
+    <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3882_RC01/embed_loader.js"></script>
+    <!-- Tailwind CSS CDN for modern responsive UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef6ff',
+                            100: '#e0eefe',
+                            500: '#1a73e8',
+                            600: '#1557b0',
+                            700: '#104494',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 440px;
+            background-color: #ffffff;
+            border-left: none;
+            border-right: none;
+            border-radius: 0 !important;
+        }
+
+        .chart-panel {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+            .chart-panel.active {
+                display: block;
+            }
+
+            .chart-panel iframe {
+                width: 100% !important;
+                height: 100% !important;
+                border: none !important;
+                position: relative;
+                z-index: 2;
+            }
+
+        .loading-notice {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-14 items-center">
+                <!-- Brand Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="switchPage('home')">
+                    <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                        📈
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-slate-900">trend<span class="text-brand-500">chart</span></span>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="flex space-x-2">
+                    <button id="nav-home" onclick="switchPage('home')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        Home
+                    </button>
+                    <button id="nav-explore" onclick="openCategoryPage('models')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm">
+                        Explore AI
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-grow w-full">
+
+        <!-- PAGE 1: HOME PAGE (Search & Chart) -->
+        <section id="page-home" class="hidden space-y-4">
+            <div class="text-center max-w-2xl mx-auto space-y-1">
+                <h1 class="text-2xl font-extrabold text-slate-900 sm:text-3xl tracking-tight">Explore AI Search Trends Worldwide</h1>
+                <p class="text-slate-500 text-xs sm:text-sm">Track interest over time with real-time analytics.</p>
+            </div>
+
+            <!-- Search Box Area -->
+            <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-sm max-w-xl mx-auto">
+                <form onsubmit="event.preventDefault(); handleSearch();" class="flex flex-col sm:flex-row gap-2">
+                    <div class="relative flex-grow">
+                        <input type="text" id="keyword-input" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-800 text-xs transition" placeholder="Enter keyword, e.g. OpenAI, Claude..." value="OpenAI">
+                    </div>
+                    <button type="submit" class="bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white px-5 py-2.5 rounded-lg font-semibold text-xs transition shadow-sm whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        Generate
+                    </button>
+                </form>
+            </div>
+
+            <!-- Dashboard Wrapper -->
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                    <div class="text-xs font-medium text-slate-600">
+                        Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-sm border border-slate-200">OpenAI</span>
+                    </div>
+                </div>
+
+                <!-- Time Range Tabs -->
+                <div id="button-group" class="flex flex-wrap gap-1.5 justify-center sm:justify-start px-4">
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t1', 'now 1-H', this)">1h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t2', 'now 4-H', this)">4h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t3', 'now 1-d', this)">1d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t4', 'now 7-d', this)">7d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t5', 'today 1-m', this)">30d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t6', 'today 3-m', this)">90d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t7', 'today 12-m', this)">12m</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchTimeTab('t8', 'today 5-y', this)">5y</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t9', 'all', this)">All</button>
+                </div>
+
+                <!-- Google Chart Panels Container -->
+                <div id="chart-wrapper" class="chart-wrapper border-t border-b border-slate-200">
+                    <div id="t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t1" class="w-full h-full"></div></div>
+                    <div id="t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t2" class="w-full h-full"></div></div>
+                    <div id="t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t3" class="w-full h-full"></div></div>
+                    <div id="t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t4" class="w-full h-full"></div></div>
+                    <div id="t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t5" class="w-full h-full"></div></div>
+                    <div id="t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t6" class="w-full h-full"></div></div>
+                    <div id="t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t7" class="w-full h-full"></div></div>
+                    <div id="t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-t8" class="w-full h-full"></div></div>
+                    <div id="t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t9" class="w-full h-full"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: CATEGORY DETAIL PAGE (Split Layout: Left = Categories & Keywords, Right = Live Chart) -->
+        <section id="page-category-detail" class="block space-y-3">
+            <!-- Desktop Split Grid: Left Column & Right Column -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+
+                <!-- LEFT COLUMN: Category Header & Keyword Cards Grid (Col-span 5) -->
+                <div class="lg:col-span-5 space-y-3">
+                    <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm space-y-1">
+                        <h2 id="cat-detail-title" class="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2"></h2>
+                        <p id="cat-detail-desc" class="text-slate-500 text-xs leading-relaxed"></p>
+                    </div>
+
+                    <!-- Compact Keyword Cards Grid (Scrollable list for 30 items) -->
+                    <div id="cat-detail-grid" class="grid grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1">
+                        <!-- Dynamic Keyword Cards Loaded Here -->
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Dynamic Chart Display Area (Col-span 7) -->
+                <div id="dynamic-embed-container" class="lg:col-span-7 bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                        <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                            🔥 Selected: <span id="dynamic-kw-display" class="bg-brand-50 text-brand-600 px-2 py-0.5 rounded text-xs border border-brand-100">OpenAI</span>
+                        </div>
+                    </div>
+
+                    <!-- Chart Time Range Buttons -->
+                    <div id="dynamic-button-group" class="flex flex-wrap gap-1.5 justify-center px-4">
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t1', 'now 1-H', this)">1h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t2', 'now 4-H', this)">4h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t3', 'now 1-d', this)">1d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t4', 'now 7-d', this)">7d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t5', 'today 1-m', this)">30d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t6', 'today 3-m', this)">90d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t7', 'today 12-m', this)">12m</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchDynamicTimeTab('dyn-t8', 'today 5-y', this)">5y</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t9', 'all', this)">All</button>
+                    </div>
+
+                    <!-- Chart Multi-panel Container -->
+                    <div class="chart-wrapper border-t border-b border-slate-200" style="height: 420px;">
+                        <div id="dyn-t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t1" class="w-full h-full"></div></div>
+                        <div id="dyn-t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t2" class="w-full h-full"></div></div>
+                        <div id="dyn-t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t3" class="w-full h-full"></div></div>
+                        <div id="dyn-t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t4" class="w-full h-full"></div></div>
+                        <div id="dyn-t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t5" class="w-full h-full"></div></div>
+                        <div id="dyn-t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t6" class="w-full h-full"></div></div>
+                        <div id="dyn-t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t7" class="w-full h-full"></div></div>
+                        <div id="dyn-t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t8" class="w-full h-full"></div></div>
+                        <div id="dyn-t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t9" class="w-full h-full"></div></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Links Section -->
+    <footer class="bg-white border-t border-slate-200 py-4">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <div class="flex justify-center space-x-6 text-xs text-slate-500">
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Privacy</a>
+                <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Terms</a>
+                <a href="https://support.google.com/trends/?hl=zh-CN" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
+            </div>
+            <p class="text-[11px] text-slate-400">© trendchart. Powered by Google Trends Embed API.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Controller -->
+    <script type="text/javascript">
+        let currentKeyword = "OpenAI";
+        let currentTabId = "t8";
+        let currentTimeParam = "today 5-y";
+        let loadedTabs = {};
+
+        let currentDynamicKeyword = "OpenAI";
+        let currentDynamicTabId = "dyn-t8";
+        let currentDynamicTimeParam = "today 5-y";
+        let dynamicLoadedTabs = {};
+
+        // Keywords Data
+        const categoryData = {
+            models: {
+                title: "🤖 Trending Search Keywords",
+                description: "Explore live keyword search trends and analytics.",
+                keywords: [
+                    { name: "cowboys", desc: "Refers to the Dallas Cowboys NFL team or general western cowboy culture" },
+                    { name: "warriors vs nuggets", desc: "NBA basketball game between the Golden State Warriors and the Denver Nuggets" },
+                    { name: "texas roadhouse steak complaint kenneth card", desc: "A customer complaint or topic involving Texas Roadhouse and Kenneth Card" },
+                    { name: "brewers", desc: "Major League Baseball team Milwaukee Brewers" },
+                    { name: "timberwolves vs cavaliers", desc: "NBA basketball game between the Minnesota Timberwolves and the Cleveland Cavaliers" },
+                    { name: "harry kane", desc: "Prominent English professional football player for Bayern Munich and the England national team" },
+                    { name: "walter koenig", desc: "American actor, writer, and director best known for playing Chekov in Star Trek" },
+                    { name: "alan dysert", desc: "American actor and radio host known for his role in All My Children" },
+                    { name: "suns vs thunder", desc: "NBA basketball game between the Phoenix Suns and the Oklahoma City Thunder" },
+                    { name: "bulls vs celtics", desc: "NBA basketball game between the Chicago Bulls and the Boston Celtics" },
+                    { name: "hawks vs rockets", desc: "NBA basketball game between the Atlanta Hawks and the Houston Rockets" },
+                    { name: "quien gano el balon de oro 2026", desc: "Spanish query meaning who won the 2026 Ballon d'Or" },
+                    { name: "at&t legal settlement december payout", desc: "Information regarding the December payout for the AT&T legal settlement" },
+                    { name: "mavericks vs heat", desc: "NBA basketball game between the Dallas Mavericks and the Miami Heat" },
+                    { name: "grizzlies vs jazz", desc: "NBA basketball game between the Memphis Grizzlies and the Utah Jazz" },
+                    { name: "donnie iris", desc: "American rock musician and singer known for his band and hit single Ah! Leah!" },
+                    { name: "anthropic ipo", desc: "Discussion or news regarding the initial public offering of artificial intelligence company Anthropic" },
+                    { name: "pacers vs bucks", desc: "NBA basketball game between the Indiana Pacers and the Milwaukee Bucks" },
+                    { name: "saquon barkley", desc: "Star NFL running back" },
+                    { name: "jay z", desc: "Famous American rapper, songwriter, and billionaire entrepreneur" },
+                    { name: "microsoft layoffs", desc: "News and updates regarding job layoffs at Microsoft" },
+                    { name: "psg vs ol", desc: "French Ligue 1 football match between Paris Saint-Germain and Olympique Lyonnais" },
+                    { name: "chris brown", desc: "American R&B and pop singer" },
+                    { name: "chrishell stause", desc: "American actress and reality TV star known for Selling Sunset" },
+                    { name: "姆巴佩", desc: "French football superstar Kylian Mbappé" },
+                    { name: "brewers - rays", desc: "MLB baseball game between the Milwaukee Brewers and the Tampa Bay Rays" },
+                    { name: "valkyries", desc: "Refers to the Golden State WNBA expansion team or Norse mythological figures" },
+                    { name: "wizards vs hornets", desc: "NBA basketball game between the Washington Wizards and the Charlotte Hornets" },
+                    { name: "sports", desc: "General term for athletic competitions, sports news, and games" },
+                    { name: "antimatter", desc: "Physics concept referring to matter composed of antiparticles" },
+                    { name: "makai lemon", desc: "Prominent college football wide receiver for USC" },
+                    { name: "brandon woodruff", desc: "Major League Baseball pitcher for the Milwaukee Brewers" },
+                    { name: "dez bryant", desc: "Former NFL wide receiver widely known for his time with the Dallas Cowboys" },
+                    { name: "red wings vs oilers", desc: "NHL ice hockey game between the Detroit Red Wings and the Edmonton Oilers" },
+                    { name: "hollywood brown", desc: "NFL wide receiver Marquise Hollywood Brown" },
+                    { name: "beatrice keul", desc: "Public figure or news subject associated with recent reports" },
+                    { name: "kylie kelce", desc: "Public figure and wife of former NFL star Jason Kelce" },
+                    { name: "elizabeth holmes deception expert analysis", desc: "Body language and deception expert analysis of Theranos founder Elizabeth Holmes" },
+                    { name: "mein schiff cruise ship", desc: "Mein Schiff cruise liner fleet operated by TUI Cruises" },
+                    { name: "beyoncé", desc: "Global pop superstar and singer Beyoncé Knowles-Carter" },
+                    { name: "komanche", desc: "Popular online content creator and streamer" },
+                    { name: "charlyn corral", desc: "Mexican professional women's national team soccer player" },
+                    { name: "pat mcafee college gameday utah", desc: "Pat McAfee's ESPN College GameDay broadcast hosted on-site in Utah" },
+                    { name: "from netflix horror series review", desc: "Reviews and discussions regarding the sci-fi horror television series From" },
+                    { name: "jackson chourio", desc: "Milwaukee Brewers MLB baseball star rookie" },
+                    { name: "bird flu mink farm", desc: "Outbreaks of avian influenza detected in mink fur farms" },
+                    { name: "winter storm forecast", desc: "Meteorological forecasts regarding impending winter storms and heavy snow" },
+                    { name: "meleek thomas", desc: "Top-ranked American high school and college basketball recruit" },
+                    { name: "exponential time hypothesis", desc: "Computational complexity theory known as the Exponential Time Hypothesis" },
+                    { name: "minimum wage netflix", desc: "Discussions surrounding minimum wage policies or Netflix workplace economics" },
+                    { name: "internet invitational 2026", desc: "Competitive gaming or esports tournament event in 2026" },
+                    { name: "kings vs rangers", desc: "NHL ice hockey game between the Los Angeles Kings and the New York Rangers" },
+                    { name: "troy aikman joe buck feud", desc: "Media reports or rumors regarding sports announcers Troy Aikman and Joe Buck" },
+                    { name: "antoine de massy", desc: "Member of the Monégasque princely family" },
+                    { name: "darius cooper", desc: "Athlete or notable public figure in sports or news" },
+                    { name: "george pickens", desc: "NFL wide receiver known for his time with the Pittsburgh Steelers" },
+                    { name: "dante moore", desc: "American college football quarterback" },
+                    { name: "dameon pierce", desc: "NFL running back in professional football" },
+                    { name: "james comey", desc: "Former Director of the United States Federal Bureau of Investigation" },
+                    { name: "elijah mitchell", desc: "Professional NFL running back" },
+                    { name: "ajay mitchell", desc: "Professional basketball player" },
+                    { name: "donal lunny", desc: "Renowned Irish folk musician, composer, and producer" },
+                    { name: "royal caribbean", desc: "Major global cruise line enterprise Royal Caribbean International" },
+                    { name: "jason priestley", desc: "Canadian-American actor and director famous for Beverly Hills, 90210" },
+                    { name: "david moulton", desc: "Sports media personality or public individual" },
+                    { name: "operation fortress", desc: "Military history operation or strategic code name" },
+                    { name: "bugs bunny voice actor", desc: "Voice acting history and performers behind the classic character Bugs Bunny" },
+                    { name: "miami heat", desc: "NBA professional basketball franchise based in Miami" },
+                    { name: "maple leafs vs flames", desc: "NHL ice hockey match between the Toronto Maple Leafs and the Calgary Flames" },
+                    { name: "hannah waddingham", desc: "English actress and singer known for Ted Lasso and Game of Thrones" },
+                    { name: "where to watch ballon d or 2026", desc: "Streaming and broadcast guide links for the 2026 Ballon d'Or ceremony" },
+                    { name: "dazn", desc: "Global over-the-top sports subscription streaming service platform" },
+                    { name: "utah jazz", desc: "NBA professional basketball franchise based in Salt Lake City" },
+                    { name: "wade phillips", desc: "Veteran American football coach and coordinator" },
+                    { name: "nick sirianni", desc: "Head coach of the NFL Philadelphia Eagles" },
+                    { name: "ryan flournoy", desc: "Professional American football wide receiver" },
+                    { name: "hazel krauss", desc: "Public news or data profile entry" },
+                    { name: "vegemite", desc: "Popular Australian thick savory food spread made from leftover brewer's yeast extract" },
+                    { name: "demarvion overshown", desc: "NFL linebacker playing for the Dallas Cowboys" },
+                    { name: "sophie cunningham f1 usgp checkered flag", desc: "WNBA player Sophie Cunningham waving the checkered flag at the Formula 1 United States Grand Prix" },
+                    { name: "ios 27.2", desc: "Apple operating system software version update" },
+                    { name: "von miller", desc: "Star NFL edge rusher and Super Bowl champion" },
+                    { name: "jerry jones", desc: "Owner, president, and general manager of the NFL Dallas Cowboys" },
+                    { name: "cooper dejean", desc: "NFL defensive back and versatile rookie star" },
+                    { name: "tanner mckee stats", desc: "Player statistics and performance metrics for NFL quarterback Tanner McKee" },
+                    { name: "dax shepard", desc: "American actor, podcast host, and comedian" },
+                    { name: "tovah feldshuh", desc: "Veteran American stage, film, and television actress" },
+                    { name: "bam adebayo", desc: "NBA All-Star center and defensive anchor for the Miami Heat" },
+                    { name: "lake macbride spillway", desc: "Water infrastructure safety and spillway updates at Lake Macbride" },
+                    { name: "abdifatah yusuf guilty verdict reinstated", desc: "Legal case updates regarding the reinstatement of a guilty verdict for Abdifatah Yusuf" },
+                    { name: "cam booser", desc: "Professional baseball player in MLB" },
+                    { name: "bleach", desc: "Japanese anime series or chemical cleaning agent" },
+                    { name: "brandon miller", desc: "NBA professional basketball player for the Charlotte Hornets" },
+                    { name: "brevyn spann-ford", desc: "Professional NFL tight end" },
+                    { name: "ofrenda", desc: "Traditional offering altar used in Mexican Day of the Dead celebrations" },
+                    { name: "nfl trade rumors", desc: "Ongoing speculation, reports, and news regarding player trades across the NFL" },
+                    { name: "bryce hopkins", desc: "College basketball player" },
+                    { name: "walter clayton jr.", desc: "College basketball standout guard" },
+                    { name: "pittsburgh steelers wide receiver trade rumors", desc: "Speculation surrounding roster changes and wide receiver acquisitions for the Pittsburgh Steelers" },
+                    { name: "walmart great value fruit cocktail recall", desc: "Consumer safety product recall issued for Walmart's Great Value fruit cocktail cans" },
+                    { name: "keanu reeves netflix action movie maelstrom", desc: "Action movie project or film release starring Keanu Reeves connected to Netflix" },
+                    { name: "roberto clemente", desc: "Legendary Hall of Fame MLB baseball player and humanitarian" },
+                    { name: "missouri attorney general", desc: "Official office and legal actions handled by the Attorney General of Missouri" },
+                    { name: "golden state warriors vs denver nuggets match player stats", desc: "Detailed box scores and individual player metrics from the Warriors-Nuggets game" },
+                    { name: "psg - lyon", desc: "Soccer match fixture and updates between Paris Saint-Germain and Lyon" },
+                    { name: "wealth tax", desc: "Economic policy proposal concerning taxation on the net wealth of ultra-high-net-worth individuals" },
+                    { name: "kevin kisner", desc: "Professional American golfer on the PGA Tour" },
+                    { name: "dre kirkpatrick jr", desc: "College football player and football legacy athlete" },
+                    { name: "zendaya", desc: "Internationally renowned American actress and fashion icon" },
+                    { name: "antonio senzatela", desc: "Professional MLB baseball pitcher" },
+                    { name: "eli stowers", desc: "College football player and offensive weapon" },
+                    { name: "sean romeo", desc: "Professional athlete or hockey player" },
+                    { name: "demar derozan", desc: "NBA veteran All-Star basketball player" },
+                    { name: "grizzlies", desc: "Professional NBA team Memphis Grizzlies" },
+                    { name: "sporting", desc: "Refers to sporting goods, athletic clubs, or sports teams" },
+                    { name: "devin booker", desc: "NBA All-Star shooting guard for the Phoenix Suns" },
+                    { name: "santa fe - bucaramanga", desc: "Colombian football match between Santa Fe and Bucaramanga" },
+                    { name: "chad lowe", desc: "American actor and television director" },
+                    { name: "rent 30th anniversary concert", desc: "Special celebratory milestone concert event for the Broadway musical Rent" },
+                    { name: "wendy's company", desc: "American international fast-food hamburger restaurant chain parent corporation" },
+                    { name: "kenrich williams", desc: "Professional NBA basketball player" },
+                    { name: "balón de oro", desc: "Spanish term for the prestigious annual football award, the Ballon d'Or" },
+                    { name: "brewers watch party tickets", desc: "Ticket availability and admission information for Milwaukee Brewers public fan watch parties" },
+                    { name: "hasan piker", desc: "Prominent political commentator, leftist streamer, and internet personality" },
+                    { name: "michael irvin", desc: "Pro Football Hall of Famer and sports analyst" },
+                    { name: "united flight 1681", desc: "Commercial airline flight service tracking and incident updates" },
+                    { name: "sal frelick", desc: "MLB outfielder for the Milwaukee Brewers" },
+                    { name: "ai bubble", desc: "Economic and financial discussions concerning potential overvaluation and speculative bubbles in AI investments" },
+                    { name: "cindy hyde smith", desc: "United States Senator representing Mississippi" },
+                    { name: "jacob morley", desc: "Journalist, analyst, or content creator" },
+                    { name: "nobody wants this season 4", desc: "Season renewal status and updates for the Netflix comedy series Nobody Wants This" },
+                    { name: "nikola jokić", desc: "NBA MVP center for the Denver Nuggets" },
+                    { name: "nicki minaj citizenship", desc: "Public discussions and news regarding rapper Nicki Minaj's citizenship status" },
+                    { name: "flamengo vs atlético mineiro", desc: "Brazilian Série A football match between Flamengo and Atlético Mineiro" },
+                    { name: "keyonte george", desc: "NBA professional basketball player for the Utah Jazz" },
+                    { name: "ebola", desc: "Rare and deadly viral disease caused by ebolaviruses" },
+                    { name: "3 year old soccer", desc: "Youth sports leagues and introductory soccer programs for toddlers" },
+                    { name: "taylor swift nashville songwriters gala", desc: "Special music industry gala event in Nashville featuring Taylor Swift" },
+                    { name: "alperen şengün", desc: "NBA professional basketball center for the Houston Rockets" },
+                    { name: "skydance", desc: "American media production company and film studio" },
+                    { name: "ballon d'or 2026 where to watch", desc: "Broadcast channels, live streams, and viewing options for the 2026 Ballon d'Or ceremony" },
+                    { name: "cedric coward", desc: "College basketball player or athletic prospect" },
+                    { name: "green bay packers officiating complaints", desc: "Controversy and fan grievances regarding referee decisions in Green Bay Packers games" },
+                    { name: "quinnen williams", desc: "NFL defensive tackle star for the New York Jets" },
+                    { name: "noah wyle", desc: "American actor known for ER and Falling Skies" },
+                    { name: "trump administration student debt collection", desc: "Federal government policies and initiatives under the Trump administration regarding student loan collections" },
+                    { name: "francis lawrence bioshock movie progress", desc: "Production updates from director Francis Lawrence on the live-action BioShock film adaptation" },
+                    { name: "freddy peralta", desc: "MLB starting pitcher for the Milwaukee Brewers" },
+                    { name: "federal reserve interest rate decision", desc: "Monetary policy announcements and benchmark interest rate adjustments by the US Federal Reserve" },
+                    { name: "sevilla - osasuna", desc: "Spanish La Liga football match between Sevilla and Osasuna" },
+                    { name: "israeli elections", desc: "Political elections and parliamentary government votes in Israel" },
+                    { name: "jazz game", desc: "Live game schedules, scores, and updates for the Utah Jazz" },
+                    { name: "姆巴佩说了啥", desc: "Chinese search query tracking public statements and interview quotes by Kylian Mbappé" },
+                    { name: "姆巴佩辱华", desc: "Controversial internet search topic regarding alleged cultural insensitivities involving Kylian Mbappé in China" },
+                    { name: "luis lara", desc: "Public personality, comedian, or professional athlete" },
+                    { name: "mavs", desc: "Common shorthand nickname for the NBA Dallas Mavericks" },
+                    { name: "johnny manziel", desc: "Former college football Heisman Trophy winner and NFL quarterback" },
+                    { name: "daniel craig", desc: "English actor famous for portraying James Bond" },
+                    { name: "ashley moody", desc: "Attorney General of Florida" },
+                    { name: "nascar news", desc: "Latest updates, race results, and driver standings in NASCAR stock car racing" },
+                    { name: "darryn peterson", desc: "Elite high school basketball recruit and prospect" },
+                    { name: "annie andrews", desc: "Public figure, researcher, or political candidate" },
+                    { name: "barry keoghan", desc: "Acclaimed Irish actor known for Saltburn and The Banshees of Inisherin" },
+                    { name: "aaron gordon", desc: "NBA forward known for his athleticism with the Denver Nuggets" },
+                    { name: "psg vs olympique lyon standings", desc: "League table standings and rankings context for Paris Saint-Germain versus Lyon" },
+                    { name: "nfl week 8", desc: "Matchups, injury reports, and results for the eighth week of the NFL regular season" },
+                    { name: "terremoto", desc: "Spanish word for earthquake, tracking seismic activity or disaster news" },
+                    { name: "drew mcintyre", desc: "WWE professional wrestler and former World Champion" },
+                    { name: "sevilla vs osasuna", desc: "La Liga football fixture between Sevilla and Osasuna" },
+                    { name: "tax", desc: "Financial obligations, tax policies, legislation, and filing regulations" },
+                    { name: "tropicana field", desc: "Multi-purpose dome stadium located in St. Petersburg, Florida, home to the Tampa Bay Rays" },
+                    { name: "anbernic handheld 3ds emulator dispute", desc: "Community and legal discussions regarding handheld retro gaming devices and 3DS emulation software" },
+                    { name: "old farmers almanac thanksgiving weather", desc: "Long-range meteorological predictions from the Old Farmer's Almanac for Thanksgiving week" },
+                    { name: "zach edey", desc: "NBA center and former college basketball powerhouse player" },
+                    { name: "hunger games", desc: "Popular dystopian book and blockbuster movie franchise" },
+                    { name: "galatasaray vs fenerbahçe", desc: "The Intercontinental Derby football match in the Turkish Süper Lig between Galatasaray and Fenerbahçe" },
+                    { name: "travis kelce taylor swift chiefs games", desc: "Media coverage and public appearances of Taylor Swift attending Kansas City Chiefs games to support Travis Kelce" },
+                    { name: "boston red sox", desc: "Historic Major League Baseball franchise based in Boston" },
+                    { name: "riq woolen", desc: "NFL cornerback star for the Seattle Seahawks" },
+                    { name: "nfl mock draft", desc: "Analyst predictions and projections for upcoming professional football draft picks" },
+                    { name: "caitlin clark", desc: "WNBA basketball superstar and former college scoring sensation" },
+                    { name: "lamelo ball", desc: "NBA All-Star point guard for the Charlotte Hornets" },
+                    { name: "memphis grizzlies vs utah jazz match player stats", desc: "Game box scores and player performance analytics for Grizzlies versus Jazz matchups" },
+                    { name: "moon tonight", desc: "Astronomical lookups and lunar phase tracking for the night sky" },
+                    { name: "tim sweeney", desc: "CEO and founder of Epic Games" },
+                    { name: "starbucks mystery bearista glass cup", desc: "Limited-edition collectible merchandise item released by Starbucks" },
+                    { name: "journalist", desc: "News reporters, media writers, and press professionals" },
+                    { name: "daniel vogelbach", desc: "Professional MLB baseball infielder and designated hitter" },
+                    { name: "anthony rivers iii", desc: "Public profile or sports roster entry" },
+                    { name: "unai simon", desc: "Spanish professional football goalkeeper for Athletic Bilbao and the national team" },
+                    { name: "trevor megill world series complaints", desc: "Post-game umpire or officiating complaints involving MLB pitcher Trevor Megill" },
+                    { name: "scott colom", desc: "Legal or political public figure" },
+                    { name: "josh sweat", desc: "Professional NFL defensive end and pass rusher" },
+                    { name: "sean mannion", desc: "Former NFL quarterback and football coach" },
+                    { name: "antoine de massy monaco", desc: "Public records and news concerning Antoine de Massy of Monaco" },
+                    { name: "departamento de seguridad nacional de los estados unidos", desc: "Spanish translation for the United States Department of Homeland Security" },
+                    { name: "keith urban", desc: "Australian-American country music singer and songwriter" },
+                    { name: "adrien broner", desc: "American professional boxer and former multi-division world champion" },
+                    { name: "devonta smith", desc: "NFL wide receiver for the Philadelphia Eagles" },
+                    { name: "vicky lopez", desc: "Professional women's football player" },
+                    { name: "bolotana sardinia centenarians longevity habits", desc: "Scientific and anthropological studies on centenarians in Bolotana, Sardinia" },
+                    { name: "prince harry public reconciliation comments", desc: "Media reports and public statements made by Prince Harry regarding family reconciliation" },
+                    { name: "eagles qb today", desc: "Injury updates, starting lineup choices, and news regarding the Philadelphia Eagles quarterback position" },
+                    { name: "moro ojomo", desc: "NFL defensive lineman for the Philadelphia Eagles" },
+                    { name: "kia stokes", desc: "WNBA professional basketball player" },
+                    { name: "gary sánchez", desc: "Major League Baseball catcher and power hitter" },
+                    { name: "airport", desc: "Transportation hubs for commercial aviation, flight departures, and arrivals" },
+                    { name: "saquon barkley trade rumors giants eagles", desc: "Historical and speculative sports trade discussions involving Saquon Barkley's team transitions" },
+                    { name: "the gilded age", desc: "Period drama television series set in late 19th-century America" },
+                    { name: "senzatela", desc: "Reference to MLB pitcher Antonio Senzatela" },
+                    { name: "natalie nakase", desc: "Professional basketball coach and former player" },
+                    { name: "united 1854", desc: "Historical airline flight reference or corporate catalog entry" },
+                    { name: "star wars", desc: "Iconic sci-fi space opera franchise created by George Lucas" },
+                    { name: "mel blanc", desc: "Legendary American voice actor known as The Man of a Thousand Voices" },
+                    { name: "galatasaray - fenerbahçe", desc: "Turkish Süper Lig soccer rivalry fixture" },
+                    { name: "openai 6.1 terra", desc: "Advanced AI model iteration or technological concept update from OpenAI" },
+                    { name: "sal frelick wife", desc: "Personal life searches regarding MLB player Sal Frelick" },
+                    { name: "ftc lawsuit dollar general pricing", desc: "Federal Trade Commission legal action against Dollar General over deceptive pricing practices" },
+                    { name: "where to vote", desc: "Voter education tools and polling location finders for elections" },
+                    { name: "maxx crosby postgame comments raiders", desc: "Post-game press conference remarks and statements by Las Vegas Raiders star Maxx Crosby" },
+                    { name: "jaden mcdaniels", desc: "NBA defensive wing player for the Minnesota Timberwolves" },
+                    { name: "nocturne apple tv", desc: "Original thriller or drama series content on Apple TV+" },
+                    { name: "cecilia zandalasini", desc: "Professional Italian women's basketball player" },
+                    { name: "john smoltz", desc: "Hall of Fame MLB pitcher and television sports broadcaster" },
+                    { name: "wwe raw results", desc: "Match summaries, title changes, and results from Monday Night Raw" },
+                    { name: "kalshi", desc: "Regulated financial exchange platform for event contracts and prediction markets" },
+                    { name: "canelo fight", desc: "Professional boxing matches featuring Canelo Alvarez" },
+                    { name: "al-nassr vs al wasl", desc: "Asian football fixture or Saudi-UAE regional club match" },
+                    { name: "bill murray", desc: "Celebrated American actor and comedian" },
+                    { name: "zach ertz", desc: "NFL veteran tight end" },
+                    { name: "luis de la fuente", desc: "Manager of the Spain national football team" },
+                    { name: "moussa diawara deported", desc: "Immigration enforcement news and deportation cases involving individuals named Moussa Diawara" },
+                    { name: "airbnb new cleaning policy rules", desc: "Updated guest and host cleaning guidelines enforced by Airbnb" },
+                    { name: "anaheim", desc: "Major city in Southern California known for Disneyland and sports venues" },
+                    { name: "espn college football rankings week 8", desc: "Associated Press and coaches poll college football rankings for week 8 of the season" },
+                    { name: "silver", desc: "Precious metal commodity trading and industrial mineral" },
+                    { name: "cooper pratt", desc: "Professional baseball prospect or minor league player" },
+                    { name: "amber alert", desc: "Emergency child abduction notification system broadcasts" },
+                    { name: "rudy gobert", desc: "Multi-time Defensive Player of the Year NBA center for the Minnesota Timberwolves" },
+                    { name: "anthony edwards stats", desc: "Performance analytics and scoring averages for NBA guard Anthony Edwards" },
+                    { name: "is anthony edwards playing tonight", desc: "Injury status and game availability queries for Anthony Edwards" },
+                    { name: "election day", desc: "Official voting date for civic and government elections" },
+                    { name: "kel'el ware", desc: "NBA center and young basketball talent" },
+                    { name: "joan beringer", desc: "Professional athlete or public individual" },
+                    { name: "giada de laurentiis", desc: "Celebrity chef, television personality, and cookbook author" },
+                    { name: "chad green", desc: "Major League Baseball relief pitcher" },
+                    { name: "emma roberts", desc: "American actress known for American Horror Story and romantic comedies" },
+                    { name: "jim cramer ipo market warning", desc: "Financial commentary and market warnings issued by CNBC host Jim Cramer regarding IPOs" },
+                    { name: "ballon d'or 2025", desc: "Historical soccer award ceremony honoring the best players of 2025" },
+                    { name: "maurene comey", desc: "American attorney and legal professional" },
+                    { name: "jeffrey lurie", desc: "Owner and CEO of the NFL Philadelphia Eagles" },
+                    { name: "the mayor of kingstown", desc: "Gritty crime drama television series starring Jeremy Renner" },
+                    { name: "olivia chow", desc: "Canadian politician serving as the Mayor of Toronto" },
+                    { name: "santa clara vs benfica", desc: "Portuguese Primeira Liga football match between Santa Clara and Benfica" },
+                    { name: "john harbaugh najee harris release", desc: "NFL roster news and coaching decisions concerning John Harbaugh and Najee Harris" },
+                    { name: "artificial intelligence", desc: "Field of computer science focused on creating intelligent machines and generative models" },
+                    { name: "wordle hint", desc: "Daily puzzle clues and spoiler-free hints for the popular word game Wordle" },
+                    { name: "james reimer", desc: "Professional NHL ice hockey goaltender" },
+                    { name: "al horford", desc: "Veteran NBA champion center and forward for the Boston Celtics" },
+                    { name: "marquise brown", desc: "Professional NFL wide receiver" },
+                    { name: "last world series sweep", desc: "Historical records and data regarding the most recent sweep in the MLB World Series" },
+                    { name: "naz reid", desc: "Fan-favorite NBA center and forward for the Minnesota Timberwolves" },
+                    { name: "nbc nightly news viewership ratings", desc: "Television broadcast audience ratings and viewership metrics for NBC Nightly News" },
+                    { name: "the mob", desc: "Organized crime syndicates and historical mafia culture" },
+                    { name: "nebraska basketball", desc: "Collegiate athletic programs representing the University of Nebraska" },
+                    { name: "dawn staley", desc: "Hall of Fame basketball player and legendary head coach of South Carolina women's basketball" },
+                    { name: "malik scott", desc: "Professional boxing trainer and former heavyweight boxer" },
+                    { name: "cata coll", desc: "Professional Spanish women's football goalkeeper" },
+                    { name: "tampa bay devil rays", desc: "Historical branding of the MLB franchise now known as the Tampa Bay Rays" },
+                    { name: "st. louis blues", desc: "Professional NHL ice hockey team based in St. Louis" },
+                    { name: "cfb power rankings week 8", desc: "College football team strength assessments and polls for week 8" },
+                    { name: "justin gaethje", desc: "Professional MMA fighter and former UFC interim lightweight champion" },
+                    { name: "hamstring", desc: "Common sports muscle injury affecting the back of the thigh" },
+                    { name: "tiger woods", desc: "Legendary professional golfer and sports icon" },
+                    { name: "mbappe ballon d'or", desc: "Discussions and predictions linking Kylian Mbappé to the Ballon d'Or award" },
+                    { name: "apple tv sci fi thriller silo", desc: "Hit dystopian science fiction television series streaming on Apple TV+" },
+                    { name: "new ipad mini 2026", desc: "Apple hardware release and product specifications for the 2026 iPad Mini" },
+                    { name: "pere romeu", desc: "Professional football manager and coach" },
+                    { name: "voting near me", desc: "Local geographic tools to help voters locate their designated polling places" },
+                    { name: "womens ballon d or", desc: "Annual football award recognizing the best female soccer player in the world" },
+                    { name: "tampa", desc: "Major metropolitan city located on the Gulf Coast of Florida" },
+                    { name: "willson contreras", desc: "Major League Baseball catcher for the St. Louis Cardinals" },
+                    { name: "evan mobley", desc: "NBA All-Defensive star forward and center for the Cleveland Cavaliers" },
+                    { name: "sony playstation", desc: "Popular line of home video game consoles and gaming hardware ecosystem" },
+                    { name: "mckee eagles qb", desc: "Queries regarding Philadelphia Eagles backup quarterback Tanner McKee" },
+                    { name: "rizespor vs trabzonspor", desc: "Turkish Süper Lig football match between Rizespor and Trabzonspor" },
+                    { name: "stephen a smith", desc: "Prominent ESPN sports commentator, analyst, and media personality" },
+                    { name: "jenna ortega marvel movie appearance", desc: "Casting rumors or entertainment news concerning Jenna Ortega joining the Marvel Cinematic Universe" },
+                    { name: "ps+ plus november 2026", desc: "Monthly free game line-up and subscription additions for PlayStation Plus in November 2026" },
+                    { name: "spacex super heavy", desc: "Heavy-lift first-stage booster rocket developed by SpaceX" },
+                    { name: "bennett stirtz", desc: "College basketball player or sports standout" },
+                    { name: "david beckham", desc: "English former professional footballer, club co-owner, and global fashion icon" },
+                    { name: "zaccharie risacher", desc: "Top NBA draft prospect and professional basketball player" },
+                    { name: "mcdonalds mcrib", desc: "Limited-time seasonal barbecue pork sandwich menu item from McDonald's" },
+                    { name: "trump account for kids", desc: "Financial savings accounts or policy proposals associated with children under the Trump administration" },
+                    { name: "motorcycle", desc: "Two-wheeled motor-powered vehicles and motorcycling culture" },
+                    { name: "derek jeter", desc: "Baseball Hall of Fame shortstop and New York Yankees legend" },
+                    { name: "dwyane wade", desc: "NBA legend, 3-time champion, and Miami Heat icon" },
+                    { name: "mouthwashing xbox game pass release", desc: "Video game launch news and release dates for Mouthwashing on Xbox Game Pass" },
+                    { name: "shakur stevenson", desc: "Undefeated American professional boxing world champion" },
+                    { name: "humana", desc: "Major American health insurance and healthcare company" },
+                    { name: "charlize theron optical illusion outfit", desc: "Viral fashion moments and red carpet appearances featuring actress Charlize Theron" },
+                    { name: "benfica", desc: "Prominent Portuguese sports club and professional football team based in Lisbon" },
+                    { name: "peyton watson", desc: "NBA basketball player for the Denver Nuggets" },
+                    { name: "jonathan taylor trade rumors", desc: "NFL trade speculation and roster discussions concerning running back Jonathan Taylor" },
+                    { name: "bukayo saka", desc: "Star winger for Arsenal and the England national football team" },
+                    { name: "dick vitale", desc: "Legendary college basketball broadcaster and ESPN analyst" },
+                    { name: "gabrielle union", desc: "American actress, activist, and author" },
+                    { name: "brazil elections lula", desc: "Political elections in Brazil involving President Luiz Inácio Lula da Silva" },
+                    { name: "racing sausages world series milwaukee", desc: "Popular live entertainment mascot race tradition held during Milwaukee Brewers baseball games" },
+                    { name: "sam raimi", desc: "Renowned American filmmaker and director known for Spider-Man and horror classics" },
+                    { name: "mike vrabel patriots official conduct fine", desc: "NFL league discipline and coaching fines involving Mike Vrabel" },
+                    { name: "guardians veterans upcoming free agency", desc: "MLB roster analysis on upcoming free agent veterans for the Cleveland Guardians" },
+                    { name: "steve hilton", desc: "Political commentator and television host" },
+                    { name: "is george pickens playing today", desc: "Injury reports and game-day availability checks for NFL wide receiver George Pickens" },
+                    { name: "wolves basketball", desc: "Refers to the Minnesota Timberwolves NBA team or college basketball teams named the Wolves" },
+                    { name: "meghan markle news", desc: "Media coverage, updates, and public appearances regarding the Duchess of Sussex" },
+                    { name: "horror movies", desc: "Film genre focused on terror, suspense, and frightening cinematic storytelling" },
+                    { name: "reed sheppard", desc: "Professional NBA rookie guard" },
+                    { name: "scarlett camberos", desc: "Professional women's soccer player" },
+                    { name: "kentucky vs tennessee football game time", desc: "Schedule kickoff times and TV broadcast details for the Kentucky versus Tennessee college football rivalry" },
+                    { name: "金球奖", desc: "Chinese translation for the prestigious football award, the Ballon d'Or" },
+                    { name: "jordan mailata", desc: "Massive Australian-born offensive tackle for the NFL Philadelphia Eagles" },
+                    { name: "hs", desc: "High school education level or sports divisions" },
+                    { name: "santa clara - benfica", desc: "Portuguese Primeira Liga football match fixture" },
+                    { name: "boomer esiason", desc: "Former NFL quarterback and veteran sports radio broadcaster" },
+                    { name: "interstate 81", desc: "Major north-south United States Interstate Highway" },
+                    { name: "point roberts", desc: "American unincorporated community on the Tsawwassen peninsula accessible by land only through Canada" },
+                    { name: "lori loughlin", desc: "American actress known for Full House" },
+                    { name: "nfl top 10", desc: "Power rankings, player countdowns, and historical lists in professional football" },
+                    { name: "nba league pass", desc: "Subscription streaming package offering live and on-demand NBA basketball games" },
+                    { name: "did the chiefs win", desc: "Game outcome inquiries for the Kansas City Chiefs" },
+                    { name: "seth bodnar", desc: "Corporate executive or academic leadership figure" },
+                    { name: "espn nba scores", desc: "Real-time basketball game scores and live stats provided by ESPN" },
+                    { name: "trabzonspor", desc: "Major Turkish professional football club based in Trabzon" },
+                    { name: "komanche streamer", desc: "Content creation and streaming activity by internet personality Komanche" },
+                    { name: "ronaldo", desc: "Refers to legendary football icons Cristiano Ronaldo or Ronaldo Nazário" },
+                    { name: "dolar hoje real", desc: "Currency exchange rate queries tracking the value of the US dollar against the Brazilian Real" },
+                    { name: "indiana fever front office changes", desc: "Management and front office restructuring news for the WNBA Indiana Fever franchise" },
+                    { name: "nvidia rtx gpu ai throttle hack", desc: "Technical software workarounds and hardware modifications involving Nvidia graphics processing units" },
+                    { name: "gsv", desc: "General Services or geospatial data references" },
+                    { name: "holger rune", desc: "Professional tennis player from Denmark" },
+                    { name: "russian", desc: "Refers to the Russian language, nationality, culture, or geopolitical news" },
+                    { name: "contreras", desc: "Reference to MLB players Willson Contreras or William Contreras" },
+                    { name: "beşiktaş vs başakşehir", desc: "Turkish Süper Lig football match between Beşiktaş and İstanbul Başakşehir" },
+                    { name: "pga tour", desc: "Premier professional golf tournament organization in North America" },
+                    { name: "travis kelce fit appearance game day", desc: "Fashion styling and game-day outfit arrivals of NFL player Travis Kelce" },
+                    { name: "attack on titan", desc: "Internationally acclaimed Japanese anime and manga dark fantasy series" },
+                    { name: "john schriffen", desc: "Professional sports broadcaster and play-by-play announcer" },
+                    { name: "lol worlds", desc: "League of Legends World Championship global esports tournament" },
+                    { name: "learner tien", desc: "Professional American tennis player" },
+                    { name: "david raya", desc: "Professional football goalkeeper for Arsenal and the Spain national team" },
+                    { name: "did the time change last night", desc: "Queries checking daylight saving time shifts and clock adjustments" },
+                    { name: "nba starting lineups", desc: "Confirmed starting five players for professional basketball games" },
+                    { name: "brian kloman", desc: "Public or professional individual record" },
+                    { name: "becca devens", desc: "Reality TV contestant known from Survivor" },
+                    { name: "baywatch 2027", desc: "Reboot, film, or television project updates connected to the Baywatch franchise" },
+                    { name: "blue ash", desc: "City located in Ohio" },
+                    { name: "gremio", desc: "Major Brazilian professional football club based in Porto Alegre" },
+                    { name: "ryan vilade", desc: "Professional MLB baseball player" },
+                    { name: "flight cancellation and delay", desc: "Airline passenger travel disruptions, cancellations, and delay notifications" },
+                    { name: "youngest ballon d'or winner", desc: "Historical records for the lowest age of a player winning the Ballon d'Or" },
+                    { name: "super ballon d'or", desc: "Rare honorary football award presented once to recognize the best player of several decades" },
+                    { name: "polar vortex forecast", desc: "Meteorological winter weather predictions tracking Arctic air mass disruptions" },
+                    { name: "robbery", desc: "Criminal offense involving theft by force or threat of violence" },
+                    { name: "cathedral anthropic", desc: "Tech industry news, events, or office locations associated with AI lab Anthropic" },
+                    { name: "brewers catcher", desc: "Roster and player updates regarding the catchers for the Milwaukee Brewers" },
+                    { name: "kevin zeitler", desc: "Veteran NFL offensive guard" },
+                    { name: "jared duffy", desc: "Professional athletic coach or sports personnel" },
+                    { name: "who sang the national anthem tonight", desc: "Live event queries tracking performers of The Star-Spangled Banner at major sports games" },
+                    { name: "king tide", desc: "Exceptionally high coastal tides caused by astronomical alignments" },
+                    { name: "alexandra eala", desc: "Professional tennis player from the Philippines" },
+                    { name: "xbox fifty new games release", desc: "Video game platform release announcements and catalog updates for Xbox" },
+                    { name: "fox news lawrence jones jd degree", desc: "Educational background and academic credentials of Fox News host Lawrence Jones" },
+                    { name: "sharon osbourne", desc: "English television personality, music manager, and author" },
+                    { name: "neocloud", desc: "Emerging cloud computing infrastructure and artificial intelligence hosting technology" },
+                    { name: "worlds 2026", desc: "Global esports championship tournament for League of Legends in 2026" },
+                    { name: "costco wholesale corp", desc: "Multinational membership-only warehouse club retail corporation" },
+                    { name: "princess", desc: "Monarchy titles, fairy tale media, or entertainment culture" },
+                    { name: "vz stock", desc: "Stock market ticker symbol and financial performance for Verizon Communications" },
+                    { name: "peter schmeichel", desc: "Legendary Danish former professional football goalkeeper" },
+                    { name: "skattebo unnecessary roughness", desc: "Football penalty reviews and player conduct incidents involving running back Cam Skattebo" },
+                    { name: "freddie peralta", desc: "Professional MLB pitcher for the Milwaukee Brewers" },
+                    { name: "maxx crosby", desc: "Star defensive end and pass rusher for the Las Vegas Raiders" },
+                    { name: "trump-xi summit", desc: "High-level diplomatic meetings and geopolitical summits between US President Donald Trump and Chinese leader Xi Jinping" },
+                    { name: "starbucks china new seating policy", desc: "Operational changes and customer seating rules introduced in Starbucks cafes across China" },
+                    { name: "nascar crash talladega", desc: "Major multi-car wrecks and racing incidents at Talladega Superspeedway" },
+                    { name: "bunny shaw", desc: "Jamaican professional women's football star striker Khadija Bunny Shaw" },
+                    { name: "moussa diabaté", desc: "Professional NBA basketball player" },
+                    { name: "matthew perry", desc: "Late American actor globally renowned for playing Chandler Bing in Friends" },
+                    { name: "alex de minaur", desc: "Top Australian professional tennis player" },
+                    { name: "nu stock", desc: "Financial market trading performance for digital banking platform Nubank" },
+                    { name: "coastal flood warning", desc: "Severe weather alerts issued by meteorological agencies for coastal inundation" },
+                    { name: "michael j fox", desc: "Beloved actor and Parkinson's disease research advocate" },
+                    { name: "supplemental security income", desc: "Federal income supplement program administered by the US Social Security Administration" },
+                    { name: "dinner", desc: "Evening meal and food recipes" },
+                    { name: "robot", desc: "Autonomous mechanical machines, robotics technology, and automation" },
+                    { name: "harry kane stats 25/26", desc: "Player performance data, goal tallies, and match statistics for Harry Kane during the 2025/2026 season" },
+                    { name: "hugo gonzalez", desc: "Professional athlete or notable public figure" },
+                    { name: "steam stuck on loading user data", desc: "Technical troubleshooting queries for digital gaming platform Steam" },
+                    { name: "jack vulcani gold panned engagement ring", desc: "Viral jewelry or unique engagement ring creation stories" },
+                    { name: "googl stock", desc: "Stock market ticker symbol and financial analysis for Alphabet Inc." },
+                    { name: "unclaimed powerball million dollar ticket", desc: "State lottery alerts for winning Powerball tickets nearing expiration without being claimed" },
+                    { name: "unión - estudiantes", desc: "Argentine Primera División football match between Unión and Estudiantes" },
+                    { name: "sami zayn", desc: "Popular WWE professional wrestler" },
+                    { name: "alan shearer", desc: "Premier League all-time top goalscorer and English football pundit" },
+                    { name: "vacation", desc: "Travel planning, holiday destinations, and leisure time off" },
+                    { name: "john grisham", desc: "Bestselling American legal thriller novelist" },
+                    { name: "pentulive", desc: "Online live streaming platform or media service" },
+                    { name: "apple iphone duo broken screen", desc: "Repair options, screen replacement costs, and DIY fixes for damaged iPhone displays" },
+                    { name: "cls stock", desc: "Financial market performance for Classica Group or designated ticker equities" },
+                    { name: "chris hemsworth", desc: "Australian actor famous for playing Thor in the Marvel Cinematic Universe" },
+                    { name: "instacart stock", desc: "Public market trading updates for grocery delivery platform Instacart" },
+                    { name: "kyle whittingham", desc: "Longtime college football head coach for the University of Utah" },
+                    { name: "black friday", desc: "Major annual post-Thanksgiving retail shopping holiday" },
+                    { name: "kody brown", desc: "Reality TV personality known from Sister Wives" },
+                    { name: "breeders cup 2026", desc: "Championship thoroughbred horse racing event for 2026" },
+                    { name: "wwe saudi arabia crown jewel 2026", desc: "Premium live professional wrestling pay-per-view event held in Saudi Arabia" },
+                    { name: "fabian ruiz", desc: "Spanish professional football midfielder for Paris Saint-Germain" },
+                    { name: "tokyo disneyland peter pan ride closing", desc: "Theme park attraction refurbishment or permanent closure announcements at Tokyo Disneyland" },
+                    { name: "vini jr", desc: "Brazilian football star forward Vinícius Júnior for Real Madrid" },
+                    { name: "patrick vieira", desc: "French professional football manager and former legendary midfielder" },
+                    { name: "joan laporta", desc: "President of FC Barcelona football club" },
+                    { name: "kon knueppel injury", desc: "Medical updates and injury recovery reports for basketball player Kon Knueppel" },
+                    { name: "coindesk", desc: "Leading digital media, news, and cryptocurrency market research publication" },
+                    { name: "sophia bush", desc: "American actress and activist" },
+                    { name: "the walking dead", desc: "Iconic post-apocalyptic zombie drama television franchise" },
+                    { name: "us election 2026 redistricting virginia", desc: "Congressional map redrawing and political redistricting litigation in Virginia for the 2026 elections" },
+                    { name: "the rule of law project", desc: "Global civic initiative and research organization measuring adherence to the rule of law" },
+                    { name: "weather boston", desc: "Current meteorological conditions, forecasts, and climate updates for Boston" },
+                    { name: "harriet dart", desc: "British professional tennis player" },
+                    { name: "amon ra st brown", desc: "NFL star wide receiver for the Detroit Lions" },
+                    { name: "jj mccarthy new york giants debut", desc: "NFL career debut games and performance analysis for quarterback J.J. McCarthy" },
+                    { name: "emily blunt", desc: "Award-winning British actress known for film blockbusters" },
+                    { name: "usc football loss wisconsin 2026", desc: "College football game recaps and analysis of a matchup between USC and Wisconsin" },
+                    { name: "amber nova", desc: "Public personality or media subject" },
+                    { name: "connecticut", desc: "U.S. state located in the New England region" },
+                    { name: "hospital", desc: "Medical treatment facilities, healthcare centers, and emergency care" },
+                    { name: "lauren cohan", desc: "American-English actress known for The Walking Dead" },
+                    { name: "brandon gill", desc: "Political figure or public official" },
+                    { name: "todd monken", desc: "American football coach and offensive coordinator" },
+                    { name: "canelo", desc: "Mexican professional boxing icon Saúl Canelo Álvarez" },
+                    { name: "cve-2026-111497", desc: "Specific cybersecurity vulnerability identifier and software security advisory patch" },
+                    { name: "eqt", desc: "Investment firm and private equity corporation" },
+                    { name: "lake powell", desc: "Major reservoir on the Colorado River located in Utah and Arizona" },
+                    { name: "daria snigur", desc: "Professional tennis player from Ukraine" },
+                    { name: "wildwood box office", desc: "Box office ticketing and event sales for entertainment venues in Wildwood" },
+                    { name: "valentin vacherot", desc: "Professional tennis player" },
+                    { name: "byu ucf football chaos fans removed", desc: "College football stadium security incidents and fan ejections during a BYU versus UCF game" },
+                    { name: "paula badosa", desc: "Professional tennis player from Spain" },
+                    { name: "peter fatse", desc: "MLB hitting coach and professional baseball personnel" },
+                    { name: "ina garten", desc: "Celebrity chef, author, and host of Food Network's Barefoot Contessa" },
+                    { name: "tom cavanagh", desc: "Canadian actor best known for The Flash" },
+                    { name: "rwanda", desc: "East-Central African nation with a growing international profile" },
+                    { name: "kimi", desc: "Refers to Formula 1 racing driver Kimi Antonelli or general name references" },
+                    { name: "james gunn", desc: "Hollywood filmmaker, writer, and co-CEO of DC Studios" },
+                    { name: "donna mills", desc: "Veteran American actress and television star" },
+                    { name: "justin bieber", desc: "Canadian pop music singer and global recording artist" },
+                    { name: "五中全会", desc: "Chinese political term for a Plenary Session of the Central Committee of the Chinese Communist Party" },
+                    { name: "lebron james 76ers center start", desc: "Basketball media discussions regarding unique starting lineup configurations involving LeBron James" },
+                    { name: "travel warning", desc: "Official government travel advisories issued regarding international safety and security" },
+                    { name: "brooks", desc: "Refers to athletic footwear brand Brooks Running or public figures" },
+                    { name: "afc east", desc: "National Football Conference division featuring the Bills, Dolphins, Patriots, and Jets" },
+                    { name: "delaware state police", desc: "Law enforcement agency responsible for statewide public safety in Delaware" },
+                    { name: "el sayed", desc: "Common Arabic surname and public figures" },
+                    { name: "zoe saldana", desc: "Hollywood actress starring in major blockbuster franchises like Avatar and Guardians of the Galaxy" },
+                    { name: "flow", desc: "Productivity concepts, workflow automation, or artistic states of immersion" },
+                    { name: "brent crude price drops today", desc: "Financial market commodities news tracking declines in global Brent crude oil prices" },
+                    { name: "barrio obrero", desc: "Neighborhood or district names found in various Spanish-speaking cities" },
+                    { name: "alex eala", desc: "Filipino professional tennis player Alexandra Eala" },
+                    { name: "temperature", desc: "Environmental weather metrics and scientific temperature measurements" },
+                    { name: "oilprice.com", desc: "Financial news portal tracking global petroleum markets, energy prices, and oil analytics" },
+                    { name: "miami weather", desc: "Daily meteorological forecasts and climate conditions for Miami, Florida" },
+                    { name: "han shi", desc: "Historical or cultural references in Chinese studies" },
+                    { name: "kia 대 삼성", desc: "South Korean professional baseball or corporate rivalry fixtures between Kia Tigers and Samsung Lions" },
+                    { name: "anna bondar", desc: "Professional tennis player from Hungary" },
+                    { name: "midterm elections 2026", desc: "Congressional and statewide midterm legislative elections across the United States in 2026" },
+                    { name: "from show", desc: "Horror mystery television series From streaming updates" },
+                    { name: "sofia vergara", desc: "Colombian-American actress and television producer" },
+                    { name: "cher", desc: "Iconic American pop music singer and Oscar-winning actress" },
+                    { name: "cyclist", desc: "Bicycle riders, cycling commuters, and professional road racing athletes" },
+                    { name: "used cars", desc: "Automotive market trends, pre-owned vehicle dealerships, and pricing guides" },
+                    { name: "amc theatres", desc: "Major American movie theater exhibition chain" },
+                    { name: "carrick", desc: "Geographic place names or historical surnames" },
+                    { name: "early voting maryland", desc: "Voter participation schedules and ballot drop-off locations for early voting periods in Maryland" },
+                    { name: "scott eastwood", desc: "American actor and model, son of Clint Eastwood" },
+                    { name: "mass lottery", desc: "State-run lottery games, jackpot drawings, and results in Massachusetts" },
+                    { name: "what is a neocloud", desc: "Explanatory tech queries defining modern specialized cloud hosting architectures" },
+                    { name: "111", desc: "Numerical search query, angel number, or error code reference" },
+                    { name: "kirill kaprizov", desc: "Star Russian professional ice hockey forward for the Minnesota Wild" },
+                    { name: "texas senate polls", desc: "Voter preference surveys and political polling for United States Senate races in Texas" },
+                    { name: "hannity wedding", desc: "Celebrity wedding news and media coverage surrounding Fox News host Sean Hannity" },
+                    { name: "333", desc: "Numerical sequence, angel number, or phone dialing prefix" },
+                    { name: "precio del dolar en mexico", desc: "Daily exchange rate tracking the price of the US Dollar against the Mexican Peso" },
+                    { name: "son heung-min", desc: "South Korean football captain and Tottenham Hotspur star forward" },
+                    { name: "weather houston", desc: "Meteorological forecasts and weather conditions for Houston, Texas" },
+                    { name: "cars", desc: "Automotive industry vehicles, animated movie franchise, or transportation" },
+                    { name: "blade", desc: "Refers to cinematic superhero action films, utility cutting tools, or industrial components" }
+                ]
+            }
+        };
+
+        // Page Navigation Switcher
+        function switchPage(page) {
+            const homeSec = document.getElementById('page-home');
+            const catDetailSec = document.getElementById('page-category-detail');
+
+            const navHome = document.getElementById('nav-home');
+            const navExplore = document.getElementById('nav-explore');
+
+            homeSec.className = "hidden space-y-4";
+            catDetailSec.className = "hidden space-y-3";
+
+            const defaultNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+            const activeNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm";
+
+            navHome.className = defaultNavClass;
+            navExplore.className = defaultNavClass;
+
+            if (page === 'home') {
+                homeSec.className = "block space-y-4";
+                navHome.className = activeNavClass;
+            } else if (page === 'category-detail') {
+                catDetailSec.className = "block space-y-3";
+                navExplore.className = activeNavClass;
+            }
+        }
+
+        // Open Category Detail Page with Expanded Keywords
+        function openCategoryPage(catKey) {
+            const catInfo = categoryData[catKey];
+            if (!catInfo) return;
+
+            document.getElementById('cat-detail-title').innerText = catInfo.title;
+            document.getElementById('cat-detail-desc').innerText = catInfo.description;
+
+            const gridContainer = document.getElementById('cat-detail-grid');
+            gridContainer.innerHTML = "";
+
+            catInfo.keywords.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded-lg border border-slate-200 shadow-sm hover:shadow hover:border-brand-500 transition cursor-pointer flex flex-col justify-between space-y-1 group";
+                card.onclick = () => selectDynamicKeyword(item.name);
+                card.innerHTML = `
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-xs group-hover:text-brand-500 transition truncate">${item.name}</h4>
+                            <p class="text-[10px] text-slate-500 line-clamp-1">${item.desc}</p>
+                        </div>
+                    `;
+                gridContainer.appendChild(card);
+            });
+
+            if (catInfo.keywords.length > 0) {
+                selectDynamicKeyword(catInfo.keywords[0].name);
+            }
+
+            switchPage('category-detail');
+        }
+
+        // Select dynamic keyword from category grid
+        function selectDynamicKeyword(keyword) {
+            currentDynamicKeyword = keyword;
+            document.getElementById('dynamic-kw-display').innerText = keyword;
+            dynamicLoadedTabs = {};
+
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('dyn-t8').classList.add('active');
+
+            currentDynamicTabId = 'dyn-t8';
+            currentDynamicTimeParam = 'today 5-y';
+
+            renderDynamicTrendsChart(currentDynamicTabId, currentDynamicTimeParam);
+        }
+
+        // Safe poll check for Google SDK readiness
+        function checkTrendsLoaded(callback) {
+            if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+                callback();
+            } else {
+                let retries = 0;
+                const timer = setInterval(() => {
+                    retries++;
+                    if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+                        clearInterval(timer);
+                        callback();
+                    } else if (retries > 100) {
+                        clearInterval(timer);
+                        console.warn("Google Trends script loading timed out.");
+                    }
+                }, 100);
+            }
+        }
+
+        // Render Google Trends embed chart for Home
+        function renderTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentKeyword);
+            const cacheKey = `${currentKeyword}_${tabId}`;
+
+            if (loadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = "";
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    loadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Render Google Trends embed chart for Dynamic Section in Category Detail Page
+        function renderDynamicTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentDynamicKeyword);
+            const cacheKey = `${currentDynamicKeyword}_${tabId}`;
+
+            if (dynamicLoadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = "";
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentDynamicKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    dynamicLoadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Dynamic Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Handle Search Form Submit on Home
+        function handleSearch() {
+            const inputVal = document.getElementById('keyword-input').value.trim();
+            if (!inputVal) return;
+
+            currentKeyword = inputVal;
+            document.getElementById('kw-display').innerText = currentKeyword;
+            loadedTabs = {};
+
+            const buttons = document.querySelectorAll('.time-btn');
+            buttons.forEach(btn => {
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#page-home .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('t8').classList.add('active');
+
+            currentTabId = 't8';
+            currentTimeParam = 'today 5-y';
+
+            renderTrendsChart(currentTabId, currentTimeParam);
+        }
+
+        // Switch Time Tabs for Home
+        function switchTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.time-btn');
+            buttons.forEach(btn => {
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#page-home .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentTabId = tabId;
+            currentTimeParam = timeParam;
+
+            renderTrendsChart(tabId, timeParam);
+        }
+
+        // Switch Time Tabs for Dynamic Section in Category Detail Page
+        function switchDynamicTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentDynamicTabId = tabId;
+            currentDynamicTimeParam = timeParam;
+
+            renderDynamicTrendsChart(tabId, timeParam);
+        }
+
+        // Initial Load Event
+        window.addEventListener('load', () => {
+            openCategoryPage('models');
+            renderTrendsChart('t8', 'today 5-y');
+        });
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NCYS6Q44WF"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-NCYS6Q44WF');
+    </script>
+</body>
+</html>
