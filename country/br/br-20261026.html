@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="https://trendchart.ai/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TrendChart - 240+ AI & Tech Trends, Google Trends Visualizer">
+    <meta property="og:description" content="Explore live keyword search trends with interactive charts and analytics.">
+    <meta name="keywords" content="AI trends, artificial intelligence trends, generative AI, AI agents">
+    <title>TrendChart - 240+ AI & Tech Trends, Google Trends Visualizer</title>
+    <!-- Google Trends Embed Script -->
+    <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3882_RC01/embed_loader.js"></script>
+    <!-- Tailwind CSS CDN for modern responsive UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef6ff',
+                            100: '#e0eefe',
+                            500: '#1a73e8',
+                            600: '#1557b0',
+                            700: '#104494',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 440px;
+            background-color: #ffffff;
+            border-left: none;
+            border-right: none;
+            border-radius: 0 !important;
+        }
+
+        .chart-panel {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+            .chart-panel.active {
+                display: block;
+            }
+
+            .chart-panel iframe {
+                width: 100% !important;
+                height: 100% !important;
+                border: none !important;
+                position: relative;
+                z-index: 2;
+            }
+
+        .loading-notice {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-14 items-center">
+                <!-- Brand Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="switchPage('home')">
+                    <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                        📈
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-slate-900">trend<span class="text-brand-500">chart</span></span>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="flex space-x-2">
+                    <button id="nav-home" onclick="switchPage('home')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        Home
+                    </button>
+                    <button id="nav-explore" onclick="openCategoryPage('models')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm">
+                        Explore AI
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-grow w-full">
+
+        <!-- PAGE 1: HOME PAGE (Search & Chart) -->
+        <section id="page-home" class="hidden space-y-4">
+            <div class="text-center max-w-2xl mx-auto space-y-1">
+                <h1 class="text-2xl font-extrabold text-slate-900 sm:text-3xl tracking-tight">Explore AI Search Trends Worldwide</h1>
+                <p class="text-slate-500 text-xs sm:text-sm">Track interest over time with real-time analytics.</p>
+            </div>
+
+            <!-- Search Box Area -->
+            <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-sm max-w-xl mx-auto">
+                <form onsubmit="event.preventDefault(); handleSearch();" class="flex flex-col sm:flex-row gap-2">
+                    <div class="relative flex-grow">
+                        <input type="text" id="keyword-input" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-800 text-xs transition" placeholder="Enter keyword, e.g. OpenAI, Claude..." value="OpenAI">
+                    </div>
+                    <button type="submit" class="bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white px-5 py-2.5 rounded-lg font-semibold text-xs transition shadow-sm whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        Generate
+                    </button>
+                </form>
+            </div>
+
+            <!-- Dashboard Wrapper -->
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                    <div class="text-xs font-medium text-slate-600">
+                        Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-sm border border-slate-200">OpenAI</span>
+                    </div>
+                </div>
+
+                <!-- Time Range Tabs -->
+                <div id="button-group" class="flex flex-wrap gap-1.5 justify-center sm:justify-start px-4">
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t1', 'now 1-H', this)">1h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t2', 'now 4-H', this)">4h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t3', 'now 1-d', this)">1d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t4', 'now 7-d', this)">7d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t5', 'today 1-m', this)">30d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t6', 'today 3-m', this)">90d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t7', 'today 12-m', this)">12m</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchTimeTab('t8', 'today 5-y', this)">5y</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t9', 'all', this)">All</button>
+                </div>
+
+                <!-- Google Chart Panels Container -->
+                <div id="chart-wrapper" class="chart-wrapper border-t border-b border-slate-200">
+                    <div id="t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t1" class="w-full h-full"></div></div>
+                    <div id="t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t2" class="w-full h-full"></div></div>
+                    <div id="t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t3" class="w-full h-full"></div></div>
+                    <div id="t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t4" class="w-full h-full"></div></div>
+                    <div id="t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t5" class="w-full h-full"></div></div>
+                    <div id="t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t6" class="w-full h-full"></div></div>
+                    <div id="t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t7" class="w-full h-full"></div></div>
+                    <div id="t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-t8" class="w-full h-full"></div></div>
+                    <div id="t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t9" class="w-full h-full"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: CATEGORY DETAIL PAGE (Split Layout: Left = Categories & Keywords, Right = Live Chart) -->
+        <section id="page-category-detail" class="block space-y-3">
+            <!-- Desktop Split Grid: Left Column & Right Column -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+
+                <!-- LEFT COLUMN: Category Header & Keyword Cards Grid (Col-span 5) -->
+                <div class="lg:col-span-5 space-y-3">
+                    <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm space-y-1">
+                        <h2 id="cat-detail-title" class="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2"></h2>
+                        <p id="cat-detail-desc" class="text-slate-500 text-xs leading-relaxed"></p>
+                    </div>
+
+                    <!-- Compact Keyword Cards Grid (Scrollable list for 30 items) -->
+                    <div id="cat-detail-grid" class="grid grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1">
+                        <!-- Dynamic Keyword Cards Loaded Here -->
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Dynamic Chart Display Area (Col-span 7) -->
+                <div id="dynamic-embed-container" class="lg:col-span-7 bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                        <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                            🔥 Selected: <span id="dynamic-kw-display" class="bg-brand-50 text-brand-600 px-2 py-0.5 rounded text-xs border border-brand-100">OpenAI</span>
+                        </div>
+                    </div>
+
+                    <!-- Chart Time Range Buttons -->
+                    <div id="dynamic-button-group" class="flex flex-wrap gap-1.5 justify-center px-4">
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t1', 'now 1-H', this)">1h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t2', 'now 4-H', this)">4h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t3', 'now 1-d', this)">1d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t4', 'now 7-d', this)">7d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t5', 'today 1-m', this)">30d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t6', 'today 3-m', this)">90d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t7', 'today 12-m', this)">12m</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchDynamicTimeTab('dyn-t8', 'today 5-y', this)">5y</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t9', 'all', this)">All</button>
+                    </div>
+
+                    <!-- Chart Multi-panel Container -->
+                    <div class="chart-wrapper border-t border-b border-slate-200" style="height: 420px;">
+                        <div id="dyn-t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t1" class="w-full h-full"></div></div>
+                        <div id="dyn-t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t2" class="w-full h-full"></div></div>
+                        <div id="dyn-t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t3" class="w-full h-full"></div></div>
+                        <div id="dyn-t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t4" class="w-full h-full"></div></div>
+                        <div id="dyn-t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t5" class="w-full h-full"></div></div>
+                        <div id="dyn-t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t6" class="w-full h-full"></div></div>
+                        <div id="dyn-t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t7" class="w-full h-full"></div></div>
+                        <div id="dyn-t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t8" class="w-full h-full"></div></div>
+                        <div id="dyn-t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t9" class="w-full h-full"></div></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Links Section -->
+    <footer class="bg-white border-t border-slate-200 py-4">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <div class="flex justify-center space-x-6 text-xs text-slate-500">
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Privacy</a>
+                <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Terms</a>
+                <a href="https://support.google.com/trends/?hl=zh-CN" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
+            </div>
+            <p class="text-[11px] text-slate-400">© trendchart. Powered by Google Trends Embed API.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Controller -->
+    <script type="text/javascript">
+        let currentKeyword = "OpenAI";
+        let currentTabId = "t8";
+        let currentTimeParam = "today 5-y";
+        let loadedTabs = {};
+
+        let currentDynamicKeyword = "OpenAI";
+        let currentDynamicTabId = "dyn-t8";
+        let currentDynamicTimeParam = "today 5-y";
+        let dynamicLoadedTabs = {};
+
+        // Keywords Data
+        const categoryData = {
+            models: {
+                title: "🤖 Trending Search Keywords",
+                description: "Explore live keyword search trends and analytics.",
+                keywords: [
+                    { name: "coritiba x grêmio", desc: "Brazilian Serie A football match between Coritiba and Grêmio." },
+                    { name: "classificações de flamengo x atlético-mg", desc: "Standings and stats for the football match between Flamengo and Atlético-MG." },
+                    { name: "quem ganhou a bola de ouro", desc: "News and updates on who won the Ballon d'Or award." },
+                    { name: "unión de santa fe x estudiantes", desc: "Argentine Primera División football match between Unión de Santa Fe and Estudiantes." },
+                    { name: "psg x lyon", desc: "Ligue 1 football match between Paris Saint-Germain and Olympique Lyonnais." },
+                    { name: "juventude x náutico", desc: "Brazilian professional football match between Juventude and Náutico." },
+                    { name: "bbas3", desc: "Stock ticker for Banco do Brasil S.A. on the Brazilian stock exchange." },
+                    { name: "nuggets x warriors", desc: "NBA regular season basketball game between Denver Nuggets and Golden State Warriors." },
+                    { name: "flavio bolsonaro eleicoes", desc: "Political news regarding Flávio Bolsonaro and Brazilian election campaigns." },
+                    { name: "willian josé", desc: "Brazilian professional footballer who plays as a striker." },
+                    { name: "américa-mg x cuiabá", desc: "Brazilian league football match between América-MG and Cuiabá." },
+                    { name: "walter koenig", desc: "American actor and writer known for his role as Pavel Chekov in Star Trek." },
+                    { name: "vivo starlink", desc: "Partnership and satellite internet services between Vivo and Starlink in Brazil." },
+                    { name: "ballon d'or", desc: "Annual football award presented by France Football to the best player in the world." },
+                    { name: "michael douglas", desc: "American actor and producer known for his career in Hollywood cinema." },
+                    { name: "habitação", desc: "Housing policies, residential real estate, and social housing programs in Brazil." },
+                    { name: "cantor", desc: "Portuguese word for singer, referencing music artists and entertainment news." },
+                    { name: "deolane bezerra", desc: "Brazilian lawyer, digital influencer, and media personality." },
+                    { name: "pagamento", desc: "Payment systems, schedule dates, and financial transaction updates." },
+                    { name: "celso freitas", desc: "Brazilian journalist and news anchor." },
+                    { name: "governo lula recua na escala 6x1", desc: "Political updates regarding the Lula administration's stance on the 6x1 work schedule." },
+                    { name: "taxas tesouro direto", desc: "Current interest rates and yields for Brazilian Treasury direct bonds." },
+                    { name: "guindaste monotrilho", desc: "Industrial overhead monorail crane equipment and infrastructure engineering." },
+                    { name: "galatasaray x fenerbahçe", desc: "Historic Turkish football derby match between Galatasaray and Fenerbahçe." },
+                    { name: "ri happy", desc: "Major Brazilian toy retail store chain." },
+                    { name: "cavaliers x timberwolves", desc: "NBA regular season basketball game between Cleveland Cavaliers and Minnesota Timberwolves." },
+                    { name: "remain calm", desc: "Phrase used in crisis communication, safety alerts, or media titles." },
+                    { name: "polícia militar de santa catarina", desc: "PMSC, the military police force of Santa Catarina state in Brazil." },
+                    { name: "demi moore", desc: "American actress and film producer." },
+                    { name: "bolsa familia pode acabar", desc: "Rumors and official facts regarding the future of the Bolsa Família social program." },
+                    { name: "alexia putellas", desc: "Spanish professional footballer and winner of multiple Ballon d'Or Féminin awards." },
+                    { name: "eleições sérvia", desc: "Elections, political voting, and parliamentary outcome in Serbia." },
+                    { name: "yaxel lendeborg", desc: "College basketball player for the UAB Blazers." },
+                    { name: "pc gamer", desc: "Custom gaming hardware, PC gaming news, hardware specs, and software updates." },
+                    { name: "lula escala 6x1", desc: "Government proposals and public debate on the 6x1 workweek shift in Brazil." },
+                    { name: "margaret qualley", desc: "American actress known for her roles in film and television series." },
+                    { name: "bolsa família", desc: "Brazil's primary federal social welfare and cash transfer program." },
+                    { name: "dazn", desc: "Global over-the-top sports live streaming platform." },
+                    { name: "governo", desc: "Government policies, legislative measures, and public administration news." },
+                    { name: "gasolina", desc: "Fuel pricing trends, state taxes, and oil industry updates in Brazil." },
+                    { name: "tabela do brasileirão", desc: "Official standings table for the Campeonato Brasileiro Série A." },
+                    { name: "mega sena 3075", desc: "Winning lottery numbers and draw result for Mega Sena contest 3075." },
+                    { name: "hantavirose", desc: "Hantavirus pulmonary syndrome medical warnings and prevention guidance." },
+                    { name: "bucks x pacers", desc: "NBA basketball matchup between the Milwaukee Bucks and Indiana Pacers." },
+                    { name: "eagles x cowboys", desc: "NFL football rivalry game between the Philadelphia Eagles and Dallas Cowboys." },
+                    { name: "airbnb", desc: "Online marketplace for lodging, short-term homestays, and vacation rentals." },
+                    { name: "itub4", desc: "Preferred stock ticker for Itaú Unibanco on B3 stock exchange." },
+                    { name: "flavio bolsonaro foi para os eua", desc: "News reports regarding Brazilian Senator Flávio Bolsonaro's travel to the United States." },
+                    { name: "richarlison", desc: "Brazilian professional footballer playing as a forward." },
+                    { name: "nuno leal maia", desc: "Veteran Brazilian television and film actor." },
+                    { name: "sofia vergara", desc: "Colombian and American actress and television personality." },
+                    { name: "al-nassr x al wasl", desc: "Club football match between Saudi Arabia's Al-Nassr and UAE's Al Wasl." },
+                    { name: "passaporte flavio bolsonaro", desc: "Public reports and legal inquiries concerning Flávio Bolsonaro's passport." },
+                    { name: "jogo do galo", desc: "Upcoming or live match updates for Atlético Mineiro (Galo)." },
+                    { name: "graciele lacerda", desc: "Brazilian digital influencer and media figure." },
+                    { name: "gsw", desc: "Abbreviation for Golden State Warriors NBA basketball team." },
+                    { name: "flamengo hoje", desc: "Today's fixture, team news, and live updates for CR Flamengo." },
+                    { name: "golden state", desc: "Golden State Warriors NBA team or California state references." },
+                    { name: "thunder x suns", desc: "NBA basketball game between Oklahoma City Thunder and Phoenix Suns." },
+                    { name: "pensão alimentícia", desc: "Child support legal guidelines, payment obligations, and family law rules." },
+                    { name: "celtics x bulls", desc: "NBA regular season basketball game between Boston Celtics and Chicago Bulls." },
+                    { name: "grupo mateus", desc: "Major Brazilian retail and supermarket conglomerate." },
+                    { name: "classificações de brasileirão série a", desc: "Full standings and league rank in the top tier of Brazilian football." },
+                    { name: "flamengo vs atlético mineiro", desc: "Brazilian football match between CR Flamengo and Atlético Mineiro." },
+                    { name: "floresta", desc: "Environmental conservation, forestry, and Amazon rainforest protection." },
+                    { name: "gui santos", desc: "Brazilian professional basketball player playing in the NBA." },
+                    { name: "sabrina sato", desc: "Popular Brazilian television presenter, actress, and model." },
+                    { name: "heat x mavericks", desc: "NBA basketball game between Miami Heat and Dallas Mavericks." },
+                    { name: "conmebol", desc: "The South American Football Confederation governing body." },
+                    { name: "bbse3", desc: "Stock ticker for BB Seguridade Participações on the Brazilian exchange." },
+                    { name: "robert renan", desc: "Brazilian professional footballer playing as a defender." },
+                    { name: "trânsito", desc: "Real-time traffic conditions, road closures, and highway transit updates." },
+                    { name: "br-373", desc: "Major federal highway in southern Brazil." },
+                    { name: "brizola", desc: "Historical Brazilian politician Leonel Brizola and political legacy." },
+                    { name: "kings league", desc: "Seven-a-side football league created by Gerard Piqué." },
+                    { name: "lula aniversário", desc: "News and public events marking the birthday of Brazilian President Lula." },
+                    { name: "pé-de-meia", desc: "Brazilian government financial incentive program for high school students." },
+                    { name: "sevilla x osasuna", desc: "La Liga football match between Sevilla FC and CA Osasuna." },
+                    { name: "lotofacil 3814", desc: "Results and winning numbers for Lotofácil draw contest 3814." },
+                    { name: "jogos de flamengo", desc: "Full match schedule and results for CR Flamengo." },
+                    { name: "tabela brasileirao", desc: "Current championship points table for Brazilian football league." },
+                    { name: "dia do servidor público é feriado", desc: "Calendar queries about Public Servant Day as an official holiday in Brazil." },
+                    { name: "santa clara x benfica", desc: "Liga Portugal football match between Santa Clara and Benfica." },
+                    { name: "jorge carrascal", desc: "Colombian professional footballer." },
+                    { name: "brandin podziemski", desc: "American professional basketball player for the Golden State Warriors." },
+                    { name: "a lista terminal", desc: "Action thriller series titled The Terminal List." },
+                    { name: "rockets x hawks", desc: "NBA basketball matchup between Houston Rockets and Atlanta Hawks." },
+                    { name: "agressão", desc: "Police reports, criminal investigation news, and legal assault cases." },
+                    { name: "osasco voleibol clube", desc: "Professional women's volleyball team based in Osasco, Brazil." },
+                    { name: "eduardo campos", desc: "Late Brazilian politician and former governor of Pernambuco." },
+                    { name: "serie a", desc: "Top division of football leagues in Brazil or Italy." },
+                    { name: "bbdc3", desc: "Common stock ticker for Banco Bradesco S.A." },
+                    { name: "mbappe", desc: "French football superstar Kylian Mbappé." },
+                    { name: "flavio bolsonaro viajou", desc: "News reports concerning Senator Flávio Bolsonaro traveling abroad." },
+                    { name: "pedro sanchez", desc: "Pedro Sánchez, Prime Minister of Spain." },
+                    { name: "faustão", desc: "Famous Brazilian television host Fausto Silva." },
+                    { name: "elias jabbour", desc: "Brazilian economist, professor, and author." },
+                    { name: "trf 3", desc: "Federal Regional Court of the 3rd Region in Brazil." },
+                    { name: "feriado novembro", desc: "Official national public holidays scheduled in November." },
+                    { name: "hornets x wizards", desc: "NBA regular season game between Charlotte Hornets and Washington Wizards." },
+                    { name: "ios 27.2", desc: "System software update release for Apple's iOS platform." },
+                    { name: "dark", desc: "German science fiction thriller series on Netflix." },
+                    { name: "donald trump eleições brasil", desc: "Donald Trump's political statements concerning Brazilian elections." },
+                    { name: "tabela do brasileirao", desc: "Overall league ladder and points table for Brasileirão Série A." },
+                    { name: "dazn bola de ouro", desc: "DAZN streaming coverage of the Ballon d'Or ceremony." },
+                    { name: "wege3", desc: "Stock ticker for WEG S.A. on the B3 stock exchange." },
+                    { name: "campeonato brasileiro 2026", desc: "2026 season of the Campeonato Brasileiro Série A football tournament." },
+                    { name: "fonteles", desc: "Brazilian political figure or legal figure with surname Fonteles." },
+                    { name: "br-470", desc: "Federal highway running through the state of Santa Catarina, Brazil." },
+                    { name: "quina 7152", desc: "Results and drawn numbers for Quina lottery contest 7152." },
+                    { name: "classificação brasileirão", desc: "Current standings in the Brazilian football league." },
+                    { name: "vasco x flamengo", desc: "Clássico dos Milhões, famous football derby between Vasco and Flamengo." },
+                    { name: "ifix", desc: "Brazilian real estate investment trust index on B3." },
+                    { name: "subsidio diesel", desc: "Government diesel fuel subsidy regulations and transport sector policy." },
+                    { name: "psol", desc: "Socialism and Liberty Party, a left-wing political party in Brazil." },
+                    { name: "milton nascimento", desc: "Iconic Brazilian singer, songwriter, and multi-instrumentalist." },
+                    { name: "belo horizonte", desc: "Capital city of the state of Minas Gerais, Brazil." },
+                    { name: "crianca baleada na penha", desc: "News reports regarding a child shot in the Penha neighborhood." },
+                    { name: "clear", desc: "Clear Corretora financial brokerage platform or hair care brand." },
+                    { name: "sevilla", desc: "Sevilla FC, prominent Spanish football club in La Liga." },
+                    { name: "tom hanks", desc: "Academy Award-winning American actor and filmmaker." },
+                    { name: "banqueiro", desc: "Banking executives, financial sector developments, and investment banking." },
+                    { name: "instituto x deportivo riestra", desc: "Argentine football match between Instituto and Deportivo Riestra." },
+                    { name: "yamal", desc: "Lamine Yamal, young Spanish professional football star." },
+                    { name: "josé de abreu", desc: "Brazilian actor and political activist." },
+                    { name: "tabela", desc: "League table, tournament schedule, or statistical chart." },
+                    { name: "governo lula", desc: "Executive policies and legislative actions under President Luiz Inácio Lula da Silva." },
+                    { name: "xp investimentos", desc: "Major Brazilian financial management and investment brokerage firm." },
+                    { name: "premiere", desc: "Pay-per-view sports channel broadcasting Brazilian football." },
+                    { name: "ligue 1", desc: "Top tier of professional football in France." },
+                    { name: "relatório focus", desc: "Weekly Central Bank of Brazil report forecasting market economic indicators." },
+                    { name: "rodeio", desc: "Rodeo events, traditional equestrian sports, and country festivals in Brazil." },
+                    { name: "manni l. perez", desc: "Voice actress associated with video game and media projects." },
+                    { name: "camila queiroz", desc: "Brazilian actress and fashion model." },
+                    { name: "jundiaí", desc: "Municipality in the state of São Paulo, Brazil." },
+                    { name: "sports", desc: "Global sports news, live match results, and athletics." },
+                    { name: "prio3", desc: "Stock ticker for PRIO (formerly PetroRio) on the B3 stock exchange." },
+                    { name: "onde assistir flamengo e atlético mineiro", desc: "TV channel and streaming broadcast options for the Flamengo vs. Atlético-MG match." },
+                    { name: "tabela do brasileiro", desc: "Current standings for the Brazilian national football league." },
+                    { name: "galatasaray", desc: "Major Turkish sports club based in Istanbul." },
+                    { name: "conmebol libertadores feminina", desc: "South American women's continental club football tournament." },
+                    { name: "dario durigan", desc: "Executive Secretary of the Ministry of Finance in Brazil." },
+                    { name: "curitiba", desc: "Capital city of the state of Paraná in southern Brazil." },
+                    { name: "bruce willis", desc: "American former actor celebrated for action and drama films." },
+                    { name: "simh3", desc: "Stock ticker for Simpar S.A. on the Brazilian stock exchange." },
+                    { name: "giorgian de arrascaeta", desc: "Uruguayan professional footballer playing for CR Flamengo." },
+                    { name: "miami heat", desc: "NBA professional basketball team based in Miami, Florida." },
+                    { name: "guarapari", desc: "Popular coastal resort city in the state of Espírito Santo, Brazil." },
+                    { name: "sevilha osasuna 26/10/2026", desc: "La Liga match between Sevilla and Osasuna played on October 26, 2026." },
+                    { name: "campeonato brasileiro a", desc: "Top division of professional football in Brazil." },
+                    { name: "anthropic", desc: "American AI safety and research company known for creating Claude." },
+                    { name: "gelo", desc: "Ice, glaciology, or winter weather phenomena." },
+                    { name: "acoes bb", desc: "Stock equities of Banco do Brasil (BBAS3)." },
+                    { name: "bolivar", desc: "Bolivian football club Club Bolívar or currency unit." },
+                    { name: "copenhagen fc", desc: "Top-flight Danish professional football club FC Copenhagen." },
+                    { name: "anthony edwards", desc: "Star shooting guard playing for the Minnesota Timberwolves in the NBA." },
+                    { name: "jerome cadier", desc: "CEO of LATAM Airlines Brazil." },
+                    { name: "cármen lúcia", desc: "Minister of the Supreme Federal Court (STF) of Brazil." },
+                    { name: "al-ahli saudi x al-gharafa", desc: "AFC Champions League fixture between Al-Ahli Saudi and Al-Gharafa." },
+                    { name: "classificação", desc: "League table standings, sports ranks, or qualification status." },
+                    { name: "ayrton senna", desc: "Legendary three-time Formula One World Champion from Brazil." },
+                    { name: "ana júlia ribeiro", desc: "Young Brazilian student leader and state deputy." },
+                    { name: "guerra das rosas", desc: "The War of the Roses, historical English civil conflict or dramatic adaptation." },
+                    { name: "bola de ouro 2025", desc: "2025 Ballon d'Or award ceremony and winners." },
+                    { name: "gabriel delfim", desc: "Young goalkeeper playing for Atlético Mineiro." },
+                    { name: "classificação da série a", desc: "Official standings table for the top division of Brazilian football." },
+                    { name: "al quadisiya x al-sadd", desc: "Asian club football match between Al Qadsiah and Al-Sadd." },
+                    { name: "fk neftchi farg'ona x al-ittihad", desc: "Asian continental club football match." },
+                    { name: "live nation entertainment", desc: "Global live entertainment and concert ticketing company." },
+                    { name: "premio socrates", desc: "Socrates Award presented at the Ballon d'Or to honor humanitarian work." },
+                    { name: "classificação do campeonato brasileiro série a", desc: "Detailed points table for the Brazilian Série A football league." },
+                    { name: "messi cup", desc: "Youth football tournament associated with Lionel Messi." },
+                    { name: "alos3", desc: "Stock ticker for Allos S.A. on the Brazilian stock market." },
+                    { name: "independiente santa fe", desc: "Major professional football club based in Bogotá, Colombia." },
+                    { name: "valor", desc: "Valor Econômico, major financial newspaper in Brazil." },
+                    { name: "filipe luís", desc: "Former professional defender and current football manager." },
+                    { name: "feriados novembro", desc: "Calendar of national public holidays during November." },
+                    { name: "getulio vargas", desc: "Former President and influential historical leader of Brazil." },
+                    { name: "bhia3", desc: "Stock ticker for Casas Bahia Group on B3." },
+                    { name: "a nobreza do amor resumo", desc: "Plot summary and episode recap for television drama A Nobreza do Amor." },
+                    { name: "minnesota timberwolves", desc: "NBA basketball team based in Minneapolis, Minnesota." },
+                    { name: "pssa3", desc: "Stock ticker for Porto Seguro S.A. on B3." },
+                    { name: "ángelo preciado", desc: "Ecuadorean professional footballer." },
+                    { name: "da lua hoje", desc: "Current moon phase and astronomical details." },
+                    { name: "papudinha", desc: "Regional nickname or viral topic in Brazilian media." },
+                    { name: "besiktas", desc: "Beşiktaş JK, major sports club based in Istanbul, Turkey." },
+                    { name: "indice bovespa", desc: "Ibovespa, benchmark stock market index of B3 in São Paulo." },
+                    { name: "entregador", desc: "Delivery workers, gig economy labor rights, and logistics apps." },
+                    { name: "denzel washington", desc: "Academy Award-winning American actor and director." },
+                    { name: "spotify", desc: "Global audio streaming platform for music and podcasts." },
+                    { name: "novas eleições", desc: "Political proposals and constitutional rules for holding special elections." },
+                    { name: "corrida", desc: "Running, marathons, automotive racing, or motorsport events." },
+                    { name: "terra", desc: "Major Brazilian news portal, internet service provider, and media platform." },
+                    { name: "jaguares de córdoba x llaneros fc", desc: "Colombian football match between Jaguares de Córdoba and Llaneros FC." },
+                    { name: "tiro na cabeça", desc: "Police crime reports and emergency news regarding gunshot incidents." },
+                    { name: "brasileiro 2026", desc: "2026 season of the national Brazilian football championship." },
+                    { name: "süper lig", desc: "Top level of the professional football league system in Turkey." },
+                    { name: "braskem", desc: "Major Brazilian petrochemical manufacturing company." },
+                    { name: "nacional potosí guabira 26/10/2026", desc: "Bolivian football match between Nacional Potosí and Guabirá on October 26, 2026." },
+                    { name: "especialização", desc: "Postgraduate education, professional specialization, and career courses." },
+                    { name: "unai simón", desc: "Spanish professional goalkeeper playing for Athletic Bilbao and Spain." },
+                    { name: "timberwolves", desc: "Minnesota Timberwolves NBA basketball franchise." },
+                    { name: "classificacao brasileirao", desc: "League table ladder for the Brazilian Série A championship." },
+                    { name: "ipad mini", desc: "Compact tablet computer created and marketed by Apple." },
+                    { name: "boat", desc: "Boating, nautical vessels, and maritime leisure." },
+                    { name: "fgv", desc: "Fundação Getulio Vargas, prestigious higher education and economic research institution." },
+                    { name: "próximo jogo do inter", desc: "Schedule and fixture details for SC Internacional's next match." },
+                    { name: "campeonato argentino", desc: "Top-flight Argentine football league competition." },
+                    { name: "cooper flagg", desc: "Highly rated American college basketball prospect." },
+                    { name: "mika godts", desc: "Belgian professional footballer playing for Ajax." },
+                    { name: "psb", desc: "Brazilian Socialist Party (Partido Socialista Brasileiro)." },
+                    { name: "superliga brasileira de voleibol feminino - série a", desc: "Top tier women's professional volleyball league in Brazil." },
+                    { name: "dudu", desc: "Brazilian professional footballer playing for Palmeiras." },
+                    { name: "univ de chile x everton", desc: "Chilean football match between Universidad de Chile and Everton de Viña del Mar." },
+                    { name: "serie a 2026", desc: "2026 edition of the top-flight football league in Brazil or Italy." },
+                    { name: "pomo4", desc: "Preferred stock ticker for Marcopolo S.A." },
+                    { name: "csna3", desc: "Stock ticker for Companhia Siderúrgica Nacional (CSN) on B3." },
+                    { name: "cbs", desc: "Major American broadcast television and radio network." },
+                    { name: "copenhague x odense bk", desc: "Danish Superliga football match between FC Copenhagen and Odense BK." },
+                    { name: "club técnico universitario x mushuc runa", desc: "Ecuadorean football match between Técnico Universitario and Mushuc Runa." },
+                    { name: "noticias agricolas", desc: "Agribusiness news portal tracking commodities, crops, and weather." },
+                    { name: "dpdf", desc: "Public Defender's Office of the Federal District in Brazil." },
+                    { name: "lcp", desc: "Complementary Law (Lei Complementar) or public sector legal term." },
+                    { name: "black friday", desc: "Annual global shopping event featuring retail discounts." },
+                    { name: "mogi x unifacisa", desc: "NBB professional basketball game in Brazil between Mogi and Unifacisa." },
+                    { name: "jogos brasileirao", desc: "Match schedule and results for the Brazilian football league." },
+                    { name: "copa do mundo de voleibol feminino", desc: "FIVB Volleyball Women's World Cup tournament." },
+                    { name: "trabzonspor", desc: "Major Turkish football club based in Trabzon." },
+                    { name: "jair renan", desc: "Jair Renan Bolsonaro, public figure and son of Jair Bolsonaro." },
+                    { name: "lei", desc: "Legislative acts, federal bills, and legal regulations in Brazil." },
+                    { name: "claudia sheinbaum", desc: "President of Mexico." },
+                    { name: "charlyn corral", desc: "Mexican women's international footballer." },
+                    { name: "lua cheia", desc: "Full moon phase calendar and night sky observations." },
+                    { name: "ourinhos", desc: "Municipality in the interior of São Paulo state, Brazil." },
+                    { name: "classificações de al-ahli x al-gharafa", desc: "Match stats and standings for Al-Ahli vs. Al-Gharafa." },
+                    { name: "unión santa fe estudiantes 26/10/2026", desc: "Argentine football match between Unión Santa Fe and Estudiantes on October 26, 2026." },
+                    { name: "burna boy", desc: "Afrobeats singer, songwriter, and global recording artist." },
+                    { name: "tse certificado de votação", desc: "Electoral voting clearance certificate issued by Brazil's Superior Electoral Court." },
+                    { name: "raiz4", desc: "Stock ticker for Raízen S.A. on the B3 stock exchange." },
+                    { name: "celtics", desc: "Boston Celtics NBA basketball team." },
+                    { name: "quantos votos tiveram depois das 17h", desc: "Electoral vote counting questions regarding ballots cast after poll closing time." },
+                    { name: "dolar turismo", desc: "Exchange rate for tourism U.S. dollar in Brazil." },
+                    { name: "ações bradesco", desc: "Equities and share prices for Banco Bradesco." },
+                    { name: "luis de la fuente", desc: "Head coach of the Spain national men's football team." },
+                    { name: "bloomberg", desc: "Global financial news, market analytics, and business media." },
+                    { name: "gustavo lima", desc: "Popular Brazilian sertanejo singer and musician." },
+                    { name: "bacen", desc: "Central Bank of Brazil (Banco Central do Brasil)." },
+                    { name: "superliga masculina", desc: "Top tier men's professional volleyball league in Brazil." },
+                    { name: "copasa", desc: "Water and sanitation utility company of Minas Gerais state." },
+                    { name: "john leguizamo", desc: "American actor, comedian, and producer." },
+                    { name: "keanu reeves", desc: "Canadian actor known for Matrix and John Wick film franchises." },
+                    { name: "google play", desc: "Digital storefront for Android apps, games, and media." },
+                    { name: "aguinaldo silva", desc: "Prominent Brazilian telenovela writer and playwright." },
+                    { name: "pere romeu", desc: "Head coach of FC Barcelona Femení." },
+                    { name: "diego caito", desc: "Young professional footballer." },
+                    { name: "sophie turner", desc: "English actress famous for Game of Thrones." },
+                    { name: "ggbr4", desc: "Preferred stock ticker for Gerdau S.A. on B3." },
+                    { name: "nsa", desc: "National Security Agency in the United States." },
+                    { name: "itatiaia", desc: "Radio Itatiaia news network or Itatiaia municipality in Rio de Janeiro." },
+                    { name: "nazista", desc: "Historical and political news addressing neo-Nazism and legal prohibitions." },
+                    { name: "resumo avenida brasil", desc: "Episode summaries for the iconic Brazilian telenovela Avenida Brasil." },
+                    { name: "flamengo joga hoje", desc: "Information on whether CR Flamengo is playing a match today." },
+                    { name: "lotomania 2992", desc: "Results and winning numbers for Lotomania contest 2992." },
+                    { name: "brasileiro a", desc: "Top tier division of Brazilian national football." },
+                    { name: "cotacao euro", desc: "Current exchange rate of the Euro against the Brazilian Real." },
+                    { name: "tnt", desc: "TNT Sports entertainment and broadcasting cable network." },
+                    { name: "obama", desc: "Barack Obama, 44th President of the United States." },
+                    { name: "whatsapp whatsapp", desc: "Popular cross-platform messaging application." },
+                    { name: "ion", desc: "Itaú Íon investment platform app." },
+                    { name: "seria a", desc: "Série A professional football league." },
+                    { name: "aitana bonmatí", desc: "Spanish football star and recipient of the Ballon d'Or Féminin." },
+                    { name: "video nikolas nordeste", desc: "Viral video and political statements by Nikolas Ferreira regarding Northeastern Brazil." },
+                    { name: "deportivo riestra", desc: "Argentine football club based in Buenos Aires." },
+                    { name: "combustível", desc: "Fuel market prices, ethanol, gasoline, and bioenergy updates." },
+                    { name: "posiciones de psg contra olympique de lyon", desc: "Match statistics and player ratings for PSG vs. Lyon." },
+                    { name: "local de prova enem", desc: "Exam center venue assignments for Brazil's ENEM national exam." },
+                    { name: "worlds 2026", desc: "League of Legends World Championship tournament." },
+                    { name: "cata coll", desc: "Spanish women's football goalkeeper playing for FC Barcelona and Spain." },
+                    { name: "patrícia poeta", desc: "Brazilian journalist and television presenter." },
+                    { name: "que horas começa quem ama cuida hoje", desc: "TV broadcast schedule for the program Quem Ama Cuida." },
+                    { name: "antena1", desc: "Major radio broadcast network in Brazil." },
+                    { name: "dol", desc: "Diário Oficial da União or U.S. Dollar currency abbreviation." },
+                    { name: "alex poatan", desc: "Alex Pereira, Brazilian UFC champion mixed martial artist." },
+                    { name: "globoesporte", desc: "Major Brazilian sports news portal by Grupo Globo." },
+                    { name: "zé felipe", desc: "Brazilian sertanejo singer." },
+                    { name: "abev3", desc: "Stock ticker for Ambev S.A. on the B3 stock exchange." },
+                    { name: "tempo", desc: "Weather forecasts, ambient temperature, and meteorological alerts." },
+                    { name: "android", desc: "Mobile operating system developed by Google." },
+                    { name: "incêndio", desc: "Fire department emergency calls and urban or forest fire incidents." },
+                    { name: "dolar canadense", desc: "Exchange rate of the Canadian Dollar against the Brazilian Real." },
+                    { name: "tati machado", desc: "Brazilian television journalist and entertainment presenter." },
+                    { name: "vulcão", desc: "Volcanic eruptions, seismic activity, and geological monitoring." },
+                    { name: "libra hoje", desc: "Current exchange rate of the British Pound Sterling." },
+                    { name: "diário oficial da união", desc: "Official gazette of the federal government of Brazil publishing laws and decrees." },
+                    { name: "invest", desc: "Personal finance, asset allocation, and stock market investments." },
+                    { name: "snel11", desc: "Real estate or energy sector investment fund ticker." },
+                    { name: "campo grande news", desc: "Local news portal serving Campo Grande, Mato Grosso do Sul." },
+                    { name: "midiamax", desc: "Regional news outlet in Mato Grosso do Sul, Brazil." },
+                    { name: "g1 goias", desc: "Regional news hub for Goiás state on Globo's G1 portal." },
+                    { name: "itub", desc: "NYSE stock ticker for Itaú Unibanco Holding S.A." },
+                    { name: "bcb", desc: "Banco Central do Brasil, Brazil's central bank authority." },
+                    { name: "ibovespa o que é", desc: "Explanations and overview of the Bovespa stock index." },
+                    { name: "honda hr-v", desc: "Popular compact crossover SUV produced by Honda." },
+                    { name: "indústria", desc: "Manufacturing sector, industrial production, and economic output." },
+                    { name: "galho", desc: "Tree branches, power line hazards, and urban maintenance news." },
+                    { name: "lamelo ball", desc: "Star NBA point guard playing for the Charlotte Hornets." },
+                    { name: "situação de inundação próxima ao rio uruguai", desc: "Flood warnings and water level alerts along the Uruguay River." },
+                    { name: "cruzeiro sub 20", desc: "Cruzeiro Esporte Clube under-20 youth football squad." },
+                    { name: "previsão do tempo curitiba", desc: "Weather forecast for the city of Curitiba." },
+                    { name: "sanb11", desc: "Unit stock ticker for Banco Santander Brasil on B3." },
+                    { name: "ingressos gremio", desc: "Ticket sales and box office access for Grêmio football matches." },
+                    { name: "show iron maiden sao paulo", desc: "Concert updates and venue info for Iron Maiden performing in São Paulo." },
+                    { name: "b.o.a.t", desc: "Boating, marine vessels, or music release acronym." },
+                    { name: "messi", desc: "Lionel Messi, iconic Argentine professional footballer." },
+                    { name: "nauhany vitória leme da silva", desc: "Young Brazilian tennis athlete." },
+                    { name: "katia abreu", desc: "Brazilian politician and former Senator." },
+                    { name: "nicki minaj", desc: "Trinidadian-born rapper and global pop culture icon." },
+                    { name: "caixa economica", desc: "Caixa Econômica Federal, major state-owned Brazilian bank." },
+                    { name: "al-nassr - al wasl", desc: "Asian club football fixture between Al-Nassr and Al Wasl." },
+                    { name: "jogo aberto ao vivo", desc: "Live broadcast of the sports show Jogo Aberto." },
+                    { name: "amer3", desc: "Stock ticker for Americanas S.A. on B3." },
+                    { name: "noticias hoje", desc: "Latest breaking news headlines for today." },
+                    { name: "vale ações", desc: "Equities and stock valuation for mining giant Vale S.A. (VALE3)." },
+                    { name: "al ain", desc: "Al Ain FC, professional football club based in the UAE." },
+                    { name: "benfica fc", desc: "S.L. Benfica, major Portuguese football club based in Lisbon." },
+                    { name: "tots3", desc: "Stock ticker for Totvs S.A. on the Brazilian stock exchange." },
+                    { name: "boeing 747", desc: "Wide-body commercial airliner and cargo aircraft." },
+                    { name: "claude ai", desc: "Artificial intelligence chatbot developed by Anthropic." },
+                    { name: "nikolas ferreira flavio bolsonaro", desc: "Political alliance and news involving Nikolas Ferreira and Flávio Bolsonaro." },
+                    { name: "b3 investidor", desc: "Official investor portal for B3, the Brazilian stock exchange." },
+                    { name: "navio", desc: "Maritime transport, cruise liners, and cargo shipping." },
+                    { name: "andre fernandes", desc: "Brazilian politician and federal deputy." },
+                    { name: "delegada maria corsato", desc: "Brazilian police chief involved in high-profile criminal investigations." },
+                    { name: "gasolina hoje", desc: "Average price of gasoline today in Brazilian cities." },
+                    { name: "árvore", desc: "Urban forestry, environmental management, and tree pruning news." },
+                    { name: "tom brady", desc: "Seven-time Super Bowl champion NFL quarterback." },
+                    { name: "cyanide", desc: "Chemical compound, industrial safety, and toxicology." },
+                    { name: "bagagem", desc: "Airline baggage policies, carry-on limits, and airport regulations." },
+                    { name: "al ittihad", desc: "Al-Ittihad Club, major Saudi Arabian professional football team." },
+                    { name: "imprensa nacional", desc: "Official government publishing agency of Brazil." },
+                    { name: "eleicoes israel", desc: "Elections, voting results, and government coalition in Israel." },
+                    { name: "info", desc: "Informational updates, general knowledge, and tech support." },
+                    { name: "montpellier fc", desc: "French professional football club Montpellier HSC." },
+                    { name: "viatura", desc: "Police patrol vehicles and emergency response units." },
+                    { name: "tempo porto alegre", desc: "Weather forecast and rain alerts for Porto Alegre." },
+                    { name: "1", desc: "The number one or top ranking indicator." },
+                    { name: "jermaine pennant", desc: "Former English professional footballer." },
+                    { name: "previsão do tempo joinville", desc: "Weather forecast for the city of Joinville, Santa Catarina." },
+                    { name: "g1 campinas", desc: "Regional news channel for Campinas on Globo's G1 network." },
+                    { name: "sgp", desc: "Public management system or organizational abbreviation." },
+                    { name: "r7 noticias", desc: "News portal by Record TV in Brazil." },
+                    { name: "komanche", desc: "Popular gaming streamer or Comanche Native American history." }
+
+                ]
+            }
+        };
+
+        // Page Navigation Switcher
+        function switchPage(page) {
+            const homeSec = document.getElementById('page-home');
+            const catDetailSec = document.getElementById('page-category-detail');
+
+            const navHome = document.getElementById('nav-home');
+            const navExplore = document.getElementById('nav-explore');
+
+            homeSec.className = "hidden space-y-4";
+            catDetailSec.className = "hidden space-y-3";
+
+            const defaultNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+            const activeNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm";
+
+            navHome.className = defaultNavClass;
+            navExplore.className = defaultNavClass;
+
+            if (page === 'home') {
+                homeSec.className = "block space-y-4";
+                navHome.className = activeNavClass;
+            } else if (page === 'category-detail') {
+                catDetailSec.className = "block space-y-3";
+                navExplore.className = activeNavClass;
+            }
+        }
+
+        // Open Category Detail Page with Expanded Keywords
+        function openCategoryPage(catKey) {
+            const catInfo = categoryData[catKey];
+            if (!catInfo) return;
+
+            document.getElementById('cat-detail-title').innerText = catInfo.title;
+            document.getElementById('cat-detail-desc').innerText = catInfo.description;
+
+            const gridContainer = document.getElementById('cat-detail-grid');
+            gridContainer.innerHTML = "";
+
+            catInfo.keywords.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded-lg border border-slate-200 shadow-sm hover:shadow hover:border-brand-500 transition cursor-pointer flex flex-col justify-between space-y-1 group";
+                card.onclick = () => selectDynamicKeyword(item.name);
+                card.innerHTML = `
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-xs group-hover:text-brand-500 transition truncate">${item.name}</h4>
+                                    <p class="text-[10px] text-slate-500 line-clamp-1">${item.desc}</p>
+                                </div>
+                            `;
+                gridContainer.appendChild(card);
+            });
+
+            if (catInfo.keywords.length > 0) {
+                selectDynamicKeyword(catInfo.keywords[0].name);
+            }
+
+            switchPage('category-detail');
+        }
+
+        // Select dynamic keyword from category grid
+        function selectDynamicKeyword(keyword) {
+            currentDynamicKeyword = keyword;
+            document.getElementById('dynamic-kw-display').innerText = keyword;
+            dynamicLoadedTabs = {};
+
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('dyn-t8').classList.add('active');
+
+            currentDynamicTabId = 'dyn-t8';
+            currentDynamicTimeParam = 'today 5-y';
+
+            renderDynamicTrendsChart(currentDynamicTabId, currentDynamicTimeParam);
+        }
+
+        // Safe poll check for Google SDK readiness
+        function checkTrendsLoaded(callback) {
+            if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+                callback();
+            } else {
+                let retries = 0;
+                const timer = setInterval(() => {
+                    retries++;
+                    if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+                        clearInterval(timer);
+                        callback();
+                    } else if (retries > 100) {
+                        clearInterval(timer);
+                        console.warn("Google Trends script loading timed out.");
+                    }
+                }, 100);
+            }
+        }
+
+        // Render Google Trends embed chart for Home
+        function renderTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentKeyword);
+            const cacheKey = `${currentKeyword}_${tabId}`;
+
+            if (loadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = "";
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    loadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Render Google Trends embed chart for Dynamic Section in Category Detail Page
+        function renderDynamicTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentDynamicKeyword);
+            const cacheKey = `${currentDynamicKeyword}_${tabId}`;
+
+            if (dynamicLoadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = "";
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentDynamicKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    dynamicLoadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Dynamic Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Handle Search Form Submit on Home
+        function handleSearch() {
+            const inputVal = document.getElementById('keyword-input').value.trim();
+            if (!inputVal) return;
+
+            currentKeyword = inputVal;
+            document.getElementById('kw-display').innerText = currentKeyword;
+            loadedTabs = {};
+
+            const buttons = document.querySelectorAll('.time-btn');
+            buttons.forEach(btn => {
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#page-home .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('t8').classList.add('active');
+
+            currentTabId = 't8';
+            currentTimeParam = 'today 5-y';
+
+            renderTrendsChart(currentTabId, currentTimeParam);
+        }
+
+        // Switch Time Tabs for Home
+        function switchTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.time-btn');
+            buttons.forEach(btn => {
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#page-home .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentTabId = tabId;
+            currentTimeParam = timeParam;
+
+            renderTrendsChart(tabId, timeParam);
+        }
+
+        // Switch Time Tabs for Dynamic Section in Category Detail Page
+        function switchDynamicTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentDynamicTabId = tabId;
+            currentDynamicTimeParam = timeParam;
+
+            renderDynamicTrendsChart(tabId, timeParam);
+        }
+
+        // Initial Load Event
+        window.addEventListener('load', () => {
+            openCategoryPage('models');
+            renderTrendsChart('t8', 'today 5-y');
+        });
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NCYS6Q44WF"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-NCYS6Q44WF');
+    </script>
+</body>
+</html>

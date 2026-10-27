@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="https://trendchart.ai/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TrendChart - 240+ AI & Tech Trends, Google Trends Visualizer">
+    <meta property="og:description" content="Explore live keyword search trends with interactive charts and analytics.">
+    <meta name="keywords" content="AI trends, artificial intelligence trends, generative AI, AI agents">
+    <title>TrendChart - 240+ AI & Tech Trends, Google Trends Visualizer</title>
+    <!-- Google Trends Embed Script -->
+    <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3882_RC01/embed_loader.js"></script>
+    <!-- Tailwind CSS CDN for modern responsive UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef6ff',
+                            100: '#e0eefe',
+                            500: '#1a73e8',
+                            600: '#1557b0',
+                            700: '#104494',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 440px;
+            background-color: #ffffff;
+            border-left: none;
+            border-right: none;
+            border-radius: 0 !important;
+        }
+
+        .chart-panel {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+            .chart-panel.active {
+                display: block;
+            }
+
+            .chart-panel iframe {
+                width: 100% !important;
+                height: 100% !important;
+                border: none !important;
+                position: relative;
+                z-index: 2;
+            }
+
+        .loading-notice {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-14 items-center">
+                <!-- Brand Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="switchPage('home')">
+                    <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                        📈
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-slate-900">trend<span class="text-brand-500">chart</span></span>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="flex space-x-2">
+                    <button id="nav-home" onclick="switchPage('home')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        Home
+                    </button>
+                    <button id="nav-explore" onclick="openCategoryPage('models')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm">
+                        Explore AI
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-grow w-full">
+
+        <!-- PAGE 1: HOME PAGE (Search & Chart) -->
+        <section id="page-home" class="hidden space-y-4">
+            <div class="text-center max-w-2xl mx-auto space-y-1">
+                <h1 class="text-2xl font-extrabold text-slate-900 sm:text-3xl tracking-tight">Explore AI Search Trends Worldwide</h1>
+                <p class="text-slate-500 text-xs sm:text-sm">Track interest over time with real-time analytics.</p>
+            </div>
+
+            <!-- Search Box Area -->
+            <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-sm max-w-xl mx-auto">
+                <form onsubmit="event.preventDefault(); handleSearch();" class="flex flex-col sm:flex-row gap-2">
+                    <div class="relative flex-grow">
+                        <input type="text" id="keyword-input" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-800 text-xs transition" placeholder="Enter keyword, e.g. OpenAI, Claude..." value="OpenAI">
+                    </div>
+                    <button type="submit" class="bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white px-5 py-2.5 rounded-lg font-semibold text-xs transition shadow-sm whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        Generate
+                    </button>
+                </form>
+            </div>
+
+            <!-- Dashboard Wrapper -->
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                    <div class="text-xs font-medium text-slate-600">
+                        Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-sm border border-slate-200">OpenAI</span>
+                    </div>
+                </div>
+
+                <!-- Time Range Tabs -->
+                <div id="button-group" class="flex flex-wrap gap-1.5 justify-center sm:justify-start px-4">
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t1', 'now 1-H', this)">1h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t2', 'now 4-H', this)">4h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t3', 'now 1-d', this)">1d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t4', 'now 7-d', this)">7d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t5', 'today 1-m', this)">30d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t6', 'today 3-m', this)">90d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t7', 'today 12-m', this)">12m</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchTimeTab('t8', 'today 5-y', this)">5y</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t9', 'all', this)">All</button>
+                </div>
+
+                <!-- Google Chart Panels Container -->
+                <div id="chart-wrapper" class="chart-wrapper border-t border-b border-slate-200">
+                    <div id="t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t1" class="w-full h-full"></div></div>
+                    <div id="t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t2" class="w-full h-full"></div></div>
+                    <div id="t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t3" class="w-full h-full"></div></div>
+                    <div id="t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t4" class="w-full h-full"></div></div>
+                    <div id="t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t5" class="w-full h-full"></div></div>
+                    <div id="t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t6" class="w-full h-full"></div></div>
+                    <div id="t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t7" class="w-full h-full"></div></div>
+                    <div id="t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-t8" class="w-full h-full"></div></div>
+                    <div id="t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t9" class="w-full h-full"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: CATEGORY DETAIL PAGE (Split Layout: Left = Categories & Keywords, Right = Live Chart) -->
+        <section id="page-category-detail" class="block space-y-3">
+            <!-- Desktop Split Grid: Left Column & Right Column -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+
+                <!-- LEFT COLUMN: Category Header & Keyword Cards Grid (Col-span 5) -->
+                <div class="lg:col-span-5 space-y-3">
+                    <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm space-y-1">
+                        <h2 id="cat-detail-title" class="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2"></h2>
+                        <p id="cat-detail-desc" class="text-slate-500 text-xs leading-relaxed"></p>
+                    </div>
+
+                    <!-- Compact Keyword Cards Grid (Scrollable list for 30 items) -->
+                    <div id="cat-detail-grid" class="grid grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1">
+                        <!-- Dynamic Keyword Cards Loaded Here -->
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Dynamic Chart Display Area (Col-span 7) -->
+                <div id="dynamic-embed-container" class="lg:col-span-7 bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                        <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                            🔥 Selected: <span id="dynamic-kw-display" class="bg-brand-50 text-brand-600 px-2 py-0.5 rounded text-xs border border-brand-100">OpenAI</span>
+                        </div>
+                    </div>
+
+                    <!-- Chart Time Range Buttons -->
+                    <div id="dynamic-button-group" class="flex flex-wrap gap-1.5 justify-center px-4">
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t1', 'now 1-H', this)">1h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t2', 'now 4-H', this)">4h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t3', 'now 1-d', this)">1d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t4', 'now 7-d', this)">7d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t5', 'today 1-m', this)">30d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t6', 'today 3-m', this)">90d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t7', 'today 12-m', this)">12m</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchDynamicTimeTab('dyn-t8', 'today 5-y', this)">5y</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t9', 'all', this)">All</button>
+                    </div>
+
+                    <!-- Chart Multi-panel Container -->
+                    <div class="chart-wrapper border-t border-b border-slate-200" style="height: 420px;">
+                        <div id="dyn-t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t1" class="w-full h-full"></div></div>
+                        <div id="dyn-t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t2" class="w-full h-full"></div></div>
+                        <div id="dyn-t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t3" class="w-full h-full"></div></div>
+                        <div id="dyn-t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t4" class="w-full h-full"></div></div>
+                        <div id="dyn-t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t5" class="w-full h-full"></div></div>
+                        <div id="dyn-t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t6" class="w-full h-full"></div></div>
+                        <div id="dyn-t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t7" class="w-full h-full"></div></div>
+                        <div id="dyn-t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t8" class="w-full h-full"></div></div>
+                        <div id="dyn-t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t9" class="w-full h-full"></div></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Links Section -->
+    <footer class="bg-white border-t border-slate-200 py-4">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <div class="flex justify-center space-x-6 text-xs text-slate-500">
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Privacy</a>
+                <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Terms</a>
+                <a href="https://support.google.com/trends/?hl=zh-CN" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
+            </div>
+            <p class="text-[11px] text-slate-400">© trendchart. Powered by Google Trends Embed API.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Controller -->
+    <script type="text/javascript">
+        let currentKeyword = "OpenAI";
+        let currentTabId = "t8";
+        let currentTimeParam = "today 5-y";
+        let loadedTabs = {};
+
+        let currentDynamicKeyword = "OpenAI";
+        let currentDynamicTabId = "dyn-t8";
+        let currentDynamicTimeParam = "today 5-y";
+        let dynamicLoadedTabs = {};
+
+        // Keywords Data
+        const categoryData = {
+            models: {
+                title: "🤖 Trending Search Keywords",
+                description: "Explore live keyword search trends and analytics.",
+                keywords: [
+                    { name: "persija jakarta vs persik", desc: "Indonesian Liga 1 football match between Persija Jakarta and Persik Kediri." },
+                    { name: "persebaya vs madura united", desc: "Indonesian Liga 1 derby match between Persebaya Surabaya and Madura United." },
+                    { name: "klasemen psg vs olympique lyonnais", desc: "League standings update for Paris Saint-Germain vs Olympique Lyonnais in Ligue 1." },
+                    { name: "al-nassr vs al wasl", desc: "Club football match between Saudi Arabia's Al-Nassr and UAE's Al Wasl." },
+                    { name: "bhayangkara fc vs psm makassar", desc: "Indonesian Liga 1 football match between Bhayangkara FC and PSM Makassar." },
+                    { name: "harry kane", desc: "English professional footballer playing as a striker for Bayern Munich and England." },
+                    { name: "galatasaray vs fenerbahçe", desc: "The Intercontinental Derby football rivalry match between Galatasaray and Fenerbahçe." },
+                    { name: "sevilla vs osasuna", desc: "La Liga football match between Sevilla FC and CA Osasuna." },
+                    { name: "balon de oro 2026", desc: "Spanish coverage and updates for the 2026 Ballon d'Or ceremony." },
+                    { name: "yuliana sagala", desc: "Indonesian public figure and government official." },
+                    { name: "nuggets vs warriors", desc: "NBA regular season basketball game between Denver Nuggets and Golden State Warriors." },
+                    { name: "rizespor vs trabzonspor", desc: "Turkish Süper Lig football match between Rizespor and Trabzonspor." },
+                    { name: "ayo senyumlah jkt48", desc: "Single title and musical performance by Indonesian idol group JKT48." },
+                    { name: "klasemen timnas u15 piala dunia", desc: "Tournament standings for the U-15 national team in world championship competitions." },
+                    { name: "psg vs ol", desc: "Ligue 1 football match between Paris Saint-Germain and Olympique Lyonnais." },
+                    { name: "alexia putellas", desc: "Spanish professional footballer and winner of multiple Ballon d'Or Féminin awards." },
+                    { name: "xxi", desc: "Cinema XXI, major movie theater chain in Indonesia." },
+                    { name: "alex marquez", desc: "Spanish professional motorcycle racer competing in MotoGP." },
+                    { name: "biskuit marie", desc: "Popular traditional round sweet biscuit snack." },
+                    { name: "yaxel lendeborg", desc: "College basketball player for the UAB Blazers." },
+                    { name: "cekbansos", desc: "Official Indonesian social assistance portal to check beneficiary welfare status." },
+                    { name: "febrie adriansyah", desc: "Indonesian prosecutor and senior official at the Attorney General's Office." },
+                    { name: "28 oktober 2026 memperingati hari apa", desc: "Public query regarding Youth Pledge Day (Hari Sumpah Pemuda) in Indonesia on October 28, 2026." },
+                    { name: "komando pasukan khusus", desc: "Kopassus, the special forces command of the Indonesian Army." },
+                    { name: "sinetron terikat janji", desc: "Indonesian television drama soap opera series." },
+                    { name: "gandung pardiman", desc: "Indonesian politician and member of the House of Representatives." },
+                    { name: "demo 28 oktober 2026", desc: "Public rallies and student demonstrations organized on Youth Pledge Day 2026." },
+                    { name: "nicki minaj", desc: "Trinidadian-born rapper and global pop culture icon." },
+                    { name: "investor", desc: "Financial market analysis, venture capital, and investment strategies." },
+                    { name: "johanis tanak", desc: "Indonesian lawyer and commissioner of the Corruption Eradication Commission (KPK)." },
+                    { name: "blt kesra", desc: "Bantuan Langsung Tunai, Indonesian government direct cash assistance program." },
+                    { name: "al-qadisiyah vs al sadd", desc: "Asian club football fixture between Al-Qadsiah and Al Sadd." },
+                    { name: "games", desc: "Video games, interactive media, and electronic sports entertainment." },
+                    { name: "heat vs mavericks", desc: "NBA basketball matchup between Miami Heat and Dallas Mavericks." },
+                    { name: "ballon d'or 2026 winner", desc: "Winner announcements and awards coverage for the 2026 Ballon d'Or." },
+                    { name: "dividen", desc: "Financial dividend distribution payouts for stock market shareholders." },
+                    { name: "megawati soekarnoputri", desc: "Former President of Indonesia and chairperson of the PDI-P political party." },
+                    { name: "fc neftchi fergana vs ittihad fc", desc: "Asian continental club football match between Neftchi Fergana and Al-Ittihad." },
+                    { name: "kopa trophy", desc: "Annual football award presented to the best performing player under the age of 21." },
+                    { name: "santa clara vs benfica", desc: "Liga Portugal football match between Santa Clara and Benfica." },
+                    { name: "tanggal merah oktober 2026", desc: "National public holidays and official calendar days off in October 2026." },
+                    { name: "internet", desc: "Global telecommunications network, connectivity, and broadband technology." },
+                    { name: "sevilla", desc: "Sevilla FC, prominent Spanish professional football club based in Seville." },
+                    { name: "benfica", desc: "S.L. Benfica, historic Portuguese sports club and football team based in Lisbon." },
+                    { name: "piala dfb", desc: "DFB-Pokal, annual German knockout football cup competition." },
+                    { name: "flamengo vs atletico mineiro", desc: "Brazilian Serie A football rivalry match between Flamengo and Atlético Mineiro." },
+                    { name: "cavaliers vs timberwolves", desc: "NBA basketball game between Cleveland Cavaliers and Minnesota Timberwolves." },
+                    { name: "socrates award", desc: "Humanitarian award presented at the Ballon d'Or ceremony to honor social work." },
+                    { name: "pertandingan liga 1", desc: "Fixture schedules and live results for Indonesia's top-tier Liga 1 football league." },
+                    { name: "copenhagen vs odense bk", desc: "Danish Superliga football match between FC Copenhagen and Odense BK." },
+                    { name: "beşiktaş vs istanbul bb", desc: "Istanbul derby football match between Beşiktaş and İstanbul Başakşehir." },
+                    { name: "weather", desc: "Meteorological updates, regional climate forecasts, and temperature alerts." },
+                    { name: "riyadh", desc: "Capital city and financial hub of the Kingdom of Saudi Arabia." },
+                    { name: "liga super turki", desc: "Süper Lig, the primary professional football league in Turkey." },
+                    { name: "trabzonspor", desc: "Turkish professional football club based in Trabzon." },
+                    { name: "galatasaray", desc: "Major Turkish sports club based in Istanbul." },
+                    { name: "akane yamaguchi", desc: "Japanese professional badminton player and former world number one." },
+                    { name: "thunder vs suns", desc: "NBA basketball game between Oklahoma City Thunder and Phoenix Suns." },
+                    { name: "tka kemendikdasmen go id", desc: "Official Indonesian Ministry portal for national academic capability assessment (TKA)." },
+                    { name: "bank indonesia", desc: "Central bank authority of the Republic of Indonesia." },
+                    { name: "al-ahli saudi vs al-gharafa", desc: "AFC Champions League match between Al-Ahli Saudi FC and Al-Gharafa." },
+                    { name: "cek desil bansos", desc: "Verification tool for household welfare decile status in social aid programs." },
+                    { name: "polisi", desc: "Indonesian National Police (Polri) law enforcement updates and public safety news." },
+                    { name: "bri liga 1", desc: "Indonesia's premier national professional football league competition." },
+                    { name: "siapkerja kemnaker", desc: "Indonesian Ministry of Manpower official employment service portal." },
+                    { name: "achraf hakimi", desc: "Moroccan professional footballer playing for Paris Saint-Germain." },
+                    { name: "mika godts", desc: "Belgian professional footballer playing for Ajax." },
+                    { name: "cuaca hari ini", desc: "Daily local weather forecast and atmospheric condition updates." },
+                    { name: "psg vs olympique lyon standings", desc: "League table standings for Paris Saint-Germain and Olympique Lyonnais." },
+                    { name: "dollar ke rupiah", desc: "Exchange rate conversion between the United States Dollar and Indonesian Rupiah." },
+                    { name: "besiktas", desc: "Beşiktaş JK, major Turkish sports club based in Istanbul." },
+                    { name: "julián alvarez", desc: "Argentine professional footballer playing as a forward for Atlético Madrid." },
+                    { name: "celtics vs bulls", desc: "NBA basketball game between Boston Celtics and Chicago Bulls." },
+                    { name: "soal tka bahasa inggris kelas 12", desc: "Grade 12 English high school academic assessment practice test questions." },
+                    { name: "hansi flick", desc: "German professional football manager coaching FC Barcelona." },
+                    { name: "sufmi dasco ahmad", desc: "Indonesian politician and Deputy Speaker of the House of Representatives." },
+                    { name: "ftse", desc: "Financial Times Stock Exchange index measuring UK equity market performance." },
+                    { name: "ajay mitchell", desc: "Belgian-American professional basketball player in the NBA." },
+                    { name: "liga indonesia", desc: "National professional football league system of Indonesia." },
+                    { name: "al ain", desc: "Al Ain FC, professional football club based in the United Arab Emirates." },
+                    { name: "hermanto tanoko", desc: "Prominent Indonesian billionaire businessman and entrepreneur." },
+                    { name: "psis semarang", desc: "Indonesian football club based in Semarang, Central Java." },
+                    { name: "reims", desc: "Stade de Reims, French professional football club in Ligue 1." },
+                    { name: "miguel pinto", desc: "Chilean former professional football goalkeeper." },
+                    { name: "bobotoh", desc: "Dedicated supporter base of Indonesian football club Persib Bandung." },
+                    { name: "fajar sadboy", desc: "Indonesian internet personality and entertainer." },
+                    { name: "fc andorra", desc: "Andorran professional football club playing in the Spanish football league system." },
+                    { name: "rockets vs hawks", desc: "NBA basketball game between Houston Rockets and Atlanta Hawks." },
+                    { name: "ramalan shio besok", desc: "Tomorrow's Chinese zodiac horoscope predictions and fortune updates." },
+                    { name: "fc copenhagen", desc: "Top-flight Danish professional football club based in Copenhagen." },
+                    { name: "kode redeem fc", desc: "Redemption codes for virtual rewards in FC Mobile sports video game." },
+                    { name: "unai simon", desc: "Spanish professional goalkeeper playing for Athletic Bilbao and Spain." },
+                    { name: "jadwal bioskop hari ini", desc: "Today's cinema movie showtimes and theater schedules." },
+                    { name: "benfica vs", desc: "Live score and fixture updates for S.L. Benfica football matches." },
+                    { name: "ashley young", desc: "English professional footballer playing as a full-back or winger." },
+                    { name: "serbia", desc: "Balkan nation located in Southeast Europe." },
+                    { name: "besiktas basket", desc: "Professional basketball team section of Beşiktaş JK in Turkey." },
+                    { name: "coritiba", desc: "Coritiba Foot Ball Club, Brazilian professional team based in Curitiba." },
+                    { name: "jazz vs grizzlies", desc: "NBA basketball matchup between Utah Jazz and Memphis Grizzlies." },
+                    { name: "rumah tasya farasya", desc: "Home tour and interior design feature of beauty influencer Tasya Farasya." },
+                    { name: "instituto vs deportivo riestra", desc: "Argentine Primera División match between Instituto and Deportivo Riestra." },
+                    { name: "al ittihad", desc: "Al-Ittihad Club, major Saudi Arabian professional football team in Jeddah." },
+                    { name: "konser kanye west", desc: "Live music concert tour updates for American rapper Kanye West." },
+                    { name: "peringkat liga 1", desc: "Current team standings ladder for Indonesian Liga 1 football league." },
+                    { name: "elon musk", desc: "Technology entrepreneur, CEO of Tesla, SpaceX, and xAI." },
+                    { name: "unión santa fe vs estudiantes la plata", desc: "Argentine football league match between Unión de Santa Fe and Estudiantes." },
+                    { name: "badan gizi nasional", desc: "Indonesian National Nutrition Agency overseeing public health nutrition programs." },
+                    { name: "sevila", desc: "Sevilla FC, Spanish football club based in Seville." },
+                    { name: "ballon d'or 2025", desc: "Awards ceremony and official winners for the 2025 Ballon d'Or." },
+                    { name: "praperadilan", desc: "Pre-trial hearing proceedings under the Indonesian criminal justice system." },
+                    { name: "liga1", desc: "Top division of professional football in Indonesia or Peru." },
+                    { name: "klasemen persebaya", desc: "Current standings and points tally for Persebaya Surabaya." },
+                    { name: "union de santa fe", desc: "Unión de Santa Fe, Argentine sports club based in Santa Fe." },
+                    { name: "gudang garam", desc: "Major Indonesian cigarette and tobacco manufacturing company." },
+                    { name: "pafos fc", desc: "Cypriot professional football club based in Pafos." },
+                    { name: "fc barcelona real madrid", desc: "El Clásico, legendary football rivalry between FC Barcelona and Real Madrid." },
+                    { name: "danantara", desc: "Daya Anagata Nusantara, Indonesian sovereign wealth funding entity." },
+                    { name: "independiente santa fe vs atletico bucaramanga", desc: "Colombian Categoría Primera A football match." },
+                    { name: "pertamina", desc: "Indonesian state-owned oil and natural gas corporation." },
+                    { name: "besiktas fc", desc: "Beşiktaş Football Club based in Istanbul, Turkey." },
+                    { name: "ojol dilindas mobil byd", desc: "News reports on an online motorcycle taxi accident involving a BYD vehicle." },
+                    { name: "orebro", desc: "Örebro SK, Swedish football club based in the city of Örebro." },
+                    { name: "insentif pajak", desc: "Government tax incentives, relief policies, and economic stimulus measures." },
+                    { name: "cska sofia", desc: "Bulgarian professional football club based in Sofia." },
+                    { name: "subuh", desc: "Dawn prayer time in Islamic religious practice." },
+                    { name: "isl", desc: "Indonesian Super League or Indian Super League football." },
+                    { name: "liga bri", desc: "BRI Liga 1, premier football league competition in Indonesia." },
+                    { name: "eddie howe", desc: "English professional football manager coaching Newcastle United." },
+                    { name: "mati listrik", desc: "Power outage and electricity supply disruption updates." },
+                    { name: "copa del rey", desc: "Annual knockout football competition in Spanish football." },
+                    { name: "afc champions league", desc: "Premier Asian continental club football tournament organized by the AFC." },
+                    { name: "ramalan cuaca hari ini", desc: "Today's meteorology forecast and weather outlook." },
+                    { name: "apple", desc: "American multinational technology company producing consumer electronics and software." },
+                    { name: "hajduk split", desc: "HNK Hajduk Split, Croatian professional football club." },
+                    { name: "montpellier", desc: "Montpellier HSC, French professional football club based in Montpellier." },
+                    { name: "serbian elections", desc: "Parliamentary and municipal election proceedings in Serbia." },
+                    { name: "piala asia afc 2027", desc: "2027 AFC Asian Cup international football tournament in Saudi Arabia." },
+                    { name: "kepolisian daerah banten", desc: "Polda Banten, regional police force of Banten province in Indonesia." },
+                    { name: "turkey super league", desc: "Süper Lig, top tier professional football league in Turkey." },
+                    { name: "alexandra eala", desc: "Filipina professional tennis player." },
+                    { name: "from paris with love", desc: "2010 action thriller film starring John Travolta and Jonathan Rhys Meyers." },
+                    { name: "carabao cup", desc: "EFL Cup, major domestic knockout cup competition in English football." },
+                    { name: "november 2026", desc: "Eleventh calendar month of the year 2026." },
+                    { name: "phantom blade zero review", desc: "Game reviews and gameplay analysis for action RPG Phantom Blade Zero." },
+                    { name: "emitennews.com", desc: "Indonesian financial news portal covering stock market and corporate actions." },
+                    { name: "sergio castel", desc: "Spanish professional footballer playing as a striker." },
+                    { name: "subuh jakarta", desc: "Dawn Islamic prayer schedule for the Jakarta metropolitan area." },
+                    { name: "cctv", desc: "Closed-circuit television security surveillance systems or China Central Television." },
+                    { name: "jadwal sholat surabaya", desc: "Daily Islamic prayer timetable for Surabaya, East Java." },
+                    { name: "persija vs persib", desc: "El Clásico Indonesia football rivalry match between Persija and Persib." },
+                    { name: "juventus f.c.", desc: "Italian professional football club based in Turin, Piedmont." },
+                    { name: "bursa efek", desc: "Indonesia Stock Exchange (IDX) equity trading platform." },
+                    { name: "siapa pemenang ballon d'or 2025", desc: "Inquiry regarding who won the 2025 Ballon d'Or award." },
+                    { name: "trabzonspor vs", desc: "Match fixtures and live score tracking for Trabzonspor." },
+                    { name: "ivan mamut", desc: "Croatian professional footballer playing as a forward." },
+                    { name: "playstation", desc: "Video game console brand and ecosystem developed by Sony Interactive Entertainment." },
+                    { name: "sites", desc: "Websites, internet domain locations, or construction project sites." },
+                    { name: "thunderstorm warning", desc: "Official meteorological alert for severe thunderstorms and lightning." },
+                    { name: "jorge martín", desc: "Spanish professional motorcycle racer and MotoGP World Champion." },
+                    { name: "jadwal sholat jakarta", desc: "Daily Islamic prayer time schedule for Jakarta." },
+                    { name: "indeks harga saham gabungan", desc: "IHSG, main benchmark stock index of the Indonesia Stock Exchange." },
+                    { name: "anthony edwards", desc: "Star NBA shooting guard playing for the Minnesota Timberwolves." },
+                    { name: "al ain fc", desc: "Emirati professional football club based in Al Ain." },
+                    { name: "malaysia", desc: "Southeast Asian country located on the Malay Peninsula and Borneo." },
+                    { name: "hoki", desc: "Field hockey or ice hockey sports updates, or colloquial Indonesian for luck." },
+                    { name: "john herdman", desc: "English professional football manager coaching Toronto FC." },
+                    { name: "bucks vs pacers", desc: "NBA basketball matchup between Milwaukee Bucks and Indiana Pacers." },
+                    { name: "brandon miller", desc: "American professional basketball player for the Charlotte Hornets." },
+                    { name: "live score persija", desc: "Real-time match scores and goal updates for Persija Jakarta." },
+                    { name: "menu", desc: "Dining food selections or digital software navigation interface." },
+                    { name: "bbri saham", desc: "Stock price and financial updates for Bank Rakyat Indonesia (BBRI)." },
+                    { name: "fc noah", desc: "Armenian professional football club based in Yerevan." },
+                    { name: "davide tardozzi", desc: "Ducati Lenovo Team manager in MotoGP motorcycle racing." },
+                    { name: "tpia", desc: "Stock ticker for PT Chandra Asri Petrochemical Tbk on the Indonesia Stock Exchange." },
+                    { name: "rk", desc: "Ridwan Kamil, Indonesian architect and politician." },
+                    { name: "idx composite", desc: "IHSG, major composite index tracking all listed stocks in Indonesia." },
+                    { name: "obama", desc: "Barack Obama, 44th President of the United States." },
+                    { name: "ramalan cuaca", desc: "Weather forecast predictions and atmospheric report." },
+                    { name: "jalen williams injury", desc: "Injury status and medical updates for NBA player Jalen Williams." },
+                    { name: "stanley", desc: "Stanley cup insulated drinkware or Stanley vacuum flask brand." },
+                    { name: "brazil election bolsonaro", desc: "Political updates and election coverage concerning Jair Bolsonaro in Brazil." }
+
+                ]
+            }
+        };
+
+        // Page Navigation Switcher
+        function switchPage(page) {
+            const homeSec = document.getElementById('page-home');
+            const catDetailSec = document.getElementById('page-category-detail');
+
+            const navHome = document.getElementById('nav-home');
+            const navExplore = document.getElementById('nav-explore');
+
+            homeSec.className = "hidden space-y-4";
+            catDetailSec.className = "hidden space-y-3";
+
+            const defaultNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+            const activeNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm";
+
+            navHome.className = defaultNavClass;
+            navExplore.className = defaultNavClass;
+
+            if (page === 'home') {
+                homeSec.className = "block space-y-4";
+                navHome.className = activeNavClass;
+            } else if (page === 'category-detail') {
+                catDetailSec.className = "block space-y-3";
+                navExplore.className = activeNavClass;
+            }
+        }
+
+        // Open Category Detail Page with Expanded Keywords
+        function openCategoryPage(catKey) {
+            const catInfo = categoryData[catKey];
+            if (!catInfo) return;
+
+            document.getElementById('cat-detail-title').innerText = catInfo.title;
+            document.getElementById('cat-detail-desc').innerText = catInfo.description;
+
+            const gridContainer = document.getElementById('cat-detail-grid');
+            gridContainer.innerHTML = "";
+
+            catInfo.keywords.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded-lg border border-slate-200 shadow-sm hover:shadow hover:border-brand-500 transition cursor-pointer flex flex-col justify-between space-y-1 group";
+                card.onclick = () => selectDynamicKeyword(item.name);
+                card.innerHTML = `
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-xs group-hover:text-brand-500 transition truncate">${item.name}</h4>
+                                    <p class="text-[10px] text-slate-500 line-clamp-1">${item.desc}</p>
+                                </div>
+                            `;
+                gridContainer.appendChild(card);
+            });
+
+            if (catInfo.keywords.length > 0) {
+                selectDynamicKeyword(catInfo.keywords[0].name);
+            }
+
+            switchPage('category-detail');
+        }
+
+        // Select dynamic keyword from category grid
+        function selectDynamicKeyword(keyword) {
+            currentDynamicKeyword = keyword;
+            document.getElementById('dynamic-kw-display').innerText = keyword;
+            dynamicLoadedTabs = {};
+
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('dyn-t8').classList.add('active');
+
+            currentDynamicTabId = 'dyn-t8';
+            currentDynamicTimeParam = 'today 5-y';
+
+            renderDynamicTrendsChart(currentDynamicTabId, currentDynamicTimeParam);
+        }
+
+        // Safe poll check for Google SDK readiness
+        function checkTrendsLoaded(callback) {
+            if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+                callback();
+            } else {
+                let retries = 0;
+                const timer = setInterval(() => {
+                    retries++;
+                    if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+                        clearInterval(timer);
+                        callback();
+                    } else if (retries > 100) {
+                        clearInterval(timer);
+                        console.warn("Google Trends script loading timed out.");
+                    }
+                }, 100);
+            }
+        }
+
+        // Render Google Trends embed chart for Home
+        function renderTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentKeyword);
+            const cacheKey = `${currentKeyword}_${tabId}`;
+
+            if (loadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = "";
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    loadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Render Google Trends embed chart for Dynamic Section in Category Detail Page
+        function renderDynamicTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentDynamicKeyword);
+            const cacheKey = `${currentDynamicKeyword}_${tabId}`;
+
+            if (dynamicLoadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = "";
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentDynamicKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    dynamicLoadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Dynamic Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Handle Search Form Submit on Home
+        function handleSearch() {
+            const inputVal = document.getElementById('keyword-input').value.trim();
+            if (!inputVal) return;
+
+            currentKeyword = inputVal;
+            document.getElementById('kw-display').innerText = currentKeyword;
+            loadedTabs = {};
+
+            const buttons = document.querySelectorAll('.time-btn');
+            buttons.forEach(btn => {
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#page-home .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('t8').classList.add('active');
+
+            currentTabId = 't8';
+            currentTimeParam = 'today 5-y';
+
+            renderTrendsChart(currentTabId, currentTimeParam);
+        }
+
+        // Switch Time Tabs for Home
+        function switchTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.time-btn');
+            buttons.forEach(btn => {
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#page-home .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentTabId = tabId;
+            currentTimeParam = timeParam;
+
+            renderTrendsChart(tabId, timeParam);
+        }
+
+        // Switch Time Tabs for Dynamic Section in Category Detail Page
+        function switchDynamicTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentDynamicTabId = tabId;
+            currentDynamicTimeParam = timeParam;
+
+            renderDynamicTrendsChart(tabId, timeParam);
+        }
+
+        // Initial Load Event
+        window.addEventListener('load', () => {
+            openCategoryPage('models');
+            renderTrendsChart('t8', 'today 5-y');
+        });
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NCYS6Q44WF"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-NCYS6Q44WF');
+    </script>
+</body>
+</html>

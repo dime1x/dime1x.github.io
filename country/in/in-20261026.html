@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="https://trendchart.ai/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TrendChart - 240+ AI & Tech Trends, Google Trends Visualizer">
+    <meta property="og:description" content="Explore live keyword search trends with interactive charts and analytics.">
+    <meta name="keywords" content="AI trends, artificial intelligence trends, generative AI, AI agents">
+    <title>TrendChart - 240+ AI & Tech Trends, Google Trends Visualizer</title>
+    <!-- Google Trends Embed Script -->
+    <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3882_RC01/embed_loader.js"></script>
+    <!-- Tailwind CSS CDN for modern responsive UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef6ff',
+                            100: '#e0eefe',
+                            500: '#1a73e8',
+                            600: '#1557b0',
+                            700: '#104494',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 440px;
+            background-color: #ffffff;
+            border-left: none;
+            border-right: none;
+            border-radius: 0 !important;
+        }
+
+        .chart-panel {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+            .chart-panel.active {
+                display: block;
+            }
+
+            .chart-panel iframe {
+                width: 100% !important;
+                height: 100% !important;
+                border: none !important;
+                position: relative;
+                z-index: 2;
+            }
+
+        .loading-notice {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-14 items-center">
+                <!-- Brand Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="switchPage('home')">
+                    <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                        📈
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-slate-900">trend<span class="text-brand-500">chart</span></span>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="flex space-x-2">
+                    <button id="nav-home" onclick="switchPage('home')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        Home
+                    </button>
+                    <button id="nav-explore" onclick="openCategoryPage('models')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm">
+                        Explore AI
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-grow w-full">
+
+        <!-- PAGE 1: HOME PAGE (Search & Chart) -->
+        <section id="page-home" class="hidden space-y-4">
+            <div class="text-center max-w-2xl mx-auto space-y-1">
+                <h1 class="text-2xl font-extrabold text-slate-900 sm:text-3xl tracking-tight">Explore AI Search Trends Worldwide</h1>
+                <p class="text-slate-500 text-xs sm:text-sm">Track interest over time with real-time analytics.</p>
+            </div>
+
+            <!-- Search Box Area -->
+            <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-sm max-w-xl mx-auto">
+                <form onsubmit="event.preventDefault(); handleSearch();" class="flex flex-col sm:flex-row gap-2">
+                    <div class="relative flex-grow">
+                        <input type="text" id="keyword-input" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-800 text-xs transition" placeholder="Enter keyword, e.g. OpenAI, Claude..." value="OpenAI">
+                    </div>
+                    <button type="submit" class="bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white px-5 py-2.5 rounded-lg font-semibold text-xs transition shadow-sm whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        Generate
+                    </button>
+                </form>
+            </div>
+
+            <!-- Dashboard Wrapper -->
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                    <div class="text-xs font-medium text-slate-600">
+                        Current Keyword: <span id="kw-display" class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-sm border border-slate-200">OpenAI</span>
+                    </div>
+                </div>
+
+                <!-- Time Range Tabs -->
+                <div id="button-group" class="flex flex-wrap gap-1.5 justify-center sm:justify-start px-4">
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t1', 'now 1-H', this)">1h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t2', 'now 4-H', this)">4h</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t3', 'now 1-d', this)">1d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t4', 'now 7-d', this)">7d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t5', 'today 1-m', this)">30d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t6', 'today 3-m', this)">90d</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t7', 'today 12-m', this)">12m</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchTimeTab('t8', 'today 5-y', this)">5y</button>
+                    <button class="time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchTimeTab('t9', 'all', this)">All</button>
+                </div>
+
+                <!-- Google Chart Panels Container -->
+                <div id="chart-wrapper" class="chart-wrapper border-t border-b border-slate-200">
+                    <div id="t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t1" class="w-full h-full"></div></div>
+                    <div id="t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t2" class="w-full h-full"></div></div>
+                    <div id="t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t3" class="w-full h-full"></div></div>
+                    <div id="t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t4" class="w-full h-full"></div></div>
+                    <div id="t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t5" class="w-full h-full"></div></div>
+                    <div id="t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t6" class="w-full h-full"></div></div>
+                    <div id="t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t7" class="w-full h-full"></div></div>
+                    <div id="t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-t8" class="w-full h-full"></div></div>
+                    <div id="t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-t9" class="w-full h-full"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: CATEGORY DETAIL PAGE (Split Layout: Left = Categories & Keywords, Right = Live Chart) -->
+        <section id="page-category-detail" class="block space-y-3">
+            <!-- Desktop Split Grid: Left Column & Right Column -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+
+                <!-- LEFT COLUMN: Category Header & Keyword Cards Grid (Col-span 5) -->
+                <div class="lg:col-span-5 space-y-3">
+                    <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm space-y-1">
+                        <h2 id="cat-detail-title" class="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2"></h2>
+                        <p id="cat-detail-desc" class="text-slate-500 text-xs leading-relaxed"></p>
+                    </div>
+
+                    <!-- Compact Keyword Cards Grid (Scrollable list for 30 items) -->
+                    <div id="cat-detail-grid" class="grid grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1">
+                        <!-- Dynamic Keyword Cards Loaded Here -->
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Dynamic Chart Display Area (Col-span 7) -->
+                <div id="dynamic-embed-container" class="lg:col-span-7 bg-white border border-slate-200 rounded-xl shadow-sm py-4 space-y-3 overflow-hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-100 pb-3 gap-2 px-4">
+                        <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                            🔥 Selected: <span id="dynamic-kw-display" class="bg-brand-50 text-brand-600 px-2 py-0.5 rounded text-xs border border-brand-100">OpenAI</span>
+                        </div>
+                    </div>
+
+                    <!-- Chart Time Range Buttons -->
+                    <div id="dynamic-button-group" class="flex flex-wrap gap-1.5 justify-center px-4">
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t1', 'now 1-H', this)">1h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t2', 'now 4-H', this)">4h</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t3', 'now 1-d', this)">1d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t4', 'now 7-d', this)">7d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t5', 'today 1-m', this)">30d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t6', 'today 3-m', this)">90d</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t7', 'today 12-m', this)">12m</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm" onclick="switchDynamicTimeTab('dyn-t8', 'today 5-y', this)">5y</button>
+                        <button class="dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200" onclick="switchDynamicTimeTab('dyn-t9', 'all', this)">All</button>
+                    </div>
+
+                    <!-- Chart Multi-panel Container -->
+                    <div class="chart-wrapper border-t border-b border-slate-200" style="height: 420px;">
+                        <div id="dyn-t1" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t1" class="w-full h-full"></div></div>
+                        <div id="dyn-t2" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t2" class="w-full h-full"></div></div>
+                        <div id="dyn-t3" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t3" class="w-full h-full"></div></div>
+                        <div id="dyn-t4" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t4" class="w-full h-full"></div></div>
+                        <div id="dyn-t5" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t5" class="w-full h-full"></div></div>
+                        <div id="dyn-t6" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t6" class="w-full h-full"></div></div>
+                        <div id="dyn-t7" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t7" class="w-full h-full"></div></div>
+                        <div id="dyn-t8" class="chart-panel active"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t8" class="w-full h-full"></div></div>
+                        <div id="dyn-t9" class="chart-panel"><div class="loading-notice">Loading chart...</div><div id="embed-dyn-t9" class="w-full h-full"></div></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Links Section -->
+    <footer class="bg-white border-t border-slate-200 py-4">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <div class="flex justify-center space-x-6 text-xs text-slate-500">
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Privacy</a>
+                <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Terms</a>
+                <a href="https://support.google.com/trends/?hl=zh-CN" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
+            </div>
+            <p class="text-[11px] text-slate-400">© trendchart. Powered by Google Trends Embed API.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Controller -->
+    <script type="text/javascript">
+        let currentKeyword = "OpenAI";
+        let currentTabId = "t8";
+        let currentTimeParam = "today 5-y";
+        let loadedTabs = {};
+
+        let currentDynamicKeyword = "OpenAI";
+        let currentDynamicTabId = "dyn-t8";
+        let currentDynamicTimeParam = "today 5-y";
+        let dynamicLoadedTabs = {};
+
+        // Keywords Data
+        const categoryData = {
+            models: {
+                title: "🤖 Trending Search Keywords",
+                description: "Explore live keyword search trends and analytics.",
+                keywords: [
+                    { name: "very severe cyclonic storm arnab", desc: "A major tropical cyclone generating high winds and heavy rainfall." },
+                    { name: "mohun bagan vs chennaiyin", desc: "Indian Super League football match between Mohun Bagan and Chennaiyin FC." },
+                    { name: "psg vs ol", desc: "Ligue 1 football fixture between Paris Saint-Germain and Olympique Lyonnais." },
+                    { name: "kfintech ipo allotment status", desc: "Share allocation verification status for KFin Technologies initial public offering." },
+                    { name: "पति", desc: "Hindi word for husband." },
+                    { name: "bayon", desc: "Famous Khmer temple built at Angkor in Cambodia." },
+                    { name: "ballon d'or", desc: "Annual football award presented by France Football to the best player." },
+                    { name: "al-nassr vs al wasl", desc: "Club football fixture between Saudi Arabia's Al-Nassr and UAE's Al Wasl." },
+                    { name: "free fire india launch date", desc: "Official launch details for the mobile battle royale game Free Fire in India." },
+                    { name: "storm boelo weather warnings", desc: "Official weather alerts and safety warnings issued for Storm Boelo." },
+                    { name: "अक्षय कुमार", desc: "Akshay Kumar, a prominent Indian actor and film producer." },
+                    { name: "psg vs olympique lyon standings", desc: "Current league positions for Paris Saint-Germain and Olympique Lyonnais." },
+                    { name: "आंध्र प्रदेश", desc: "Andhra Pradesh, a state located in southeastern India." },
+                    { name: "microsoft", desc: "American multinational technology company specializing in software and cloud services." },
+                    { name: "বৃষ্টি", desc: "Bengali word for rain." },
+                    { name: "அர்ஜுன்", desc: "Arjun, a popular South Indian male name and legendary figure." },
+                    { name: "26 अक्टूबर 2026 का राशिफल", desc: "Daily astrological horoscope for October 26, 2026." },
+                    { name: "mlc election result", desc: "Election count and winner declarations for Legislative Council seats." },
+                    { name: "ugc net", desc: "National Eligibility Test for determining university teaching credentials in India." },
+                    { name: "motorola edge 70 neo specs", desc: "Technical specifications and hardware features of Motorola Edge 70 Neo." },
+                    { name: "nuggets vs warriors", desc: "NBA regular season game between the Denver Nuggets and Golden State Warriors." },
+                    { name: "बल्लेबाज़ी", desc: "Hindi term for batting in cricket." },
+                    { name: "alexia putellas", desc: "Spanish professional footballer and multi-time Ballon d'Or Féminin winner." },
+                    { name: "रश्मिका मंदाना", desc: "Rashmika Mandanna, a prominent Indian film actress." },
+                    { name: "प्रशांत भूषण", desc: "Prashant Bhushan, a prominent Indian public interest lawyer and activist." },
+                    { name: "മിനി കൂപ്പര്", desc: "Mini Cooper, a popular compact luxury automobile brand." },
+                    { name: "eci", desc: "Election Commission of India, the constitutional body overseeing Indian elections." },
+                    { name: "वर्षा", desc: "Hindi word for rain or monsoon shower." },
+                    { name: "সোনা", desc: "Bengali word for gold." },
+                    { name: "மதுபானம்", desc: "Tamil word for liquor or alcoholic beverage." },
+                    { name: "విద్యార్థి", desc: "Telugu word for student." },
+                    { name: "p m kisan", desc: "Pradhan Mantri Kisan Samman Nidhi, a cash transfer scheme for Indian farmers." },
+                    { name: "claude ai", desc: "Artificial intelligence assistant developed by Anthropic." },
+                    { name: "devdutt padikkal", desc: "Indian professional cricketer who plays as a batsman." },
+                    { name: "tradingview", desc: "Financial analysis platform offering interactive charts and technical indicators." },
+                    { name: "outlook", desc: "Personal information manager and email service by Microsoft." },
+                    { name: "జయప్రద", desc: "Jaya Prada, a veteran Indian film actress and politician." },
+                    { name: "നസ്രിയ നസീം", desc: "Nazriya Nazim, an Indian film actress and producer." },
+                    { name: "f1 kimi antonelli", desc: "Andrea Kimi Antonelli, an Italian Formula 1 racing driver." },
+                    { name: "ramandeep singh", desc: "Indian professional cricketer." },
+                    { name: "राष्ट्रीय परीक्षा एजेंसी", desc: "National Testing Agency (NTA), an entrance exam authority in India." },
+                    { name: "डिजायर", desc: "Maruti Suzuki Dzire, a compact sedan car model." },
+                    { name: "ipad mini", desc: "Compact tablet computer manufactured by Apple Inc." },
+                    { name: "अगले महीने की पहली तारीख को रसोई और कमर्शियल गैस सिलेंडर की कीमतों की समीक्षा होगी", desc: "Monthly government price review update for LPG and commercial gas cylinders." },
+                    { name: "yaxel lendeborg", desc: "College basketball player for the UAB Blazers." },
+                    { name: "anbil mahesh", desc: "Anbil Mahesh Poyyamozhi, an Indian politician and Minister for School Education." },
+                    { name: "రాయితీ", desc: "Telugu word for subsidy or financial concession." },
+                    { name: "sevilla vs osasuna", desc: "La Liga football match between Sevilla FC and CA Osasuna." },
+                    { name: "लॉरेंस बिश्नोई", desc: "Lawrence Bishnoi, a notorious Indian criminal gang leader." },
+                    { name: "ராஷ்மிகா மந்தனா", desc: "Rashmika Mandanna, a popular Indian film actress." },
+                    { name: "padvidhar election result", desc: "Election outcome for the Graduate (Padavidhar) constituency representative." },
+                    { name: "न्यायाधीश", desc: "Hindi word for judge or magistrate." },
+                    { name: "mail", desc: "Electronic mail services or postal messaging systems." },
+                    { name: "mlc result 2026", desc: "Election outcome and tally for Member of Legislative Council seats in 2026." },
+                    { name: "संजय मिश्रा", desc: "Sanjay Mishra, an Indian film actor and comedian." },
+                    { name: "नवंबर", desc: "Hindi word for the month of November." },
+                    { name: "naseeruddin shah", desc: "Veteran Indian theatre and film actor." },
+                    { name: "election results", desc: "Official vote counting and winner declarations for political contests." },
+                    { name: "upstox login", desc: "User sign-in portal for Upstox trading and investment platform." },
+                    { name: "करवा चौथ कब है", desc: "Inquiry about the official calendar date for Karwa Chauth festival." },
+                    { name: "wellington weather", desc: "Meteorological forecasts and climate updates for Wellington, New Zealand." },
+                    { name: "dainik bhaskar", desc: "Major Hindi-language daily newspaper in India." },
+                    { name: "ചൈന", desc: "Malayalam word for China." },
+                    { name: "ather energy share price", desc: "Stock market trading valuation for electric scooter maker Ather Energy." },
+                    { name: "தேனி", desc: "Theni, a city and district in Tamil Nadu, India." },
+                    { name: "new ott release movies", desc: "Latest movies streaming on digital OTT platforms." },
+                    { name: "maninder buttar", desc: "Indian Punjabi singer and songwriter." },
+                    { name: "bls polymers ipo", desc: "Initial public offering details for BLS Polymers." },
+                    { name: "നികുതി", desc: "Malayalam word for tax or duty." },
+                    { name: "सांभा", desc: "Samba, a town and district in Jammu and Kashmir, India." },
+                    { name: "islam makhachev", desc: "Russian professional mixed martial artist competing in the UFC." },
+                    { name: "மைக்ரோசாப்ட்", desc: "Tamil transliteration for Microsoft." },
+                    { name: "cag", desc: "Comptroller and Auditor General of India." },
+                    { name: "bleach", desc: "Popular Japanese manga and anime series created by Tite Kubo." },
+                    { name: "jailer 2 box office collection day 12", desc: "Day 12 theatrical ticket sales figures for the movie Jailer 2." },
+                    { name: "ബംഗാള് ഉള്ക്കടലില്", desc: "Malayalam phrase referring to weather developments in the Bay of Bengal." },
+                    { name: "aequs share price", desc: "Stock market price tracking for aerospace manufacturer Aequs." },
+                    { name: "ക്രിസ്റ്റ്യാനോ റൊണാള്ഡോ", desc: "Cristiano Ronaldo, Portuguese professional football star." },
+                    { name: "सचिन तेंडुलकर", desc: "Sachin Tendulkar, iconic former Indian international cricketer." },
+                    { name: "new zealand vs india (oct 27, 2026) international cricket council pre match breakdown and analysis", desc: "Tactical breakdown and pitch preview for the NZ vs India cricket match on October 27, 2026." },
+                    { name: "अभिजीत सावंत", desc: "Abhijeet Sawant, an Indian playback singer and first Indian Idol winner." },
+                    { name: "இந்திய ரிசர்வ் வங்கி", desc: "Reserve Bank of India (RBI), India's central banking institution." },
+                    { name: "డబ్బు", desc: "Telugu word for money or wealth." },
+                    { name: "israel election results", desc: "Vote tallies and political outcome for parliamentary elections in Israel." },
+                    { name: "apollo micro systems share price", desc: "Financial market equity price for Apollo Micro Systems." },
+                    { name: "ब्याज दर", desc: "Hindi term for interest rate." },
+                    { name: "dhan", desc: "Indian stock trading and investment platform." },
+                    { name: "maharashtra times", desc: "Prominent Marathi-language newspaper in Maharashtra, India." },
+                    { name: "ব্যালন ডি’অর", desc: "Bengali transliteration for the Ballon d'Or football award." },
+                    { name: "జాతకం", desc: "Telugu word for horoscope or astrological natal chart." },
+                    { name: "sfc environmental technologies ipo", desc: "IPO market subscription details for SFC Environmental Technologies." },
+                    { name: "iit bombay", desc: "Indian Institute of Technology Bombay, a premier public engineering university." },
+                    { name: "मुंबई पुणे द्रुतगती महामार्ग", desc: "Mumbai–Pune Expressway, India's first 6-lane concrete high-speed toll expressway." },
+                    { name: "paytm share price", desc: "Stock market trading valuation for Paytm (One97 Communications)." },
+                    { name: "पंजाब नैशनल बैंक", desc: "Punjab National Bank (PNB), an Indian public sector bank." },
+                    { name: "netherlands vs oman", desc: "International cricket match between Netherlands and Oman." },
+                    { name: "சைம் அயூப்", desc: "Saim Ayub, a Pakistani professional cricketer." },
+                    { name: "अरुणाचल प्रदेश", desc: "Arunachal Pradesh, a state in northeastern India." },
+                    { name: "icici direct", desc: "Online retail trading and investment platform by ICICI Securities." },
+                    { name: "माधुरी दीक्षित", desc: "Madhuri Dixit, an iconic Indian film actress." },
+                    { name: "నరేష్", desc: "Naresh, a popular Telugu male name and actor." },
+                    { name: "hul share price", desc: "Stock price for consumer goods giant Hindustan Unilever Limited." },
+                    { name: "bonfiglioli share price", desc: "Equity valuation updates for industrial equipment maker Bonfiglioli." },
+                    { name: "बजट", desc: "Hindi term for government or financial budget." },
+                    { name: "sundar pichai", desc: "CEO of Alphabet Inc. and its subsidiary Google." },
+                    { name: "gareth batty", desc: "Former English international cricketer and current coach." },
+                    { name: "windy", desc: "Popular interactive weather map and forecast service." },
+                    { name: "సాయిపల్లవి", desc: "Sai Pallavi, a prominent Indian film actress." },
+                    { name: "बाघ", desc: "Hindi word for tiger." },
+                    { name: "सैम अयूब", desc: "Saim Ayub, a Pakistani cricketer." },
+                    { name: "अमृत भारत एक्सप्रेस", desc: "Amrit Bharat Express, a push-pull passenger train service in India." },
+                    { name: "socrates award", desc: "Humanitarian award presented at the Ballon d'Or ceremony." },
+                    { name: "november", desc: "The eleventh month of the calendar year." },
+                    { name: "upcoming ipo", desc: "Schedule and prospectus details for upcoming initial public offerings." },
+                    { name: "ঈশান কিষাণ", desc: "Ishan Kishan, an Indian professional cricketer." },
+                    { name: "बस्ती", desc: "Basti, a city and district in Uttar Pradesh, India." },
+                    { name: "ಬೆಂಗಳೂರು", desc: "Bengaluru, the capital city of Karnataka, India." },
+                    { name: "eaaa india alternatives", desc: "Alternative platforms or providers for EAAA service operations in India." },
+                    { name: "saransh jain", desc: "Indian domestic cricketer." },
+                    { name: "बॉलिंग कोच", desc: "Hindi term for bowling coach in cricket." },
+                    { name: "अग्निपथ योजना", desc: "Agnipath Scheme, a recruitment scheme for the Indian Armed Forces." },
+                    { name: "हत्या", desc: "Hindi word for murder or homicide." },
+                    { name: "guwahati news", desc: "Local news and regional updates from Guwahati, Assam." },
+                    { name: "cavaliers vs timberwolves", desc: "NBA game between Cleveland Cavaliers and Minnesota Timberwolves." },
+                    { name: "अभिषेक बच्चन", desc: "Abhishek Bachchan, an Indian film actor and producer." },
+                    { name: "sumit mathur", desc: "Indian domestic cricketer." },
+                    { name: "jammu and kashmir", desc: "Union territory of India located in the northern part of the country." },
+                    { name: "ரஞ்சிக் கோப்பை", desc: "Ranji Trophy, India's premier premier domestic red-ball cricket tournament." },
+                    { name: "ఇందిరమ్మ ఇళ్ల పథకం", desc: "Indiramma Indlu Scheme, a state housing scheme for low-income families." },
+                    { name: "indmoney", desc: "Super money app for wealth management and international investments in India." },
+                    { name: "पोलीस", desc: "Marathi word for police." },
+                    { name: "शतक", desc: "Hindi/Marathi term for century in cricket or 100 units." },
+                    { name: "লক্ষ্মী", desc: "Lakshmi, the Hindu goddess of wealth and prosperity." },
+                    { name: "balon de oro 2026", desc: "Spanish phrase referring to the 2026 Ballon d'Or ceremony." },
+                    { name: "সাপ", desc: "Bengali word for snake." },
+                    { name: "galatasaray vs fenerbahçe", desc: "The Intercontinental Derby between Galatasaray and Fenerbahçe football clubs." },
+                    { name: "cbse board exam 2027 registration check", desc: "Verification portal for CBSE 2027 board exam candidate registration." },
+                    { name: "न्यूज़ीलैंड क्रिकेट टीम", desc: "New Zealand national cricket team (Black Caps)." },
+                    { name: "हनुमान अंश", desc: "Spiritual concept or narrative concerning divine traits of Lord Hanuman." },
+                    { name: "cnbc awaaz live", desc: "Live broadcast of Indian Hindi-language business news channel CNBC Awaaz." },
+                    { name: "జియో", desc: "Jio, major Indian telecommunications network operator." },
+                    { name: "બુધ", desc: "Gujarati word for the planet Mercury or Wednesday." },
+                    { name: "ballon d'or 2025", desc: "The 2025 presentation of the prestigious Ballon d'Or football awards." },
+                    { name: "anushka sharma", desc: "Indian film actress and producer." },
+                    { name: "விராட் கோலி", desc: "Virat Kohli, world-renowned Indian international cricketer." },
+                    { name: "ಶುಕ್ರ", desc: "Kannada word for planet Venus or Friday." },
+                    { name: "महंगाई भत्ता", desc: "Dearness Allowance (DA) for Indian government employees and pensioners." },
+                    { name: "dazn football", desc: "Live stream offerings and football broadcasting rights on DAZN." },
+                    { name: "namo ghat helipad security breach", desc: "Security alert regarding unauthorized access at Namo Ghat helipad in Varanasi." },
+                    { name: "thunder vs suns", desc: "NBA game between Oklahoma City Thunder and Phoenix Suns." },
+                    { name: "ballondor winner", desc: "Recipients of football's annual Ballon d'Or accolade." },
+                    { name: "maria sakkari", desc: "Greek professional tennis player." },
+                    { name: "हुंडई बेयोन", desc: "Hyundai Bayon, a subcompact crossover SUV." },
+                    { name: "santa clara vs benfica", desc: "Liga Portugal football match between Santa Clara and Benfica." },
+                    { name: "investing", desc: "Resource management, asset building, and financial markets." },
+                    { name: "నజ్రియా నజీమ్", desc: "Nazriya Nazim, Indian film actress." },
+                    { name: "ചേരാനെല്ലൂര്", desc: "Cheranalloor, a suburb in Kochi, Kerala, India." },
+                    { name: "bhaskar", desc: "Dainik Bhaskar news organization or personal name." },
+                    { name: "ఇన్ఫోసిస్", desc: "Infosys, a global Indian IT consulting and services corporation." },
+                    { name: "apple", desc: "American multinational technology company famous for iPhone and Mac." },
+                    { name: "celtics vs bulls", desc: "NBA game between Boston Celtics and Chicago Bulls." },
+                    { name: "कंपनी", desc: "Hindi/Marathi word for company or business corporation." },
+                    { name: "india vix today", desc: "Current value of India Volatility Index measuring market volatility." },
+                    { name: "d'arcy short", desc: "Australian professional cricketer." },
+                    { name: "బ్యాంకు", desc: "Telugu word for bank or financial institution." },
+                    { name: "taxpayers", desc: "Individuals and corporate entities liable for income and sales taxes." },
+                    { name: "unai simon", desc: "Spanish professional football goalkeeper playing for Athletic Bilbao and Spain." },
+                    { name: "heat vs mavericks", desc: "NBA matchup between Miami Heat and Dallas Mavericks." },
+                    { name: "பணம்", desc: "Tamil word for money or cash." },
+                    { name: "షాదాబ్ ఖాన్", desc: "Shadab Khan, a Pakistani international cricketer." },
+                    { name: "செம்பரம்பாக்கம் ஏரி", desc: "Chembarambakkam Lake, a major water reservoir in Chennai, Tamil Nadu." },
+                    { name: "ann li", desc: "American professional tennis player." },
+                    { name: "ఆలీ", desc: "Ali, a popular Telugu actor and comedian." },
+                    { name: "ദേവ്ദത്ത് പടിക്കല്", desc: "Devdutt Padikkal, Indian professional cricketer." },
+                    { name: "ऋषभ पंत", desc: "Rishabh Pant, Indian international wicketkeeper-batsman." },
+                    { name: "zee business live", desc: "Live television broadcast of Zee Business financial news." },
+                    { name: "മലയാള മനോരമ", desc: "Malayala Manorama, a widely circulated Malayalam newspaper." },
+                    { name: "ప్రభుత్వం", desc: "Telugu word for government." },
+                    { name: "super league kerala", desc: "Professional franchise football league in Kerala, India." },
+                    { name: "హార్దిక్ పాండ్యా", desc: "Hardik Pandya, Indian international cricket all-rounder." },
+                    { name: "aquarius horoscope today", desc: "Daily astrological prediction for the Aquarius zodiac sign." },
+                    { name: "திருச்செந்தூர்", desc: "Tiruchendur, a coastal pilgrimage town in Tamil Nadu, India." },
+                    { name: "కీర్తి సురేష్", desc: "Keerthy Suresh, prominent Indian film actress." },
+                    { name: "accuweather", desc: "Commercial weather forecasting platform providing global weather details." },
+                    { name: "शाओमी", desc: "Xiaomi, Chinese consumer electronics and smartphone manufacturer." },
+                    { name: "రైలు రవాణా", desc: "Telugu phrase for railway transportation." },
+                    { name: "అక్టోబర్ 26", desc: "Telugu phrase for the date October 26." },
+                    { name: "वादळ", desc: "Marathi word for storm or cyclone." },
+                    { name: "vicky lopez", desc: "Young Spanish women's football prodigy playing for Barcelona and Spain." },
+                    { name: "brian chesky ai workforce advice", desc: "Airbnb CEO Brian Chesky's commentary on AI integration in business workforces." },
+                    { name: "ओप्पो", desc: "Oppo, global smart device and smartphone manufacturer." },
+                    { name: "brazil stock market", desc: "Equity financial markets in Brazil, primarily tracked via Ibovespa." },
+                    { name: "न्यूझीलंड अ क्रिकेट संघ", desc: "New Zealand A national cricket team." },
+                    { name: "இந்தியா தேசிய கிரிக்கெட் அணி", desc: "India national cricket team." },
+                    { name: "उड़ता तीर", desc: "Hindi idiom meaning inviting unnecessary trouble or risk." },
+                    { name: "sudurpaschim royals vs lumbini lions", desc: "Matchup between Sudurpaschim Royals and Lumbini Lions in Nepal T20 league." },
+                    { name: "कांदा", desc: "Marathi word for onion." },
+                    { name: "लिस्टिंग", desc: "Financial term for new stock listing on equity exchanges." },
+                    { name: "త్రివిక్రమ్ శ్రీనివాస్", desc: "Trivikram Srinivas, acclaimed Telugu film director and screenwriter." },
+                    { name: "kate scott", desc: "American sports play-by-play commentator." },
+                    { name: "kick", desc: "Popular live video streaming service." },
+                    { name: "central railway news", desc: "Operational updates and local train schedules for Central Railway zone in India." },
+                    { name: "keerthy suresh", desc: "Award-winning South Indian film actress." },
+                    { name: "flamengo vs atlético mineiro", desc: "Brazilian Serie A football rivalry match." },
+                    { name: "dax index", desc: "Blue chip stock market index consisting of 40 major German companies." },
+                    { name: "süper lig", desc: "Top tier of the Turkish football league system." },
+                    { name: "ನ್ಯಾಯಾಲಯ", desc: "Kannada word for court of law." },
+                    { name: "luis de la fuente", desc: "Head coach of the Spain national football team." },
+                    { name: "the rock", desc: "Dwayne 'The Rock' Johnson, American actor and professional wrestler." },
+                    { name: "global market today", desc: "Worldwide stock indices performance and global financial market updates." },
+                    { name: "ekaterina alexandrova", desc: "Russian professional tennis player." },
+                    { name: "टेलीविजन", desc: "Hindi word for television media and broadcasting." },
+                    { name: "তহুরা খাতুন", desc: "Tohura Khatun, Bangladeshi women's international footballer." },
+                    { name: "rizespor vs trabzonspor", desc: "Turkish Süper Lig football match between Rizespor and Trabzonspor." },
+                    { name: "माही विज", desc: "Mahhi Vij, Indian television actress and model." },
+                    { name: "ইনিংস", desc: "Bengali word for innings in cricket." },
+                    { name: "efl cup", desc: "English Football League Cup, commonly called the Carabao Cup." },
+                    { name: "ಆನೆ", desc: "Kannada word for elephant." },
+                    { name: "premada oorali", desc: "Kannada movie or cultural artistic work." },
+                    { name: "nayanthara", desc: "Prominent South Indian film actress." },
+                    { name: "rajat patidar", desc: "Indian professional cricketer who plays for Madhya Pradesh and RCB." },
+                    { name: "ಪ್ರತಿಭಟನೆ", desc: "Kannada word for protest or strike." },
+                    { name: "മോഹന്ലാല്", desc: "Mohanlal, legendary Indian film actor in Malayalam cinema." },
+                    { name: "फिरोज़ाबाद", desc: "Firozabad, a city in Uttar Pradesh famous for glass manufacturing." },
+                    { name: "सहायक कोच", desc: "Hindi term for assistant coach." },
+                    { name: "അനുശ്രീ", desc: "Anusree, Indian actress appearing in Malayalam films." },
+                    { name: "pere romeu", desc: "Head coach of the FC Barcelona Femení football team." },
+                    { name: "chandi ka bhav", desc: "Current price of silver metal per gram/kilogram in India." },
+                    { name: "al-ahli saudi fc vs al-gharafa standings", desc: "Tournament standings for AFC Champions League fixture between Al-Ahli and Al-Gharafa." },
+                    { name: "sophie turner", desc: "English actress known for Game of Thrones." },
+                    { name: "maya joint", desc: "Australian professional tennis player." },
+                    { name: "rays vs brewers", desc: "MLB baseball game between Tampa Bay Rays and Milwaukee Brewers." },
+                    { name: "matthew lamb", desc: "English cricketer playing for Gloucestershire." },
+                    { name: "कर्मचारी भविष्य निधि संगठन", desc: "Employees' Provident Fund Organisation (EPFO) of India." },
+                    { name: "slk", desc: "Benz SLK luxury sports car line or organization abbreviation." },
+                    { name: "गुंतवणूक", desc: "Marathi word for investment." },
+                    { name: "asin", desc: "Asin Thottumkal, former Indian actress." },
+                    { name: "শাদাব খান", desc: "Bengali transliteration for Pakistani cricketer Shadab Khan." },
+                    { name: "ಇಶಾನ್ ಕಿಶನ್", desc: "Kannada transliteration for Indian cricketer Ishan Kishan." },
+                    { name: "ಹಾರಂಗಿ", desc: "Harangi, a major reservoir dam in Kodagu, Karnataka." },
+                    { name: "27", desc: "The cardinal number 27." },
+                    { name: "ಬೆಳೆ ವಿಮೆ", desc: "Kannada term for crop insurance." },
+                    { name: "prabhsimran singh", desc: "Indian professional cricketer for Punjab Kings." },
+                    { name: "pension", desc: "Regular retirement payment provided to former employees." },
+                    { name: "al qadsiah vs al sadd", desc: "AFC Champions League match between Al-Qadsiah and Al Sadd." },
+                    { name: "हमसफर एक्सप्रेस", desc: "Humsafar Express, an all-AC 3-tier train service operated by Indian Railways." },
+                    { name: "शोले", desc: "Sholay, iconic 1975 Indian action-adventure film." },
+                    { name: "beparwah ahaan panday", desc: "Beparwah, musical or acting project featuring Ahaan Panday." },
+                    { name: "mika godts", desc: "Belgian professional footballer playing for Ajax." },
+                    { name: "acquitted", desc: "Legal judgment declaring an accused person not guilty." },
+                    { name: "net", desc: "National Eligibility Test or internet network." },
+                    { name: "brent crude price today", desc: "Current benchmark spot price for global crude oil trading." },
+                    { name: "cata coll", desc: "Spanish women's football goalkeeper playing for FC Barcelona and Spain." },
+                    { name: "ശദാബ് ഖാന്", desc: "Malayalam transliteration for cricketer Shadab Khan." },
+                    { name: "रामायण", desc: "Ramayana, an ancient Indian epic text." },
+                    { name: "രശ്മിക മന്ദാന", desc: "Malayalam transliteration for actress Rashmika Mandanna." },
+                    { name: "तेल रिसाव", desc: "Hindi term for oil spill or environmental leakage." },
+                    { name: "wnba", desc: "Women's National Basketball Association in the United States." },
+                    { name: "lumbini lions v sudurpaschim royals", desc: "Twenty20 cricket clash between Lumbini Lions and Sudurpaschim Royals." },
+                    { name: "ios 27.2 release date", desc: "Speculated or official deployment date for Apple's iOS 27.2 software update." },
+                    { name: "manoramaonline", desc: "Digital news portal of Malayala Manorama." },
+                    { name: "सार्वजनिक अवकाश", desc: "Hindi term for official public holiday." },
+                    { name: "serbia elections", desc: "Parliamentary and municipal election proceedings in Serbia." },
+                    { name: "sarfaraz khan", desc: "Indian international middle-order batsman." },
+                    { name: "putellas", desc: "Refers to Spanish football star Alexia Putellas." },
+                    { name: "न्यूजीलैंड डॉलर", desc: "New Zealand Dollar (NZD) currency." },
+                    { name: "કેરેટ", desc: "Gujarati word for carat, unit of purity for gold or gemstones." },
+                    { name: "charlyn corral", desc: "Mexican women's international footballer." },
+                    { name: "namit malhotra", desc: "Indian film producer and CEO of DNEG." },
+                    { name: "jazz vs grizzlies", desc: "NBA game between Utah Jazz and Memphis Grizzlies." },
+                    { name: "ltcg", desc: "Long-Term Capital Gains tax on asset investments." },
+                    { name: "ജയിലര് 2", desc: "Jailer 2, upcoming Indian action film starring Rajinikanth." },
+                    { name: "2027", desc: "The upcoming calendar year 2027." },
+                    { name: "alex de minaur", desc: "Australian professional tennis player." },
+                    { name: "ಚಂಡಮಾರುತ", desc: "Kannada word for cyclone or storm." },
+                    { name: "ಪಡಿತರ", desc: "Kannada word for public distribution food rations." },
+                    { name: "જિઓ", desc: "Gujarati transliteration for Jio." },
+                    { name: "death", desc: "Obituaries, news reports, or medical updates concerning deceased persons." },
+                    { name: "মালদা", desc: "Malda, a district and city in West Bengal, India." },
+                    { name: "h&m", desc: "Multinational retail clothing company." },
+                    { name: "दैनिक जागरण", desc: "Dainik Jagran, one of India's largest Hindi daily newspapers." },
+                    { name: "શાદાબ ખાન", desc: "Gujarati transliteration for cricketer Shadab Khan." },
+                    { name: "bucks vs pacers", desc: "NBA game between Milwaukee Bucks and Indiana Pacers." },
+                    { name: "railways vs tamil nadu", desc: "Domestic Ranji Trophy cricket match between Railways and Tamil Nadu." },
+                    { name: "isl match today", desc: "Today's Indian Super League football fixture." },
+                    { name: "వధువు", desc: "Telugu word for bride." },
+                    { name: "ఈనాడు", desc: "Eenadu, a major Telugu-language daily newspaper." },
+                    { name: "nsc", desc: "National Savings Certificate, an Indian government small savings bond." },
+                    { name: "october 2026 calendar", desc: "Calendar breakdown and holidays for October 2026." },
+                    { name: "neftchi fergana vs al-ittihad club standings", desc: "AFC Champions League tournament standings for Neftchi Fergana vs Al-Ittihad." },
+                    { name: "david beckham", desc: "Former English footballer and current co-owner of Inter Miami CF." },
+                    { name: "dazn in", desc: "DAZN streaming service operations in India." },
+                    { name: "கனமழை", desc: "Tamil term for heavy rainfall." },
+                    { name: "thailand", desc: "Southeast Asian country famous for tropical beaches and temples." },
+                    { name: "ഒമാന്", desc: "Malayalam transliteration for the Sultanate of Oman." },
+                    { name: "ballon d'or 2027", desc: "Future coverage and candidate projections for the 2027 Ballon d'Or." },
+                    { name: "psg vs olympique lyon lineups", desc: "Starting eleven team lineups for Paris Saint-Germain vs Olympique Lyonnais." },
+                    { name: "amanda seyfried", desc: "American actress and singer." },
+                    { name: "ரிலையன்ஸ் ஜியோ", desc: "Reliance Jio, major Indian telecommunications enterprise." },
+                    { name: "peter schmeichel", desc: "Legendary Danish former professional football goalkeeper." },
+                    { name: "झारखण्ड उच्च न्यायालय", desc: "Jharkhand High Court, the highest judicial court in Jharkhand state." },
+                    { name: "bar and bench", desc: "Indian online legal news portal covering court proceedings." },
+                    { name: "david raya", desc: "Spanish professional goalkeeper playing for Arsenal and Spain." },
+                    { name: "ஜெயிலர் 2", desc: "Jailer 2, upcoming Tamil action drama movie." },
+                    { name: "super ballon d'or", desc: "Prestigious award presented once every few decades to the greatest player." },
+                    { name: "భూగర్భ జలం", desc: "Telugu term for groundwater." },
+                    { name: "luciano darderi", desc: "Italian-Argentine professional tennis player." },
+                    { name: "live weather", desc: "Real-time weather reports and radar maps." },
+                    { name: "কলকাতা মেট্রো", desc: "Kolkata Metro, rapid transit system in Kolkata, West Bengal." },
+                    { name: "dear lottery result today", desc: "Daily winning numbers for the popular Dear Lottery." },
+                    { name: "isro", desc: "Indian Space Research Organisation, national space agency of India." },
+                    { name: "ഹനുമാന് കുരങ്ങ്", desc: "Malayalam term for Hanuman langur monkey." },
+                    { name: "itc hotels q2 ebitda margin", desc: "Q2 financial operating margins for ITC Hotels hospitality division." },
+                    { name: "nikhil kamath", desc: "Indian entrepreneur and co-founder of Zerodha." },
+                    { name: "boat", desc: "Indian consumer electronics brand selling audio devices and wearables." },
+                    { name: "ഡല്ഹി", desc: "Malayalam word for Delhi." },
+                    { name: "मसूर", desc: "Hindi word for red lentil." },
+                    { name: "ક્રિકેટ", desc: "Gujarati word for cricket." },
+                    { name: "hang seng index", desc: "Main stock market index of Hong Kong." },
+                    { name: "ભુવનેશ્વર કુમાર", desc: "Bhuvaneshwar Kumar, Indian international pace bowler." },
+                    { name: "कुंभ राशि", desc: "Hindi term for Aquarius zodiac sign." },
+                    { name: "ಬರ", desc: "Kannada word for drought." },
+                    { name: "kannada prabha", desc: "Major Kannada-language daily newspaper." },
+                    { name: "driving licence", desc: "Official document permitting operation of motorized vehicles." },
+                    { name: "பத்திரம்", desc: "Tamil word for legal document, bond, or deed." },
+                    { name: "dac defence proposals 2.12 lakh crore", desc: "Defence Acquisition Council approval for military procurement proposals." },
+                    { name: "முதலை", desc: "Tamil word for crocodile." },
+                    { name: "malik scott", desc: "American professional boxing trainer and former heavyweight boxer." },
+                    { name: "nobody wants this", desc: "Netflix romantic comedy series starring Kristen Bell and Adam Brody." },
+                    { name: "live cricket match india new zealand", desc: "Real-time ball-by-ball updates for India vs New Zealand cricket match." },
+                    { name: "sevilla", desc: "Sevilla FC, prominent Spanish professional football club." },
+                    { name: "kerala psc", desc: "Kerala Public Service Commission, state civil service recruitment portal." },
+                    { name: "polymarket", desc: "Decentralized crypto-based prediction market platform." },
+                    { name: "దుబాయ్", desc: "Telugu transliteration for Dubai." },
+                    { name: "cnn", desc: "Cable News Network, global television news channel." },
+                    { name: "iqoo neo 12 launch date", desc: "Expected release window for iQOO Neo 12 smartphone." },
+                    { name: "alex lanier", desc: "French professional badminton player." },
+                    { name: "ગૌરી ખાન", desc: "Gauri Khan, Indian film producer and interior designer." },
+                    { name: "बेटी", desc: "Hindi word for daughter." },
+                    { name: "isl points table", desc: "Current team standings and points table in Indian Super League." },
+                    { name: "പിറന്നാള്", desc: "Malayalam word for birthday." },
+                    { name: "నందమూరి బాలకృష్ణ", desc: "Nandamuri Balakrishna, veteran Telugu film actor and politician." },
+                    { name: "लोकसत्ता", desc: "Loksatta, leading Marathi daily newspaper published by The Indian Express." },
+                    { name: "ಮಂಗಳೂರು", desc: "Mangaluru, coastal port city in Karnataka, India." },
+                    { name: "crypto exchange binance", desc: "World's largest cryptocurrency exchange platform." },
+                    { name: "ಸಾಯಿ ಕುಮಾರ್", desc: "Sai Kumar, Indian actor and dubbing artist." },
+                    { name: "fighter aircraft", desc: "Military fixed-wing aircraft designed primarily for air-to-air combat." },
+                    { name: "ದಾವಣಗೆರೆ", desc: "Davanagere, a major city in central Karnataka, India." },
+                    { name: "integrity pledge", desc: "Anti-corruption public commitment pledge organized by CVC in India." },
+                    { name: "निवेश", desc: "Hindi word for financial investment." },
+                    { name: "gautam gulati", desc: "Indian film actor and reality show winner." },
+                    { name: "casper ruud", desc: "Norwegian professional tennis player." },
+                    { name: "alexandra eala", desc: "Filipina professional tennis player." },
+                    { name: "canada ncl gt20 canada", desc: "Global T20 Canada tournament cricket fixtures and updates." },
+                    { name: "amazon share price", desc: "Stock market price tracking for Amazon.com Inc." },
+                    { name: "মৃত্যুদণ্ড", desc: "Bengali word for death penalty or capital punishment." },
+                    { name: "tri vs kar", desc: "Domestic Ranji Trophy cricket match between Tripura and Karnataka." },
+                    { name: "weather update", desc: "Current weather conditions and daily local forecasts." },
+                    { name: "hdfc icici axis kotak q2 results", desc: "Second quarter financial earnings reports for top Indian private banks." },
+                    { name: "ஓய்வூதியம்", desc: "Tamil word for retirement pension." },
+                    { name: "kpsc", desc: "Karnataka Public Service Commission, state civil services recruitment." },
+                    { name: "கடலூர்", desc: "Cuddalore, a coastal city in Tamil Nadu, India." },
+                    { name: "love in disguise ep 3", desc: "Episode 3 of the romantic drama series Love in Disguise." },
+                    { name: "दैनिक भास्कर", desc: "Dainik Bhaskar, major Hindi newspaper." },
+                    { name: "scene", desc: "Cinematic sequence or dramatic performance unit." },
+                    { name: "கமலகாசன்", desc: "Kamal Haasan, acclaimed South Indian actor and politician." },
+                    { name: "the odyssey", desc: "Ancient Greek epic poem attributed to Homer." },
+                    { name: "మాదాపూర్", desc: "Madhapur, major IT and commercial hub in Hyderabad, Telangana." },
+                    { name: "monaco vs losc", desc: "Ligue 1 football match between AS Monaco and Lille OSC." },
+                    { name: "daria snigur", desc: "Ukrainian professional tennis player." }
+
+                ]
+            }
+        };
+
+        // Page Navigation Switcher
+        function switchPage(page) {
+            const homeSec = document.getElementById('page-home');
+            const catDetailSec = document.getElementById('page-category-detail');
+
+            const navHome = document.getElementById('nav-home');
+            const navExplore = document.getElementById('nav-explore');
+
+            homeSec.className = "hidden space-y-4";
+            catDetailSec.className = "hidden space-y-3";
+
+            const defaultNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+            const activeNavClass = "px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-brand-500 text-white shadow-sm";
+
+            navHome.className = defaultNavClass;
+            navExplore.className = defaultNavClass;
+
+            if (page === 'home') {
+                homeSec.className = "block space-y-4";
+                navHome.className = activeNavClass;
+            } else if (page === 'category-detail') {
+                catDetailSec.className = "block space-y-3";
+                navExplore.className = activeNavClass;
+            }
+        }
+
+        // Open Category Detail Page with Expanded Keywords
+        function openCategoryPage(catKey) {
+            const catInfo = categoryData[catKey];
+            if (!catInfo) return;
+
+            document.getElementById('cat-detail-title').innerText = catInfo.title;
+            document.getElementById('cat-detail-desc').innerText = catInfo.description;
+
+            const gridContainer = document.getElementById('cat-detail-grid');
+            gridContainer.innerHTML = "";
+
+            catInfo.keywords.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded-lg border border-slate-200 shadow-sm hover:shadow hover:border-brand-500 transition cursor-pointer flex flex-col justify-between space-y-1 group";
+                card.onclick = () => selectDynamicKeyword(item.name);
+                card.innerHTML = `
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-xs group-hover:text-brand-500 transition truncate">${item.name}</h4>
+                                    <p class="text-[10px] text-slate-500 line-clamp-1">${item.desc}</p>
+                                </div>
+                            `;
+                gridContainer.appendChild(card);
+            });
+
+            if (catInfo.keywords.length > 0) {
+                selectDynamicKeyword(catInfo.keywords[0].name);
+            }
+
+            switchPage('category-detail');
+        }
+
+        // Select dynamic keyword from category grid
+        function selectDynamicKeyword(keyword) {
+            currentDynamicKeyword = keyword;
+            document.getElementById('dynamic-kw-display').innerText = keyword;
+            dynamicLoadedTabs = {};
+
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('dyn-t8').classList.add('active');
+
+            currentDynamicTabId = 'dyn-t8';
+            currentDynamicTimeParam = 'today 5-y';
+
+            renderDynamicTrendsChart(currentDynamicTabId, currentDynamicTimeParam);
+        }
+
+        // Safe poll check for Google SDK readiness
+        function checkTrendsLoaded(callback) {
+            if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+                callback();
+            } else {
+                let retries = 0;
+                const timer = setInterval(() => {
+                    retries++;
+                    if (typeof trends !== 'undefined' && trends.embed && typeof trends.embed.renderExploreWidgetTo === 'function') {
+                        clearInterval(timer);
+                        callback();
+                    } else if (retries > 100) {
+                        clearInterval(timer);
+                        console.warn("Google Trends script loading timed out.");
+                    }
+                }, 100);
+            }
+        }
+
+        // Render Google Trends embed chart for Home
+        function renderTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentKeyword);
+            const cacheKey = `${currentKeyword}_${tabId}`;
+
+            if (loadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = "";
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    loadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Render Google Trends embed chart for Dynamic Section in Category Detail Page
+        function renderDynamicTrendsChart(tabId, timeParam) {
+            const encodedKw = encodeURIComponent(currentDynamicKeyword);
+            const cacheKey = `${currentDynamicKeyword}_${tabId}`;
+
+            if (dynamicLoadedTabs[cacheKey]) return;
+
+            checkTrendsLoaded(() => {
+                const targetElem = document.getElementById(`embed-${tabId}`);
+                if (!targetElem) return;
+
+                targetElem.innerHTML = "";
+
+                try {
+                    trends.embed.renderExploreWidgetTo(
+                        targetElem,
+                        "TIMESERIES",
+                        {
+                            "comparisonItem": [
+                                { "keyword": currentDynamicKeyword, "geo": "", "time": timeParam }
+                            ],
+                            "category": 0,
+                            "property": ""
+                        },
+                        {
+                            "exploreQuery": `q=${encodedKw}&date=${encodeURIComponent(timeParam)}&hl=en`,
+                            "guestPath": "https://trends.google.com:443/trends/embed/"
+                        }
+                    );
+                    dynamicLoadedTabs[cacheKey] = true;
+                } catch (err) {
+                    console.error("Dynamic Chart rendering error:", err);
+                }
+            });
+        }
+
+        // Handle Search Form Submit on Home
+        function handleSearch() {
+            const inputVal = document.getElementById('keyword-input').value.trim();
+            if (!inputVal) return;
+
+            currentKeyword = inputVal;
+            document.getElementById('kw-display').innerText = currentKeyword;
+            loadedTabs = {};
+
+            const buttons = document.querySelectorAll('.time-btn');
+            buttons.forEach(btn => {
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            buttons[7].className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#page-home .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById('t8').classList.add('active');
+
+            currentTabId = 't8';
+            currentTimeParam = 'today 5-y';
+
+            renderTrendsChart(currentTabId, currentTimeParam);
+        }
+
+        // Switch Time Tabs for Home
+        function switchTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.time-btn');
+            buttons.forEach(btn => {
+                btn.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#page-home .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentTabId = tabId;
+            currentTimeParam = timeParam;
+
+            renderTrendsChart(tabId, timeParam);
+        }
+
+        // Switch Time Tabs for Dynamic Section in Category Detail Page
+        function switchDynamicTimeTab(tabId, timeParam, btnElement) {
+            const buttons = document.querySelectorAll('.dynamic-time-btn');
+            buttons.forEach(btn => {
+                btn.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200";
+            });
+            btnElement.className = "dynamic-time-btn px-2.5 py-1 rounded-full border text-[11px] font-medium transition bg-brand-500 border-brand-500 text-white shadow-sm";
+
+            const panels = document.querySelectorAll('#dynamic-embed-container .chart-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            currentDynamicTabId = tabId;
+            currentDynamicTimeParam = timeParam;
+
+            renderDynamicTrendsChart(tabId, timeParam);
+        }
+
+        // Initial Load Event
+        window.addEventListener('load', () => {
+            openCategoryPage('models');
+            renderTrendsChart('t8', 'today 5-y');
+        });
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NCYS6Q44WF"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-NCYS6Q44WF');
+    </script>
+</body>
+</html>
