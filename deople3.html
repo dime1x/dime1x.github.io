@@ -143,32 +143,28 @@
         <!-- CATEGORY PILLS (Horizontal Scroll) -->
         <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar pb-4 mb-4" id="category-pills">
             <button data-cat="all" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-cardDark text-white shadow-sm whitespace-nowrap transition-all">
-                All Videos <span id="total-count" class="ml-1 opacity-70 font-mono text-[10px]">…</span>
+                All Showcase <span id="all-count" class="ml-1 opacity-70 font-mono text-[10px]">418</span>
             </button>
             <button data-cat="motion" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all">
                 Motion Graphics
             </button>
-            <button data-cat="explainers" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all">
+            <button data-cat="explainer" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all">
                 Explainers
             </button>
             <button data-cat="3d" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all">
                 3D Scenes
             </button>
-            <button data-cat="simulations" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all">
+            <button data-cat="interactive" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all">
                 Simulations
             </button>
         </div>
 
-        <div class="mb-4 rounded-2xl border border-borderSubtle bg-white/80 px-4 py-3 text-xs text-textMuted">
-          视频目录来自公开 GitHub 数据；封面由来源站提供。公开数据没有提供 MP4 直链，因此播放尝试通过 Skillry 条目页嵌入；若来源站禁止嵌入，可点击按钮跳转观看。
-          <a class="font-bold underline ml-1" href="https://github.com/yihui-dev/awesome-opus5-5-videos" target="_blank" rel="noopener noreferrer">数据来源与作者信息</a>
-        </div>
-        <!-- FEED LIST (20 real records per page) -->
+        <!-- FEED LIST (20 cards per page) -->
         <div class="space-y-6" id="cards-container">
             <!-- Rendered dynamically -->
         </div>
 
-        <!-- PAGINATION CONTROLS (dynamic pages) -->
+        <!-- PAGINATION CONTROLS (20 Pages) -->
         <div class="mt-10 pt-6 border-t border-borderSubtle flex flex-col items-center space-y-4" id="pagination-wrapper">
             <div class="flex items-center space-x-2 text-xs font-bold">
                 <button id="prev-page" class="px-3.5 py-2 rounded-full bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center space-x-1">
@@ -187,7 +183,7 @@
                 </button>
             </div>
             
-            <p id="page-indicator" class="text-xs text-textMuted font-medium">Showing page 1 of 20 (400 items)</p>
+            <p id="page-indicator" class="text-xs text-textMuted font-medium">Loading 418 real video records…</p>
         </div>
 
     </main>
@@ -220,23 +216,10 @@
             </div>
             
             <div class="p-5 overflow-y-auto space-y-4">
-                <!-- Skillry remake page: embedding may be blocked by the source site. -->
-                <div class="relative h-64 sm:h-80 bg-cardDark rounded-2xl overflow-hidden shadow-inner">
-                    <iframe id="modal-frame" title="Skillry video remake" class="w-full h-full border-0 bg-white"
-                        loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
-                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
-                    <div id="frame-fallback" class="hidden absolute inset-0 p-5 text-white flex flex-col items-center justify-center text-center bg-cardDark">
-                        <p class="font-bold mb-2">该页面可能禁止嵌入播放</p>
-                        <p class="text-xs text-gray-300 mb-4">可以通过下方按钮在 Skillry 原页面观看交互式重制。</p>
-                        <a id="fallback-skillry-link" href="https://skillry.dev/ai-videos/opus-5-5" target="_blank" rel="noopener noreferrer"
-                           class="px-4 py-2 rounded-full bg-brandLime text-cardDark text-xs font-bold">打开 Skillry</a>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <a id="modal-skillry-link" href="https://skillry.dev/ai-videos/opus-5-5" target="_blank" rel="noopener noreferrer"
-                       class="px-3 py-2 rounded-full bg-cardDark text-white text-xs font-bold">在 Skillry 播放/查看重制</a>
-                    <a id="modal-original-link" href="#" target="_blank" rel="noopener noreferrer"
-                       class="px-3 py-2 rounded-full bg-white border border-borderSubtle text-textPrimary text-xs font-bold">原作者帖子</a>
+                <!-- Preview Canvas -->
+                <div class="relative h-52 bg-cardDark rounded-2xl overflow-hidden shadow-inner">
+                    <img id="modal-poster" class="w-full h-full object-cover" alt="Video preview" />
+                    <span id="modal-duration" class="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-black/70 text-white font-mono text-[10px]">0:25</span>
                 </div>
 
                 <div>
@@ -254,322 +237,149 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT & DATA -->
+    <!-- JAVASCRIPT & REAL VIDEO DATA -->
     <script>
-      /*
-       * Live public dataset:
-       * https://github.com/yihui-dev/awesome-opus5-5-videos
-       * The dataset provides poster_url, skillry_url, post_url and prompt.
-       * It does NOT provide a direct MP4 URL. Posters are not video files.
-       */
+      // Uses the public, machine-readable dataset from the source repository,
+      // not an iframe or a live embed of the Skillry webpage.
       const DATA_URL = 'https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/data/videos.json';
-      const SKILLRY_INDEX = 'https://skillry.dev/ai-videos/opus-5-5';
       const ITEMS_PER_PAGE = 20;
       let cardsData = [];
       let currentPage = 1;
       let currentCategory = 'all';
       let searchFilter = '';
       let modalActivePrompt = '';
-      let loadingError = '';
 
-      const categoryLabels = {
+      const categoryNames = {
         motion: 'Motion Graphics',
         explainer: 'Explainers',
-        explainers: 'Explainers',
         '3d': '3D Scenes',
-        simulation: 'Simulations',
-        simulations: 'Simulations',
-        game: 'Games & Interactive',
-        games: 'Games & Interactive'
+        interactive: 'Games & Interactive'
       };
+      const esc = (v='') => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const titleFromSlug = slug => (slug || 'Opus 5.5 video').replace(/-\d+$/, '').replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
-      function safeText(value, fallback = '') {
-        return (typeof value === 'string' && value.trim()) ? value.trim() : fallback;
+      async function loadVideoData() {
+        const container = document.getElementById('cards-container');
+        container.innerHTML = '<div class="bg-white rounded-2xl p-6 text-sm text-textMuted">正在加载真实视频数据…</div>';
+        try {
+          const response = await fetch(DATA_URL, {cache:'no-cache'});
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          const source = await response.json();
+          // The repo contains a larger prompt collection; Skillry's 418 gallery entries are has_remake=true.
+          cardsData = source.filter(v => v && v.has_remake === true).map((v, i) => ({
+            id: v.slug || `video-${i+1}`,
+            handle: '@' + String(v.author || 'creator').replace(/^@/, ''),
+            title: titleFromSlug(v.slug),
+            category: v.category || 'motion',
+            prompt: v.prompt || 'The creator did not publish a prompt for this entry.',
+            promptPartial: !!v.prompt_partial,
+            poster: v.poster_url || '',
+            postUrl: v.post_url || '',
+            authorUrl: v.author_url || '',
+            detailUrl: v.skillry_url || '',
+            tech: Array.isArray(v.tech_tags) ? v.tech_tags : [],
+            added: v.added || ''
+          }));
+          document.getElementById('all-count').textContent = cardsData.length;
+          updateCategoryCounts();
+          renderFeedCards();
+        } catch (err) {
+          container.innerHTML = `<div class="bg-white rounded-2xl border border-borderSubtle p-6 text-sm"><b>无法加载视频数据。</b><p class="mt-2 text-textMuted">浏览器可能无法访问 GitHub Raw。请确认网络连接，或将仓库的 data/videos.json 下载到本地后，将 DATA_URL 改为同目录的 ./videos.json。</p><p class="mt-2 text-xs text-textMuted">${esc(err.message)}</p><a class="inline-block mt-3 underline font-bold" href="https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/data/videos.json" target="_blank" rel="noopener">打开原始 JSON 数据</a></div>`;
+          document.getElementById('page-indicator').textContent = '数据加载失败';
+        }
       }
 
-      function getFilteredData() {
-        return cardsData.filter(item => {
-          const category = (item.category || '').toLowerCase();
-          const matchesCat = currentCategory === 'all' ||
-            (currentCategory === 'motion' && category === 'motion') ||
-            (currentCategory === 'explainers' && ['explainer', 'explainers'].includes(category)) ||
-            (currentCategory === '3d' && ['3d', '3d scenes', '3d-scenes'].includes(category)) ||
-            (currentCategory === 'simulations' && ['simulation', 'simulations', 'game', 'games'].includes(category));
-          const haystack = [
-            item.author, item.slug, item.prompt, item.category,
-            ...(Array.isArray(item.tech_tags) ? item.tech_tags : [])
-          ].join(' ').toLowerCase();
-          return matchesCat && (!searchFilter || haystack.includes(searchFilter.toLowerCase()));
+      function updateCategoryCounts() {
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+          const cat = btn.dataset.cat;
+          const count = cat === 'all' ? cardsData.length : cardsData.filter(v => v.category === cat).length;
+          const label = btn.textContent.trim().replace(/\s+\d+$/, '');
+          btn.innerHTML = `${esc(label)} <span class="ml-1 opacity-70 font-mono text-[10px]">${count}</span>`;
         });
       }
-
+      function getFilteredData() {
+        const q = searchFilter.toLowerCase().trim();
+        return cardsData.filter(item => {
+          const matchesCat = currentCategory === 'all' || item.category === currentCategory;
+          const matchesSearch = !q || [item.handle,item.title,item.prompt,item.tech.join(' '),item.category].join(' ').toLowerCase().includes(q);
+          return matchesCat && matchesSearch;
+        });
+      }
       function renderFeedCards() {
         const container = document.getElementById('cards-container');
         container.innerHTML = '';
         const filtered = getFilteredData();
         const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
-        currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+        currentPage = Math.min(Math.max(1, currentPage), totalPages);
         const pageItems = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-
-        if (loadingError && cardsData.length === 0) {
-          container.innerHTML = `
-            <div class="text-center py-12 px-5 text-textMuted bg-white rounded-3xl border border-borderSubtle">
-              <p class="text-sm font-bold mb-2">无法加载公开视频目录</p>
-              <p class="text-xs mb-4">${escapeHtml(loadingError)}</p>
-              <a class="inline-block px-4 py-2 rounded-full bg-cardDark text-white text-xs font-bold"
-                 href="${SKILLRY_INDEX}" target="_blank" rel="noopener noreferrer">打开 Skillry 视频库</a>
-              <p class="text-[11px] mt-4">如果你是直接双击本地 HTML 打开，请部署到 HTTPS 网站后重试；浏览器可能会限制本地文件读取远程 JSON。</p>
-            </div>`;
-          renderPagination(0, 0);
-          return;
-        }
-
         if (!pageItems.length) {
-          container.innerHTML = `
-            <div class="text-center py-12 text-textMuted bg-white rounded-3xl border border-borderSubtle">
-              <p class="text-sm font-bold">没有找到匹配的视频条目</p>
-              <p class="text-xs mt-2">试试其他关键词或分类。</p>
-            </div>`;
-          renderPagination(filtered.length, totalPages);
-          return;
+          container.innerHTML = '<div class="text-center py-12 text-textMuted bg-white rounded-3xl border border-borderSubtle"><p class="text-sm font-bold">No matching videos found</p></div>';
+          renderPagination(0, 0); return;
         }
-
         pageItems.forEach(item => {
           const card = document.createElement('article');
           card.className = 'space-y-2 group';
-          const poster = safeText(item.poster_url);
-          const title = safeText(item.title, prettifySlug(item.slug));
-          const author = safeText(item.author, 'Unknown creator');
-          const category = categoryLabels[(item.category || '').toLowerCase()] || safeText(item.category, 'AI Video');
-          const tags = Array.isArray(item.tech_tags) ? item.tech_tags.slice(0, 3).join(' · ') : '';
-          const idx = cardsData.indexOf(item);
-
+          const poster = item.poster ? `<img src="${esc(item.poster)}" alt="${esc(item.title)} preview" loading="lazy" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
           card.innerHTML = `
-            <div class="relative h-60 sm:h-72 w-full bg-cardDark rounded-3xl border border-borderSubtle overflow-hidden skillry-card-shadow cursor-pointer transition-transform group-hover:scale-[1.005]"
-                 role="button" tabindex="0" aria-label="查看 ${escapeHtml(title)}" data-open-index="${idx}">
-              ${poster ? `<img src="${escapeAttr(poster)}" alt="${escapeAttr(title)}" loading="lazy" class="w-full h-full object-cover" referrerpolicy="no-referrer">`
-                       : `<div class="w-full h-full flex items-center justify-center text-white text-sm">暂无封面</div>`}
-              <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/10"></div>
-              <div class="absolute top-3.5 left-3.5 z-10">
-                <span class="px-2.5 py-1 rounded-full bg-white/90 text-cardDark text-[10px] font-bold">${escapeHtml(category)}</span>
-              </div>
-              <div class="absolute inset-0 flex items-center justify-center">
-                <span class="w-14 h-14 rounded-full bg-black/60 border border-white/60 text-white flex items-center justify-center text-2xl pl-1">▶</span>
-              </div>
-              <div class="absolute bottom-3.5 left-4 right-4 text-white">
-                <div class="font-bold text-sm sm:text-base leading-snug">${escapeHtml(title)}</div>
-                <div class="text-[11px] text-white/80 mt-1">${escapeHtml(tags || 'Opus 5.5 community showcase')}</div>
-              </div>
-              <span class="absolute bottom-3.5 right-3.5 z-10 px-2 py-0.5 rounded-full bg-black/70 text-white font-mono text-[10px]">↗</span>
+            <div role="button" tabindex="0" onclick="openCardModal('${esc(item.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCardModal('${esc(item.id)}')}" class="relative h-60 sm:h-72 w-full bg-cardDark rounded-3xl border border-borderSubtle overflow-hidden skillry-card-shadow cursor-pointer transition-transform group-hover:scale-[1.005]">
+              ${poster}<div style="display:${item.poster?'none':'flex'}" class="absolute inset-0 items-center justify-center text-white/60 text-sm">Video preview</div>
+              <div class="absolute top-3.5 left-3.5 z-10"><span class="px-3 py-1 rounded-full bg-white/90 text-cardDark text-[10px] font-bold">${esc(categoryNames[item.category] || item.category)}</span></div>
+              <div class="absolute bottom-3.5 left-3.5 right-3.5 z-10 flex items-end justify-between gap-2"><span class="text-white font-extrabold text-lg drop-shadow-lg">${esc(item.title)}</span><span class="px-2 py-1 rounded-full bg-black/70 text-white font-mono text-[10px]">${esc(item.tech.join(' · ') || 'Opus 5.5')}</span></div>
             </div>
-            <div class="flex items-center justify-between gap-3 px-1 text-xs text-textPrimary font-semibold">
-              <a href="${escapeAttr(safeText(item.author_url, item.post_url || SKILLRY_INDEX))}" target="_blank" rel="noopener noreferrer" class="hover:underline truncate" onclick="event.stopPropagation()">@${escapeHtml(author.replace(/^@/, ''))}</a>
-              <div class="flex items-center gap-3 text-textMuted shrink-0">
-                <button type="button" data-copy-index="${idx}" title="复制提示词" class="hover:text-textPrimary" aria-label="复制提示词">⧉</button>
-                <a href="${escapeAttr(safeText(item.post_url, SKILLRY_INDEX))}" target="_blank" rel="noopener noreferrer" title="原作者帖子" class="hover:text-textPrimary" onclick="event.stopPropagation()">↗ 原帖</a>
-              </div>
-            </div>`;
+            <div class="flex items-center justify-between gap-3 px-1 text-xs text-textPrimary font-semibold"><a href="${esc(item.authorUrl || item.postUrl || '#')}" target="_blank" rel="noopener" class="hover:underline">${esc(item.handle)}</a><div class="flex items-center space-x-3 text-textMuted"><button onclick="copyPromptDirect('${encodeURIComponent(item.prompt)}')" title="Copy Prompt" class="hover:text-textPrimary"><i data-lucide="copy" class="w-4 h-4"></i></button>${item.postUrl ? `<a href="${esc(item.postUrl)}" target="_blank" rel="noopener" title="Original post" class="hover:text-textPrimary"><i data-lucide="external-link" class="w-4 h-4"></i></a>` : ''}</div></div>`;
           container.appendChild(card);
         });
-
         renderPagination(filtered.length, totalPages);
+        if (window.lucide) lucide.createIcons();
       }
-
-      function prettifySlug(slug) {
-        return safeText(slug, 'AI Video Showcase').replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      }
-
       function renderPagination(totalCount, totalPages) {
-        const pageNumbersContainer = document.getElementById('page-numbers');
-        const prevBtn = document.getElementById('prev-page');
-        const nextBtn = document.getElementById('next-page');
-        const indicator = document.getElementById('page-indicator');
-        prevBtn.disabled = currentPage <= 1 || totalCount === 0;
-        nextBtn.disabled = currentPage >= totalPages || totalCount === 0;
-        indicator.innerText = cardsData.length
-          ? `Showing page ${currentPage} of ${totalPages} (${totalCount} videos)`
-          : 'Loading video records…';
-        pageNumbersContainer.innerHTML = '';
-        for (let i = 1; i <= totalPages; i++) {
-          if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 2) {
-            const btn = document.createElement('button');
-            btn.className = i === currentPage
-              ? 'w-8 h-8 rounded-full bg-cardDark text-white text-xs font-bold shadow-sm transition-all'
-              : 'w-8 h-8 rounded-full bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 text-xs font-bold transition-all';
-            btn.innerText = i;
-            btn.addEventListener('click', () => {
-              currentPage = i;
-              renderFeedCards();
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-            pageNumbersContainer.appendChild(btn);
-          } else if (Math.abs(i - currentPage) === 3) {
-            const dots = document.createElement('span');
-            dots.className = 'text-textMuted text-xs px-1';
-            dots.innerText = '…';
-            pageNumbersContainer.appendChild(dots);
-          }
+        const nums = document.getElementById('page-numbers');
+        const prev = document.getElementById('prev-page');
+        const next = document.getElementById('next-page');
+        prev.disabled = currentPage <= 1;
+        next.disabled = !totalPages || currentPage >= totalPages;
+        document.getElementById('page-indicator').innerText = `Showing page ${currentPage} of ${totalPages} (${totalCount} videos total)`;
+        nums.innerHTML = '';
+        for (let i=1; i<=totalPages; i++) {
+          if (i===1 || i===totalPages || Math.abs(i-currentPage)<=2) {
+            const b=document.createElement('button');
+            b.className = i===currentPage ? 'w-8 h-8 rounded-full bg-cardDark text-white text-xs font-bold shadow-sm' : 'w-8 h-8 rounded-full bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 text-xs font-bold';
+            b.textContent=i; b.onclick=()=>{currentPage=i;renderFeedCards();window.scrollTo({top:0,behavior:'smooth'});}; nums.appendChild(b);
+          } else if (Math.abs(i-currentPage)===3) { const d=document.createElement('span'); d.className='text-textMuted text-xs px-1'; d.textContent='…'; nums.appendChild(d); }
         }
       }
-
-      function openCardModalByIndex(index) {
-        const item = cardsData[index];
-        if (!item) return;
-        modalActivePrompt = safeText(item.prompt, '该条目没有公开提示词。');
-        document.getElementById('modal-handle').innerText = '@' + safeText(item.author, 'creator').replace(/^@/, '');
-        document.getElementById('modal-title').innerText = prettifySlug(item.slug);
-        document.getElementById('modal-prompt').innerText = modalActivePrompt;
-        document.getElementById('modal-duration').innerText = 'SOURCE';
-        const skillryUrl = safeText(item.skillry_url, SKILLRY_INDEX);
-        const originalUrl = safeText(item.post_url, safeText(item.author_url, SKILLRY_INDEX));
-        const frame = document.getElementById('modal-frame');
-        const fallback = document.getElementById('frame-fallback');
-        frame.onload = () => {
-          clearTimeout(window.__frameFallbackTimer);
-          fallback.classList.add('hidden');
-        };
-        frame.src = skillryUrl;
-        fallback.classList.add('hidden');
-        frame.classList.remove('hidden');
-        document.getElementById('modal-skillry-link').href = skillryUrl;
-        document.getElementById('fallback-skillry-link').href = skillryUrl;
-        const originalLink = document.getElementById('modal-original-link');
-        originalLink.href = originalUrl;
-        originalLink.classList.toggle('hidden', !originalUrl);
+      function openCardModal(id) {
+        const item=cardsData.find(c=>c.id===id); if(!item) return;
+        modalActivePrompt=item.prompt;
+        document.getElementById('modal-handle').innerText=item.handle;
+        document.getElementById('modal-title').innerText=item.title;
+        document.getElementById('modal-prompt').innerText=item.prompt + (item.promptPartial ? '\n\n[Note: source marks this prompt as partial.]' : '');
+        const poster=document.getElementById('modal-poster'); poster.src=item.poster || ''; poster.style.display=item.poster?'block':'none';
+        document.getElementById('modal-duration').innerText=(item.tech.join(' · ') || 'Opus 5.5');
+        let links=document.getElementById('modal-source-links');
+        if(!links){links=document.createElement('div');links.id='modal-source-links';links.className='flex flex-wrap gap-3 text-xs font-bold';document.getElementById('modal-prompt').parentElement.appendChild(links);}
+        links.innerHTML=`${item.postUrl?`<a class="underline" target="_blank" rel="noopener" href="${esc(item.postUrl)}">Original post</a>`:''}${item.detailUrl?`<a class="underline" target="_blank" rel="noopener" href="${esc(item.detailUrl)}">Source entry</a>`:''}`;
         document.getElementById('video-modal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        // If iframe embedding is blocked, users still have a direct source link.
-        clearTimeout(window.__frameFallbackTimer);
-        window.__frameFallbackTimer = setTimeout(() => {
-          if (!document.getElementById('video-modal').classList.contains('hidden')) {
-            fallback.classList.remove('hidden');
-          }
-        }, 5000);
       }
-
-      function closeModal() {
-        document.getElementById('video-modal').classList.add('hidden');
-        document.getElementById('modal-frame').src = 'about:blank';
-        document.body.style.overflow = '';
+      function closeModal(){document.getElementById('video-modal').classList.add('hidden');}
+      function copyModalPrompt(){copyPromptDirect(encodeURIComponent(modalActivePrompt));}
+      function copyPromptDirect(encodedText){
+        const value=decodeURIComponent(encodedText);
+        if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(value).then(()=>showToast('Copied Prompt!','Prompt copied to clipboard')).catch(()=>fallbackCopy(value));
+        else fallbackCopy(value);
       }
-
-      function copyModalPrompt() {
-        copyText(modalActivePrompt);
-      }
-
-      async function copyText(text) {
-        try {
-          if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(text);
-          } else {
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.style.position = 'fixed';
-            ta.style.opacity = '0';
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            ta.remove();
-          }
-          showToast('Copied Prompt!', '提示词已复制');
-        } catch (e) {
-          showToast('Copy failed', '请打开条目后手动复制提示词');
-        }
-      }
-
-      function showToast(title, desc) {
-        const toast = document.getElementById('toast');
-        document.getElementById('toast-title').innerText = title;
-        document.getElementById('toast-desc').innerText = desc;
-        toast.classList.remove('hidden');
-        setTimeout(() => toast.classList.add('hidden'), 2500);
-      }
-
-      function closeDrawer() {
-        document.getElementById('mobile-drawer').classList.add('hidden');
-      }
-
-      function escapeHtml(value) {
-        return String(value ?? '').replace(/[&<>"']/g, c => ({
-          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-        }[c]));
-      }
-      function escapeAttr(value) { return escapeHtml(value); }
-
-      async function loadVideos() {
-        const container = document.getElementById('cards-container');
-        container.innerHTML = '<div class="text-center py-12 text-textMuted bg-white rounded-3xl border border-borderSubtle"><p class="text-sm font-bold">正在加载公开视频目录…</p><p class="text-xs mt-2">正在读取真实条目，不会生成虚假的视频地址。</p></div>';
-        try {
-          const response = await fetch(DATA_URL, { cache: 'no-cache' });
-          if (!response.ok) throw new Error('数据源返回 HTTP ' + response.status);
-          const data = await response.json();
-          if (!Array.isArray(data)) throw new Error('公开数据格式不是数组');
-          // Skillry gallery documents 418 live remakes; use those actual records.
-          cardsData = data.filter(item => item && item.has_remake === true && item.skillry_url && item.poster_url);
-          cardsData.sort((a, b) => String(b.added || '').localeCompare(String(a.added || '')));
-          document.getElementById('total-count').innerText = cardsData.length;
-          document.querySelector('[data-cat="all"]').innerHTML = `All Videos <span id="total-count" class="ml-1 opacity-70 font-mono text-[10px]">${cardsData.length}</span>`;
-          loadingError = '';
-          renderFeedCards();
-        } catch (error) {
-          loadingError = '读取 GitHub 公开 JSON 失败：' + (error && error.message ? error.message : '网络或跨域限制');
-          renderFeedCards();
-        }
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        renderFeedCards();
-        loadVideos();
-
-        document.getElementById('prev-page').addEventListener('click', () => {
-          if (currentPage > 1) { currentPage--; renderFeedCards(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        });
-        document.getElementById('next-page').addEventListener('click', () => {
-          const totalPages = Math.ceil(getFilteredData().length / ITEMS_PER_PAGE);
-          if (currentPage < totalPages) { currentPage++; renderFeedCards(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        });
-        document.getElementById('menu-toggle').addEventListener('click', () => document.getElementById('mobile-drawer').classList.remove('hidden'));
-        document.getElementById('menu-close').addEventListener('click', closeDrawer);
-        document.getElementById('main-search').addEventListener('input', e => {
-          searchFilter = e.target.value;
-          currentPage = 1;
-          renderFeedCards();
-        });
-        document.getElementById('category-pills').addEventListener('click', e => {
-          const btn = e.target.closest('.cat-btn');
-          if (!btn) return;
-          currentCategory = btn.dataset.cat;
-          currentPage = 1;
-          document.querySelectorAll('.cat-btn').forEach(b => {
-            b.className = b.dataset.cat === currentCategory
-              ? 'cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-cardDark text-white shadow-sm whitespace-nowrap transition-all'
-              : 'cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all';
-          });
-          renderFeedCards();
-        });
-        document.getElementById('cards-container').addEventListener('click', e => {
-          const copyButton = e.target.closest('[data-copy-index]');
-          if (copyButton) {
-            e.preventDefault();
-            const item = cardsData[Number(copyButton.dataset.copyIndex)];
-            if (item) copyText(safeText(item.prompt, ''));
-            return;
-          }
-          const openTarget = e.target.closest('[data-open-index]');
-          if (openTarget) openCardModalByIndex(Number(openTarget.dataset.openIndex));
-        });
-        document.getElementById('cards-container').addEventListener('keydown', e => {
-          if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-open-index]')) {
-            e.preventDefault();
-            openCardModalByIndex(Number(e.target.dataset.openIndex));
-          }
-        });
-        document.getElementById('video-modal').addEventListener('click', e => {
-          if (e.target.id === 'video-modal') closeModal();
-        });
-        document.addEventListener('keydown', e => {
-          if (e.key === 'Escape') closeModal();
-        });
+      function fallbackCopy(value){const ta=document.createElement('textarea');ta.value=value;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();showToast('Copied Prompt!','Prompt copied to clipboard');}
+      function showToast(title,desc){const toast=document.getElementById('toast');document.getElementById('toast-title').innerText=title;document.getElementById('toast-desc').innerText=desc;toast.classList.remove('hidden');setTimeout(()=>toast.classList.add('hidden'),2500);}
+      function closeDrawer(){document.getElementById('mobile-drawer').classList.add('hidden');}
+      document.addEventListener('DOMContentLoaded',()=>{
+        loadVideoData();
+        document.getElementById('prev-page').addEventListener('click',()=>{if(currentPage>1){currentPage--;renderFeedCards();window.scrollTo({top:0,behavior:'smooth'});}});
+        document.getElementById('next-page').addEventListener('click',()=>{const pages=Math.ceil(getFilteredData().length/ITEMS_PER_PAGE);if(currentPage<pages){currentPage++;renderFeedCards();window.scrollTo({top:0,behavior:'smooth'});}});
+        document.getElementById('menu-toggle').addEventListener('click',()=>document.getElementById('mobile-drawer').classList.remove('hidden'));
+        document.getElementById('menu-close').addEventListener('click',closeDrawer);
+        document.getElementById('main-search').addEventListener('input',e=>{searchFilter=e.target.value;currentPage=1;renderFeedCards();});
+        document.getElementById('category-pills').addEventListener('click',e=>{const btn=e.target.closest('.cat-btn');if(!btn)return;currentCategory=btn.dataset.cat;currentPage=1;document.querySelectorAll('.cat-btn').forEach(b=>b.className=b.dataset.cat===currentCategory?'cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-cardDark text-white shadow-sm whitespace-nowrap transition-all':'cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all');renderFeedCards();});
+        document.getElementById('video-modal').addEventListener('click',e=>{if(e.target.id==='video-modal')closeModal();});
       });
     </script>
 </body>
