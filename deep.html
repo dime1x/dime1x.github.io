@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时序动画 · 深炭暗金</title>
+    <style>
+        /* 全局重置 & 深炭黑背景 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #0e0e0e;
+            overflow: hidden;
+            cursor: none;               /* 隐藏鼠标光标 */
+        }
+
+        /* 固定 1920x1080 舞台，等比缩放 */
+        #stage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1920px;
+            height: 1080px;
+            transform-origin: center center;
+            background-color: #0e0e0e;   /* 深炭黑 */
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+
+        /* 所有绘制层共用 */
+        .layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* SVG 层 —— 用于贝塞尔曲线、暗角等 */
+        #svgLayer {
+            pointer-events: none;
+        }
+
+        /* Canvas 层 —— 用于粒子、数字、模拟 */
+        #canvasLayer {
+            pointer-events: none;
+        }
+
+        /* 版式文字与字幕层 */
+        #textLayer {
+            pointer-events: none;
+            font-family: 'Noto Serif SC', 'Times New Roman', '宋体', 'SimSun', serif;
+            color: #d4af37;           /* 暗金色基色 */
+        }
+
+        /* 左上角小字 */
+        .corner-left {
+            position: absolute;
+            top: 48px;
+            left: 56px;
+            font-size: 24px;
+            letter-spacing: 2px;
+            color: #b89b4c;           /* 稍暗的金色 */
+            opacity: 0.85;
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.2);
+            font-weight: 300;
+        }
+
+        /* 右上角小字 */
+        .corner-right {
+            position: absolute;
+            top: 48px;
+            right: 56px;
+            font-size: 24px;
+            letter-spacing: 2px;
+            color: #b89b4c;
+            opacity: 0.85;
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.2);
+            font-weight: 300;
+        }
+
+        /* 底部字幕区域 */
+        #subtitle {
+            position: absolute;
+            bottom: 72px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
+        }
+
+        #subtitleText {
+            font-size: 34px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: #e8d9b0;
+            text-align: center;
+            line-height: 1.4;
+            max-width: 1400px;
+            padding: 0 40px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+            background: linear-gradient(90deg, transparent, rgba(14, 14, 14, 0.4), transparent);
+        }
+
+        /* 关键词暗金色高亮 */
+        .keyword {
+            color: #d4af37;
+            font-weight: 500;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+            letter-spacing: 4px;
+        }
+
+        /* 颗粒 & 暗角叠加层 (Canvas) 单独一个，但为了性能我们用两个 Canvas？其实粒子和模拟可以共用一个，这里为了清晰另加一个颗粒层也可以用canvas，但粒子和场景绘制放在一起也没问题；暗角用SVG径向渐变或Canvas。这里使用一个Canvas绘制粒子+模拟，再用CSS径向渐变模拟暗角 + 用伪元素模拟颗粒？但为了完全控制且无外部资源，使用Canvas绘制颗粒与暗角更灵活。但静态颗粒也可用SVG滤镜？为了简单，我们用Canvas叠加颗粒（每帧重绘静态颗粒也会动，但为了胶片感可以每帧随机位置），暗角用CSS radial-gradient。但规范要求“全局叠加低强度胶片颗粒、柔和暗角”，使用CSS暗角+Canvas颗粒可以。或者使用一个额外的canvas层画颗粒与暗角；但暗角也可以放在最上面的canvas层。但考虑到性能，我们用CSS radial-gradient做暗角（几乎无开销），颗粒放在主canvas每一帧绘制。再或者用SVG滤镜？但SVG滤镜可能在某些无头渲染下兼容性不好。所以最终决定：暗角用CSS伪元素或背景实现；颗粒在主canvas中每帧绘制（随机点）。但为了保证颗粒不干扰模拟绘制，可以单独使用一个颗粒层 canvas 放在最上层（pointer-events:none）。但多一个canvas开销可控。我们使用两个canvas层：一个用于场景绘制（数字、模拟、粒子），另一个用于颗粒+暗角（半透明），这样颗粒不会被覆盖。暗角也用canvas径向渐变绘制在颗粒canvas上。这样最干净。 — 但为了简化，把颗粒和暗角放在最上层canvas。好，再增加一个canvas。
+
+        接下来我们实现舞台缩放逻辑。
+        */
+        #stage {
+            /* 保持 16:9 比例 */
+        }
+
+        /* 暗角用CSS径向渐变可以实现，但为了精确柔和、叠在顶层并且低强度，就用额外的canvas绘制径向渐变圆。 */
+    </style>
+</head>
+<body>
+    <div id="stage">
+        <!-- 背景绘制层 (Canvas) —— 动态效果：数字滚动、数理实验、粒子、贝塞尔曲线（贝塞尔也可以用SVG，但统一用Canvas更流畅，同时可以混合使用SVG来画贝塞尔线，但为简单且完全控制，全部使用Canvas绘制；但需求提到“原生 SVG + Canvas”，可以以Canvas为主，SVG用于某些元素，比如贝塞尔曲线由SVG path实现？但我们用Canvas绘制贝塞尔也可以，为了满足“原生SVG+Canvas”的描述，我们至少使用一个SVG绘制贝塞尔曲线生长效果。好，使用SVG层画一条贝塞尔生长线；其他动态由Canvas完成，这样同时用到了两者。设计如下：在某一幕（例如第2幕）SVG path 绘制贝塞尔生长，通过stroke-dashoffset动画。但SVG需要脚本控制，我们将SVG嵌入到DOM中，并使用JS操作属性。这样符合规范。那么我们就用SVG画一条长长的金色贝塞尔曲线作为幕间过渡或装饰，但分镜需要贝塞尔曲线描边生长，所以专门设计一个幕。好。
+
+        分镜列表：
+        幕1: 数字滚动 (0~5秒) 地点·人物：长安·李白 书名·年份：全唐诗·天宝三载
+        幕2: 贝塞尔曲线描边生长 (5~10秒) 地点·人物：敦煌·画师 书名·年份：敦煌遗书·五代
+        幕3: 数理实验模拟 (10~16秒) —— 模拟简谐振动或双摆，地点人物：临安·沈括 书名·年份：梦溪笔谈·元祐
+        幕4: 粒子聚散重组 (16~22秒) 地点人物：杭州·苏轼 书名年份：东坡七集·元丰
+        幕5: 镜头缓推 (22~28秒) —— 镜头推进效果，可以结合数字或几何，地点人物：金陵·曹雪芹 书名年份：红楼梦·乾隆
+        全部结束停留最后一幕。总时长约28秒。
+        过渡淡入淡出在各幕之间（用全局淡入淡出叠加层？可以用一个黑色遮罩透明度在切换时渐变动画。或者每幕自身用透明度动画。为简单，我们用一个全局遮罩div或canvas在幕切换时淡入淡出。我们使用CSS transition on a overlay div。
+
+        字幕逐句淡入，每一幕有对应字幕，关键词高亮。
+
+        快捷键：R重播，左箭头/右箭头手动切换。
+        */
+
+        <!-- SVG 层：用于贝塞尔曲线路径（幕2）和可能的装饰线 -->
+        <svg id="svgLayer" class="layer" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" style="pointer-events: none;">
+            <!-- 贝塞尔曲线将在幕2显示，其他幕隐藏 -->
+            <path id="bezierPath" d="" fill="none" stroke="#d4af37" stroke-width="3" stroke-linecap="round" stroke-dasharray="0 2000" stroke-dashoffset="0" opacity="0" />
+            <!-- 可添加其他SVG元素 -->
+        </svg>
+
+        <!-- 主绘制 Canvas 层：用于数字、模拟、粒子 -->
+        <canvas id="mainCanvas" class="layer" width="1920" height="1080"></canvas>
+
+        <!-- 颗粒与暗角 Canvas 层（最上层，无交互） -->
+        <canvas id="grainCanvas" class="layer" width="1920" height="1080"></canvas>
+
+        <!-- 文字版式层 -->
+        <div id="textLayer" class="layer">
+            <div class="corner-left" id="cornerLeft">长安 · 李白</div>
+            <div class="corner-right" id="cornerRight">全唐诗 · 天宝三载</div>
+            <div id="subtitle"><span id="subtitleText"></span></div>
+        </div>
+
+        <!-- 过渡遮罩（淡入淡出） -->
+        <div id="transitionOverlay" style="position: absolute; top:0; left:0; width:100%; height:100%; background:#0e0e0e; opacity:0; pointer-events: none; transition: opacity 0.6s ease;"></div>
+    </div>
+
+    <script>
+        (function() {
+            // --- 舞台缩放 ---
+            const stage = document.getElementById('stage');
+            function scaleStage() {
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                const scale = Math.min(w / 1920, h / 1080);
+                stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            }
+            window.addEventListener('resize', scaleStage);
+            scaleStage();
+
+            // --- 获取元素 ---
+            const canvas = document.getElementById('mainCanvas');
+            const ctx = canvas.getContext('2d');
+            const grainCanvas = document.getElementById('grainCanvas');
+            const grainCtx = grainCanvas.getContext('2d');
+            const svgPath = document.getElementById('bezierPath');
+            const cornerLeft = document.getElementById('cornerLeft');
+            const cornerRight = document.getElementById('cornerRight');
+            const subtitleText = document.getElementById('subtitleText');
+            const overlay = document.getElementById('transitionOverlay');
+
+            // --- 全局状态 ---
+            let isPlaying = false;
+            let startTime = 0;             // 动画开始的时间戳 (performance.now)
+            let currentTime = 0;           // 当前动画时间 (秒)
+            let animationFrameId = null;
+
+            // 分镜配置
+            const scenes = [
+                {
+                    duration: 5,          // 秒
+                    cornerLeft: '长安 · 李白',
+                    cornerRight: '全唐诗 · 天宝三载',
+                    subtitle: '云想衣裳花想容，<span class="keyword">春风拂槛</span>露华浓。',
+                    type: 'numberRoll',
+                },
+                {
+                    duration: 5,
+                    cornerLeft: '敦煌 · 画师',
+                    cornerRight: '敦煌遗书 · 五代',
+                    subtitle: '素手把<em class="keyword">青莲</em>，虚空生<em class="keyword">白月</em>。',
+                    type: 'bezier',
+                },
+                {
+                    duration: 6,
+                    cornerLeft: '临安 · 沈括',
+                    cornerRight: '梦溪笔谈 · 元祐',
+                    subtitle: '阳燧照物，<em class="keyword">影随形动</em>，格术可推。',
+                    type: 'simulation',
+                },
+                {
+                    duration: 6,
+                    cornerLeft: '杭州 · 苏轼',
+                    cornerRight: '东坡七集 · 元丰',
+                    subtitle: '人生如<em class="keyword">逆旅</em>，我亦是行人。',
+                    type: 'particles',
+                },
+                {
+                    duration: 6,
+                    cornerLeft: '金陵 · 曹雪芹',
+                    cornerRight: '红楼梦 · 乾隆',
+                    subtitle: '满纸<em class="keyword">荒唐言</em>，一把辛酸泪。',
+                    type: 'cameraPush',
+                }
+            ];
+
+            // 总时长
+            let totalDuration = scenes.reduce((acc, s) => acc + s.duration, 0);
+
+            // 当前场景索引
+            let currentSceneIndex = 0;
+
+            // 字幕/角落文字控制
+            function setTextsForScene(index) {
+                const scene = scenes[index];
+                if (!scene) return;
+                cornerLeft.textContent = scene.cornerLeft;
+                cornerRight.textContent = scene.cornerRight;
+                // 字幕用innerHTML以支持关键词高亮
+                subtitleText.innerHTML = scene.subtitle;
+                // 淡入字幕
+                subtitleText.parentElement.style.opacity = '1';
+            }
+
+            // 字幕淡出
+            function fadeOutSubtitle() {
+                subtitleText.parentElement.style.opacity = '0';
+            }
+
+            // 过渡：淡入淡出黑色遮罩
+            function transitionToScene(index, callback) {
+                if (index === currentSceneIndex && isPlaying) return;
+                overlay.style.opacity = '1';
+                setTimeout(() => {
+                    // 切换场景
+                    currentSceneIndex = index;
+                    setTextsForScene(index);
+                    // 重置动画时间起点? 实际上我们根据全局时间计算进度，但切换场景意味着立即跳转到该场景起始时间？
+                    // 对于手动切换：我们需要更新 currentTime 到该场景的开始累计时间。
+                    // 但我们的动画循环基于全局时间，如果跳转需要重新计算时间偏移。
+                    // 简易做法：停止动画，重置 startTime，然后从新场景的开始时间播放。
+                    // 因为是手动切换，我们可以重置 startTime 和 currentTime 让动画从场景起点开始。
+                    // 对于自动播放，我们使用连续时间，但手动跳转需要重新调整。
+                    // 为了简单且符合逻辑，我们为手动切换保留连续时间？但会引发复杂度。我们采用: 每次切换场景（包括手动），重新从该场景起点开始计时，且不自动跳转下一幕直到时间到达该场景时长。
+                    // 这需要重构。但我们也可以基于全局时间线，手动切换时直接跳转到对应的全局时间点。
+                    // 就按全局时间线吧，手动切换直接跳到该场景的startTime。
+                    // 计算场景起始全局时间
+                    let sceneStartTime = 0;
+                    for (let i = 0; i < index; i++) {
+                        sceneStartTime += scenes[i].duration;
+                    }
+                    // 设置当前时间为 sceneStartTime，并重置 startTime 以让动画从那里开始
+                    // 但动画循环使用 (performance.now() - startTime) / 1000; 如果重置 startTime = performance.now() - sceneStartTime * 1000，那么currentTime = sceneStartTime。
+                    startTime = performance.now() - sceneStartTime * 1000;
+                    currentTime = sceneStartTime;
+                    // 对于自动播放结束，如果已播放完毕，停留在最后一幕，不自动重播。
+                    // 但如果是手动切换到最后一幕，跳转即可。
+                    // 如果当前已经播放完毕，手动切换后应继续播放？ 我们让 isPlaying = true 继续播放。
+                    isPlaying = true;
+                    overlay.style.opacity = '0';
+                    if (callback) callback();
+                }, 300); // 等待淡出
+            }
+
+            // --- 绘制函数们 ---
+
+            // 清空主画布
+            function clearMain() {
+                ctx.clearRect(0, 0, 1920, 1080);
+            }
+
+            // 绘制数字滚动 (幕1)
+            function drawNumberRoll(t) {
+                // t: 0~1 场景进度
+                clearMain();
+                const progress = t;
+                // 数字从0滚动到 123456.789 左右
+                const val = Math.floor(progress * 123456.789 * 100) / 100;
+                ctx.save();
+                ctx.font = '300 180px "Noto Serif SC", "Times New Roman", serif';
+                ctx.fillStyle = '#d4af37';
+                ctx.shadowColor = 'rgba(212, 175, 55, 0.5)';
+                ctx.shadowBlur = 40;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(val.toFixed(2), 960, 540);
+                // 添加辅助细线装饰
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = '#b89b4c';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(660, 680);
+                ctx.lineTo(1260, 680);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // 贝塞尔曲线描边生长 (幕2) —— 使用SVG路径
+            // 在场景开始时重置SVG
+            function updateBezier(t) {
+                // t 0~1
+                clearMain(); // 主canvas清空
+                // 设置SVG path可见
+                svgPath.setAttribute('opacity', '1');
+                // 贝塞尔路径数据: 一条优雅的曲线
+                const pathData = `M 260,820 C 660,180 1260,180 1660,820`;
+                svgPath.setAttribute('d', pathData);
+                // 路径总长度约 1600左右? 使用 getTotalLength 动态获取
+                const length = svgPath.getTotalLength();
+                // 根据t控制 dashoffset 和 dasharray
+                const drawLength = length * t;
+                svgPath.setAttribute('stroke-dasharray', `${drawLength} ${length}`);
+                // 如果t=1，完全显示
+                if (t >= 1) {
+                    svgPath.setAttribute('stroke-dasharray', `${length} ${length}`);
+                }
+            }
+
+            // 数理实验模拟 (幕3) —— 简谐振动 / 双摆
+            function drawSimulation(t) {
+                clearMain();
+                ctx.save();
+                // 绘制背景网格淡线
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.08)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 1920; i += 80) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i, 1080);
+                    ctx.stroke();
+                }
+                for (let i = 0; i < 1080; i += 80) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, i);
+                    ctx.lineTo(1920, i);
+                    ctx.stroke();
+                }
+
+                // 模拟双摆或弹簧振子，这里简单模拟单摆+相位
+                const cx = 960, cy = 400;
+                const amp = 250;
+                const angle = Math.sin(t * Math.PI * 4) * 0.8; // 摆动角度
+                const x = cx + Math.sin(angle) * amp;
+                const y = cy + Math.cos(angle) * amp * 0.6;
+                // 绘制摆线
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 3;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = 'rgba(212, 175, 55, 0.6)';
+                ctx.stroke();
+                // 绘制球
+                ctx.beginPath();
+                ctx.arc(x, y, 24, 0, Math.PI * 2);
+                ctx.fillStyle = '#d4af37';
+                ctx.shadowBlur = 40;
+                ctx.fill();
+                // 绘制轨迹
+                ctx.beginPath();
+                ctx.arc(cx, cy, amp * 0.9, 0, Math.PI * 2, false);
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)';
+                ctx.lineWidth = 1.5;
+                ctx.shadowBlur = 0;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // 粒子聚散重组 (幕4)
+            let particles = [];
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < 600; i++) {
+                    particles.push({
+                        angle: Math.random() * Math.PI * 2,
+                        radius: Math.random() * 600 + 100,
+                        speed: Math.random() * 0.01 + 0.005,
+                        offset: Math.random() * 100,
+                        size: Math.random() * 3 + 1.5,
+                    });
+                }
+            }
+            initParticles();
+
+            function drawParticles(t) {
+                clearMain();
+                ctx.save();
+                // 粒子围绕中心聚散，根据t变化半径缩放
+                const centerX = 960, centerY = 540;
+                const globalScale = 0.8 + 0.4 * Math.sin(t * Math.PI * 2); // 呼吸
+                // 重组：t从0->1，粒子从分散到聚集到中心，再散开? 我们做一个先聚后散的效果。
+                const phase = t < 0.5 ? t * 2 : (1 - t) * 2; // 0->1->0
+                const radiusScale = 0.3 + phase * 0.9;
+                particles.forEach(p => {
+                    const angle = p.angle + t * Math.PI * 0.5; // 旋转
+                    const r = p.radius * radiusScale * (0.8 + 0.2 * Math.sin(t * 10 + p.offset));
+                    const x = centerX + Math.cos(angle) * r;
+                    const y = centerY + Math.sin(angle) * r * 0.7;
+                    ctx.beginPath();
+                    ctx.arc(x, y, p.size * (0.7 + 0.5 * phase), 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(212, 175, 55, ${0.5 + 0.4 * Math.sin(t * 20 + p.offset)})`;
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = 'rgba(212, 175, 55, 0.7)';
+                    ctx.fill();
+                });
+                ctx.restore();
+            }
+
+            // 镜头缓推 (幕5)
+            function drawCameraPush(t) {
+                clearMain();
+                ctx.save();
+                // 镜头推进: 缩放系数从1到1.8
+                const scale = 1 + t * 0.8;
+                ctx.translate(960, 540);
+                ctx.scale(scale, scale);
+                ctx.translate(-960, -540);
+
+                // 绘制一个逐渐放大的图案（比如文字或几何）
+                ctx.font = '300 120px "Noto Serif SC", "Times New Roman", serif';
+                ctx.fillStyle = '#d4af37';
+                ctx.shadowColor = 'rgba(212, 175, 55, 0.7)';
+                ctx.shadowBlur = 40;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('一梦', 960, 420);
+                ctx.font = '300 72px "Noto Serif SC", "Times New Roman", serif';
+                ctx.fillText('红楼梦', 960, 580);
+
+                // 绘制一些放射线
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < 24; i++) {
+                    const angle = (i / 24) * Math.PI * 2 + t * 0.5;
+                    const r1 = 200 + t * 150;
+                    const r2 = 400 + t * 300;
+                    const x1 = 960 + Math.cos(angle) * r1;
+                    const y1 = 540 + Math.sin(angle) * r1;
+                    const x2 = 960 + Math.cos(angle) * r2;
+                    const y2 = 540 + Math.sin(angle) * r2;
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            // 绘制颗粒与暗角 (每一帧)
+            function drawGrainAndVignette() {
+                grainCtx.clearRect(0, 0, 1920, 1080);
+                // 胶片颗粒: 随机点
+                grainCtx.save();
+                const grainCount = 4000;
+                for (let i = 0; i < grainCount; i++) {
+                    const x = Math.random() * 1920;
+                    const y = Math.random() * 1080;
+                    const alpha = Math.random() * 0.12 + 0.02;
+                    grainCtx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                    grainCtx.fillRect(x, y, 1.5, 1.5);
+                }
+                // 柔和暗角: 径向渐变
+                const gradient = grainCtx.createRadialGradient(960, 540, 300, 960, 540, 1100);
+                gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+                gradient.addColorStop(0.6, 'rgba(0, 0, 0, 0.25)');
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0.75)');
+                grainCtx.fillStyle = gradient;
+                grainCtx.fillRect(0, 0, 1920, 1080);
+                grainCtx.restore();
+            }
+
+            // --- 主循环 ---
+            function animate() {
+                if (!isPlaying) {
+                    animationFrameId = requestAnimationFrame(animate);
+                    return;
+                }
+
+                // 计算全局时间
+                const now = performance.now();
+                currentTime = (now - startTime) / 1000;
+
+                // 判断当前场景
+                let acc = 0;
+                let sceneIndex = 0;
+                let sceneProgress = 0; // 0~1
+                for (let i = 0; i < scenes.length; i++) {
+                    const duration = scenes[i].duration;
+                    if (currentTime < acc + duration) {
+                        sceneIndex = i;
+                        sceneProgress = (currentTime - acc) / duration;
+                        break;
+                    }
+                    acc += duration;
+                    // 如果超出总时长，停留在最后一帧
+                    if (i === scenes.length - 1 && currentTime >= totalDuration) {
+                        sceneIndex = scenes.length - 1;
+                        sceneProgress = 1.0;
+                    }
+                }
+
+                // 如果场景变化，更新文字（但需要避免频繁更新，用当前索引判断）
+                if (sceneIndex !== currentSceneIndex) {
+                    // 自动切换场景（非手动触发）
+                    currentSceneIndex = sceneIndex;
+                    setTextsForScene(sceneIndex);
+                    // 淡入淡出过渡？自动播放时也可以加一个轻微过渡，但为了流畅，可以不加，或简单加透明变化。我们使用字幕自动更新。
+                }
+
+                // 根据场景类型绘制
+                const scene = scenes[sceneIndex];
+                if (scene) {
+                    switch (scene.type) {
+                        case 'numberRoll':
+                            drawNumberRoll(sceneProgress);
+                            // 隐藏SVG路径
+                            svgPath.setAttribute('opacity', '0');
+                            break;
+                        case 'bezier':
+                            updateBezier(sceneProgress);
+                            break;
+                        case 'simulation':
+                            drawSimulation(sceneProgress);
+                            svgPath.setAttribute('opacity', '0');
+                            break;
+                        case 'particles':
+                            drawParticles(sceneProgress);
+                            svgPath.setAttribute('opacity', '0');
+                            break;
+                        case 'cameraPush':
+                            drawCameraPush(sceneProgress);
+                            svgPath.setAttribute('opacity', '0');
+                            break;
+                        default:
+                            clearMain();
+                    }
+                }
+
+                // 绘制颗粒和暗角（每帧）
+                drawGrainAndVignette();
+
+                // 检查是否全部播放完毕
+                if (currentTime >= totalDuration) {
+                    // 停留在最后一幕片尾
+                    isPlaying = false;
+                    // 确保最后一幕绘制完整
+                    // 可能最后一次绘制进度为1，但上面的判断已处理。
+                    // 但为了避免快速重绘最后状态，手动再调用一次绘制
+                    const lastScene = scenes[scenes.length - 1];
+                    if (lastScene.type === 'cameraPush') drawCameraPush(1.0);
+                    else if (lastScene.type === 'particles') drawParticles(1.0);
+                    // 画完最后一帧
+                    drawGrainAndVignette();
+                }
+
+                animationFrameId = requestAnimationFrame(animate);
+            }
+
+            // --- 启动动画 ---
+            function startAnimation() {
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                // 重置状态
+                currentTime = 0;
+                currentSceneIndex = 0;
+                startTime = performance.now();
+                isPlaying = true;
+                setTextsForScene(0);
+                // 确保SVG等重置
+                svgPath.setAttribute('opacity', '0');
+                clearMain();
+                drawGrainAndVignette();
+                // 开始循环
+                animationFrameId = requestAnimationFrame(animate);
+            }
+
+            // 初始化: 黑屏等待点击
+            function initBlackScreen() {
+                isPlaying = false;
+                clearMain();
+                // 绘制黑色背景由stage背景提供，但主canvas默认透明，所以背景是深炭黑，没问题。
+                drawGrainAndVignette(); // 暗角和颗粒也画上
+                // 清空文字或显示提示? 规范说初始黑屏，点击开始，不渲染按钮。所以我们不显示任何文字提示。
+                // 但为了用户知道点击，可以隐藏鼠标光标，但点击画面触发。
+            }
+
+            // 点击开始
+            stage.addEventListener('click', () => {
+                if (!isPlaying && currentTime < totalDuration) {
+                    // 如果是从未开始，或结束后点击？规范是点击开始，全部播放完毕后停留在最后一幕片尾。如果已结束，点击不再有动作（除非按R）。
+                    // 如果当前不在播放且当前时间为0（初始），开始。如果已结束，不响应点击。
+                    if (currentTime === 0) {
+                        startAnimation();
+                    } else if (currentTime >= totalDuration) {
+                        // 停留在最后一幕，不响应点击
+                    } else {
+                        // 暂停状态（可能被手动暂停？但我们没有暂停功能），直接继续。
+                        // 但为了简单，点击若不在播放且未结束，继续播放。
+                        isPlaying = true;
+                        startTime = performance.now() - currentTime * 1000;
+                        if (!animationFrameId) animationFrameId = requestAnimationFrame(animate);
+                    }
+                }
+            });
+
+            // 键盘快捷键
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'r' || e.key === 'R') {
+                    e.preventDefault();
+                    // 重播
+                    startAnimation();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    // 上一幕
+                    let newIndex = Math.max(0, currentSceneIndex - 1);
+                    if (newIndex !== currentSceneIndex) {
+                        // 计算场景起始时间
+                        let sceneStartTime = 0;
+                        for (let i = 0; i < newIndex; i++) sceneStartTime += scenes[i].duration;
+                        startTime = performance.now() - sceneStartTime * 1000;
+                        currentTime = sceneStartTime;
+                        currentSceneIndex = newIndex;
+                        setTextsForScene(newIndex);
+                        isPlaying = true;
+                        if (!animationFrameId) animationFrameId = requestAnimationFrame(animate);
+                        // 过渡淡入淡出（可选）
+                        overlay.style.opacity = '0.6';
+                        setTimeout(() => { overlay.style.opacity = '0'; }, 200);
+                    }
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    let newIndex = Math.min(scenes.length - 1, currentSceneIndex + 1);
+                    if (newIndex !== currentSceneIndex) {
+                        let sceneStartTime = 0;
+                        for (let i = 0; i < newIndex; i++) sceneStartTime += scenes[i].duration;
+                        startTime = performance.now() - sceneStartTime * 1000;
+                        currentTime = sceneStartTime;
+                        currentSceneIndex = newIndex;
+                        setTextsForScene(newIndex);
+                        isPlaying = true;
+                        if (!animationFrameId) animationFrameId = requestAnimationFrame(animate);
+                        overlay.style.opacity = '0.6';
+                        setTimeout(() => { overlay.style.opacity = '0'; }, 200);
+                    }
+                }
+            });
+
+            // 初始化黑屏状态
+            initBlackScreen();
+
+            // 确保页面缩放时重新缩放
+            window.dispatchEvent(new Event('resize'));
+
+            // 额外: 鼠标移动时隐藏光标已经通过CSS cursor:none完成
+
+            // 注意: 由于Canvas字体可能需要等待字体加载，但为了无头渲染，使用系统衬线字体回退。
+            // 但要求Noto Serif SC，我们已经在font-family中指定。
+        })();
+    </script>
+</body>
+</html>
