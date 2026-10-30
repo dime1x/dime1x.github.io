@@ -81,14 +81,14 @@
         </div>
     </div>
 
-    <!-- HEADER BAR (Exact to screenshot) -->
-    <header class="sticky top-0 z-40 w-full bg-creamBg/90 backdrop-blur-md border-b border-borderSubtle">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+<!-- HEADER BAR -->
+<header class="sticky top-0 z-40 w-full bg-creamBg/90 backdrop-blur-md border-b border-borderSubtle">
+    <div class="max-w-4xl mx-auto px-4 py-6 flex items-center justify-between">
 
 <!-- Logo Section -->
-<a href="#" class="flex items-center space-x-2.5 group">
-    <!-- 图标部分 -->
-    <div class="w-9 h-9 rounded-full overflow-hidden bg-transparent flex items-center justify-center" aria-label="Deople logo">
+<a href="#" class="flex items-center space-x-6 group">
+    <!-- 保留左侧圆圈 Icon，高度与右侧 Logo 完全同步 (h-20 sm:h-24) -->
+    <div class="h-20 sm:h-24 w-auto aspect-square rounded-full overflow-hidden bg-transparent flex items-center justify-center shadow-md shrink-0" aria-label="Deople logo">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
         <style>
           .bg-red { fill: #FF3B30; }
@@ -125,8 +125,8 @@
       </svg>
     </div>
 
-    <!-- 修正大小后的彩色文字 Deople SVG -->
-    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2172 724" class="h-7 w-auto" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Deople">
+    <!-- 右侧彩色几何文字 Logo -->
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 120 2172 430" class="h-20 sm:h-24 w-auto" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Deople Logo">
       <title>Deople Logo Text</title>
       <path id="color-fb050f" d="M406.25 220.176 C436.515 265.303 450.707 321.25 440 375 L438.969 380.207 C434.896 398.849 428.035 416.224 419 433 L417.07 436.605 C402.663 462.673 380.837 488.287 356 505 L352.465 507.387 C287.596 549.423 208 556.672 137.957 522.098 C126.765 516.165 116.01 509.777 106 502 L103.531 500.113 C62.161 467.842 33.176 421.879 24 370 L21.705 332.838 C22.435 259.992 66.838 192.789 129 157 C223.685 105.292 343.628 131.787 406.25 220.176 Z " fill="#FB050F"/>
       <path id="color-0173fd" d="M520.485 164.606 L733.48 164.364 C757.985 164.222 778.135 169.805 792.313 190.938 C798.435 202.47 801.248 213.035 801.254 226.095 L801.252 447.112 C800.141 468.689 788.86 486.967 770.004 497.492 C761.224 501.899 752.959 503.124 743.248 503.14 L515.135 503.372 C495.664 501.962 478.588 490.862 469.242 473.789 C464.634 464.239 462.753 455.567 462.733 444.914 L462.496 235.356 C462.361 208.337 467.533 186.185 492 171.5 C501.112 166.331 510.117 164.627 520.485 164.606 Z " fill="#0173FD"/>
@@ -154,8 +154,6 @@
 
             <!-- Right Actions -->
             <div class="flex items-center space-x-2 sm:space-x-2.5">
-
-
                 <!-- Mobile Menu Hamburger -->
                 <button id="menu-toggle" class="w-9 h-9 rounded-full bg-white border border-borderSubtle hover:bg-gray-50 flex items-center justify-center text-textPrimary transition-all shadow-sm">
                     <i data-lucide="menu" class="w-4 h-4"></i>
