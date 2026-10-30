@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skillry - Viral Opus 5.5 AI videos, with their prompts</title>
+    <title>Deople - Claude AI videos, with their prompts</title>
+    <meta name="keywords" content="AI videos, claide videos,claude design">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
+    <script>tailwind.config = {
             theme: {
                 extend: {
                     colors: {
@@ -26,8 +26,7 @@
                     }
                 }
             }
-        }
-    </script>
+        }</script>
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -44,6 +43,7 @@
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
+
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
@@ -53,9 +53,17 @@
         .toast-enter {
             animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
         @keyframes slideUp {
-            from { transform: translateY(100%) scale(0.95); opacity: 0; }
-            to { transform: translateY(0) scale(1); opacity: 1; }
+            from {
+                transform: translateY(100%) scale(0.95);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -75,26 +83,21 @@
     <!-- HEADER BAR (Exact to screenshot) -->
     <header class="sticky top-0 z-40 w-full bg-creamBg/90 backdrop-blur-md border-b border-borderSubtle">
         <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-            
+
             <!-- Logo Section -->
             <a href="#" class="flex items-center space-x-2.5 group">
-                <div class="w-9 h-9 rounded-xl bg-cardDark flex items-center justify-center shadow-sm">
-                    <span class="text-white font-extrabold text-lg transform -rotate-12 select-none">/</span>
+                <div class="w-9 h-9 rounded-xl overflow-hidden bg-transparent flex items-center justify-center" aria-label="Deople logo">
+                    <img src="https://pbs.twimg.com/profile_images/2015666252451364864/Oyqltbfz_400x400.jpg"
+                         alt="Deople Logo"
+                         class="w-full h-full object-contain rounded-xl"
+                         referrerpolicy="no-referrer" />
                 </div>
-                <span class="text-xl font-extrabold tracking-tight text-textPrimary">Skillry</span>
+                <span class="text-xl font-extrabold tracking-tight text-textPrimary">Deople</span>
             </a>
 
             <!-- Right Actions -->
             <div class="flex items-center space-x-2 sm:space-x-2.5">
-                <!-- Feedback / Yellow Icon Button -->
-                <button onclick="showToast('Feedback', 'Thanks for exploring Skillry!')" class="w-9 h-9 rounded-full bg-brandLime hover:bg-brandLimeHover flex items-center justify-center text-cardDark font-semibold transition-all shadow-sm active:scale-95" title="Give Feedback">
-                    <i data-lucide="message-square-plus" class="w-4 h-4"></i>
-                </button>
 
-                <!-- Sign In Button -->
-                <button class="px-4 py-2 rounded-full bg-cardDark hover:bg-black text-white text-xs font-bold transition-all shadow-sm active:scale-95">
-                    Sign In
-                </button>
 
                 <!-- Mobile Menu Hamburger -->
                 <button id="menu-toggle" class="w-9 h-9 rounded-full bg-white border border-borderSubtle hover:bg-gray-50 flex items-center justify-center text-textPrimary transition-all shadow-sm">
@@ -130,11 +133,11 @@
 
     <!-- MAIN CONTAINER -->
     <main class="max-w-3xl mx-auto px-4 pt-4 pb-16 flex-grow w-full" id="feed">
-        
+
         <!-- SEARCH FIELD (Exact to screenshot) -->
         <div class="mb-5 relative">
-            <input type="text" id="main-search" placeholder="What do you want to create?" 
-                class="w-full pl-5 pr-12 py-3.5 bg-white border border-borderSubtle rounded-full text-sm text-textPrimary placeholder-textMuted focus:outline-none focus:ring-2 focus:ring-cardDark shadow-sm font-medium transition-all">
+            <input type="text" id="main-search" placeholder="What do you want to create?"
+                   class="w-full pl-5 pr-12 py-3.5 bg-white border border-borderSubtle rounded-full text-sm text-textPrimary placeholder-textMuted focus:outline-none focus:ring-2 focus:ring-cardDark shadow-sm font-medium transition-all">
             <button class="absolute right-4 top-1/2 -translate-y-1/2 text-textPrimary hover:scale-110 transition-transform">
                 <i data-lucide="search" class="w-4 h-4 stroke-[2.5]"></i>
             </button>
@@ -171,7 +174,7 @@
                     <i data-lucide="chevron-left" class="w-4 h-4"></i>
                     <span>Prev</span>
                 </button>
-                
+
                 <!-- Page Numbers Container -->
                 <div id="page-numbers" class="flex items-center space-x-1 overflow-x-auto no-scrollbar max-w-[220px] sm:max-w-none px-1">
                     <!-- Dynamic page buttons -->
@@ -182,7 +185,7 @@
                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </button>
             </div>
-            
+
             <p id="page-indicator" class="text-xs text-textMuted font-medium">Loading 418 real video records…</p>
         </div>
 
@@ -214,7 +217,7 @@
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
-            
+
             <div class="p-5 overflow-y-auto space-y-4">
                 <!-- Direct MP4 player powered by videos.json -->
                 <div class="relative bg-cardDark rounded-2xl overflow-hidden shadow-inner">
@@ -253,8 +256,7 @@
     </div>
 
     <!-- JAVASCRIPT & REAL VIDEO DATA -->
-    <script>
-      // Uses the public, machine-readable dataset from the source repository,
+    <script>// Uses the public, machine-readable dataset from the source repository,
       // not an iframe or a live embed of the Skillry webpage.
         // Live public dataset maintained by the original Skillry showcase repository.
         // This avoids relying on a missing local ./videos.json file.
@@ -458,7 +460,16 @@
         document.getElementById('main-search').addEventListener('input',e=>{searchFilter=e.target.value;currentPage=1;renderFeedCards();});
         document.getElementById('category-pills').addEventListener('click',e=>{const btn=e.target.closest('.cat-btn');if(!btn)return;currentCategory=btn.dataset.cat;currentPage=1;document.querySelectorAll('.cat-btn').forEach(b=>b.className=b.dataset.cat===currentCategory?'cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-cardDark text-white shadow-sm whitespace-nowrap transition-all':'cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all');renderFeedCards();});
         document.getElementById('video-modal').addEventListener('click',e=>{if(e.target.id==='video-modal')closeModal();});
-      });
+      });</script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-384RKFQQZQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-384RKFQQZQ');
     </script>
 </body>
 </html>
