@@ -1,0 +1,518 @@
+    <!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude · Spark Universe</title>
+<style>
+  :root {
+    --clay: #D97757;
+    --bg: #F0EEE6;
+    --ink: #1F1E1D;
+    --muted: #8a8780;
+  }
+  body.dark {
+    --bg: #1C1B19;
+    --ink: #F0EEE6;
+    --muted: #7d7a73;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Georgia, "Songti SC", "Times New Roman", serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background .8s, color .8s;
+    user-select: none;
+  }
+
+  /* 画布：背景星尘 + 前景火花 */
+  #bg, #fx { position: fixed; inset: 0; pointer-events: none; }
+  #bg { z-index: 0; }
+  #fx { z-index: 3; }
+
+  .stage {
+    position: relative;
+    z-index: 1;
+    perspective: 900px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .tilt {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    transform-style: preserve-3d;
+    transition: transform .2s ease-out;
+  }
+
+  /* 光晕 */
+  .glow {
+    position: absolute;
+    inset: -70px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(217,119,87,.35), transparent 65%);
+    filter: blur(10px);
+    animation: pulse 3.6s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .glow.flash { animation: flash .8s ease-out; }
+  @keyframes pulse {
+    0%, 100% { transform: scale(.9); opacity: .6; }
+    50%      { transform: scale(1.1); opacity: 1; }
+  }
+  @keyframes flash {
+    0%   { transform: scale(1.7); opacity: 1; }
+    100% { transform: scale(1);   opacity: .7; }
+  }
+
+  /* 星芒 */
+  svg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    cursor: pointer;
+  }
+  #whirl, .spark { transform-origin: 0 0; }
+  .ray {
+    stroke: var(--clay);
+    stroke-width: 9;
+    stroke-linecap: round;
+    transform-origin: 0 0;
+    transform: scale(0);
+    animation: burst .8s cubic-bezier(.34,1.56,.64,1) forwards;
+    animation-delay: var(--d);
+  }
+  @keyframes burst { to { transform: scale(1); } }
+  .core {
+    fill: var(--clay);
+    transform-origin: 0 0;
+    animation: pop .4s ease-out both;
+  }
+  @keyframes pop { from { transform: scale(0); } }
+
+  .thinking .spark { animation: spin 14s linear infinite; }
+  .thinking .ray {
+    transform: scale(1);
+    animation: breathe 1.8s ease-in-out infinite;
+    animation-delay: var(--w);
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(.55); }
+  }
+
+  /* 思绪碎片 */
+  .thought {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    color: var(--clay);
+    font-size: var(--s);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    animation: drift 3.2s ease-out forwards;
+  }
+  @keyframes drift {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.4);
+    }
+    20% { opacity: .9; }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%)
+                 translate(var(--dx), var(--dy))
+                 rotate(var(--r)) scale(1);
+    }
+  }
+
+  /* 标题 */
+  h1 {
+    margin-top: 40px;
+    font-size: 60px;
+    font-weight: 400;
+    letter-spacing: -1px;
+    cursor: default;
+  }
+  h1 span {
+    display: inline-block;
+    opacity: 0;
+    translate: 0 18px;
+    animation: rise .7s cubic-bezier(.34,1.56,.64,1) forwards;
+    animation-delay: calc(1s + var(--i) * 70ms);
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1), color .3s;
+  }
+  h1 span:hover {
+    transform: translateY(-10px) rotate(-6deg);
+    color: var(--clay);
+  }
+  @keyframes rise { to { opacity: 1; translate: 0 0; } }
+
+  /* 打字机 */
+  .type {
+    margin-top: 12px;
+    min-height: 24px;
+    font-size: 16px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: fade .8s ease-out 1.6s forwards;
+  }
+  @keyframes fade { to { opacity: 1; } }
+  .caret {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 3px;
+    vertical-align: -2px;
+    background: var(--clay);
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* 涟漪 */
+  .ripple {
+    position: fixed;
+    z-index: 2;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--clay);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0);
+    animation: ripple .9s ease-out forwards;
+  }
+  @keyframes ripple {
+    to { transform: translate(-50%, -50%) scale(14); opacity: 0; }
+  }
+
+  /* 主题按钮 */
+  #theme {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 4;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--muted);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ink);
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform .3s, border-color .3s;
+  }
+  #theme:hover {
+    transform: rotate(20deg) scale(1.08);
+    border-color: var(--clay);
+  }
+
+  .hint {
+    position: fixed;
+    bottom: 20px;
+    z-index: 4;
+    padding: 0 16px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<canvas id="fx"></canvas>
+
+<button id="theme" title="切换夜间模式（D）">☾</button>
+
+<div class="stage">
+  <div class="tilt" id="tilt">
+    <div class="glow" id="glow"></div>
+    <svg id="logo" viewBox="-100 -100 200 200">
+      <g id="whirl"><g class="spark" id="spark"></g></g>
+    </svg>
+  </div>
+  <h1 id="title"></h1>
+  <p class="type"><span id="typed"></span><span class="caret"></span></p>
+</div>
+
+<div class="hint">
+  移动鼠标 · 点击星芒 · 空格 灵感爆发 · 双击 灵感雨 · R 重播 · D 夜间
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+const svg = $('#logo'), spark = $('#spark'), whirl = $('#whirl');
+const tilt = $('#tilt'), glow = $('#glow');
+
+const lengths = [88, 72, 82, 66, 90, 70, 84, 64, 86, 74, 80, 68];
+const N = lengths.length;
+let rays = [], timers = [], thinking = false;
+const mouse = { x: innerWidth / 2, y: innerHeight / 2, active: false };
+
+const pt = (x, y) => { const p = svg.createSVGPoint(); p.x = x; p.y = y; return p; };
+const rand = (a, b) => a + Math.random() * (b - a);
+
+/* ========== 画布 ========== */
+const bg = $('#bg'), fx = $('#fx');
+const bctx = bg.getContext('2d'), fctx = fx.getContext('2d');
+let W, H;
+function resize() {
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  [bg, fx].forEach(c => {
+    c.width = W * dpr; c.height = H * dpr;
+    c.style.width = W + 'px'; c.style.height = H + 'px';
+    c.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+  });
+}
+resize();
+addEventListener('resize', resize);
+
+const dust = Array.from({ length: 80 }, () => ({
+  x: Math.random() * W, y: Math.random() * H,
+  vx: rand(-.15, .15), vy: rand(-.15, .15), r: rand(.6, 2.4)
+}));
+const sparks = [];
+function spawn(x, y, vx, vy, life = 60, size = 2.5) {
+  sparks.push({ x, y, vx, vy, life, max: life, size });
+}
+
+/* ========== 构建星芒 ========== */
+function build() {
+  timers.forEach(clearTimeout); timers = [];
+  thinking = false;
+  svg.classList.remove('thinking');
+  spark.innerHTML = ''; rays = [];
+
+  lengths.forEach((len, i) => {
+    const deg = i * 360 / N + (i % 2 ? 4 : -3);
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('transform', `rotate(${deg})`);
+    const line = document.createElementNS(NS, 'line');
+    line.setAttribute('class', 'ray');
+    line.setAttribute('x1', 0); line.setAttribute('y1', -14);
+    line.setAttribute('x2', 0); line.setAttribute('y2', -len);
+    const d = .2 + i * .05;
+    line.style.setProperty('--d', d + 's');
+    line.style.setProperty('--w', i * .15 + 's');
+    g.appendChild(line); spark.appendChild(g);
+    const ray = { g, line, len, cur: len };
+    rays.push(ray);
+    timers.push(setTimeout(() => emitFromTip(ray, 6, 2.5), (d + .35) * 1000));
+  });
+
+  const core = document.createElementNS(NS, 'circle');
+  core.setAttribute('class', 'core');
+  core.setAttribute('r', 12);
+  spark.appendChild(core);
+
+  timers.push(setTimeout(() => {
+    svg.classList.add('thinking');
+    thinking = true;
+  }, 1600));
+}
+
+function emitFromTip(ray, n, speed) {
+  const m = ray.line.getScreenCTM();
+  if (!m) return;
+  const o = pt(0, 0).matrixTransform(m);
+  const t = pt(0, -ray.cur).matrixTransform(m);
+  let dx = t.x - o.x, dy = t.y - o.y;
+  const l = Math.hypot(dx, dy) || 1;
+  dx /= l; dy /= l;
+  for (let i = 0; i < n; i++) {
+    const s = speed * rand(.5, 1.5);
+    spawn(t.x, t.y, dx * s + rand(-.8, .8), dy * s + rand(-.8, .8), rand(40, 80), rand(1.5, 3));
+  }
+}
+
+/* ========== 磁吸光线 ========== */
+function updateRays() {
+  rays.forEach(r => {
+    let target = r.len;
+    if (mouse.active) {
+      const m = r.g.getScreenCTM();
+      if (m) {
+        const o = pt(0, 0).matrixTransform(m);
+        const d = pt(0, -1).matrixTransform(m);
+        const ux = d.x - o.x, uy = d.y - o.y, ul = Math.hypot(ux, uy) || 1;
+        const mx = mouse.x - o.x, my = mouse.y - o.y, ml = Math.hypot(mx, my) || 1;
+        const cos = (ux * mx + uy * my) / (ul * ml);
+        const prox = Math.max(0, 1 - ml / 420);
+        if (cos > 0) target += Math.pow(cos, 8) * prox * 34;
+      }
+    }
+    r.cur += (target - r.cur) * .15;
+    r.line.setAttribute('y2', -r.cur);
+  });
+}
+
+/* ========== 主循环 ========== */
+function frame() {
+  const dark = document.body.classList.contains('dark');
+  const dotColor = dark ? '240,238,230' : '217,119,87';
+
+  // 背景星尘
+  bctx.clearRect(0, 0, W, H);
+  dust.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (mouse.active) {
+      const dx = p.x - mouse.x, dy = p.y - mouse.y, d = Math.hypot(dx, dy);
+      if (d < 90 && d > 0) { p.x += dx / d * .6; p.y += dy / d * .6; }
+    }
+    if (p.x < -10) p.x = W + 10; if (p.x > W + 10) p.x = -10;
+    if (p.y < -10) p.y = H + 10; if (p.y > H + 10) p.y = -10;
+    bctx.fillStyle = `rgba(${dotColor},${dark ? .5 : .35})`;
+    bctx.beginPath(); bctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); bctx.fill();
+  });
+
+  // 星座连线
+  if (mouse.active) {
+    const near = dust.filter(p => Math.hypot(p.x - mouse.x, p.y - mouse.y) < 170);
+    bctx.lineWidth = .8;
+    near.forEach((a, i) => {
+      const da = Math.hypot(a.x - mouse.x, a.y - mouse.y);
+      bctx.strokeStyle = `rgba(217,119,87,${(1 - da / 170) * .5})`;
+      bctx.beginPath(); bctx.moveTo(a.x, a.y); bctx.lineTo(mouse.x, mouse.y); bctx.stroke();
+      for (let j = i + 1; j < near.length; j++) {
+        const b = near[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d < 110) {
+          bctx.strokeStyle = `rgba(217,119,87,${(1 - d / 110) * .35})`;
+          bctx.beginPath(); bctx.moveTo(a.x, a.y); bctx.lineTo(b.x, b.y); bctx.stroke();
+        }
+      }
+    });
+  }
+
+  // 前景火花
+  fctx.clearRect(0, 0, W, H);
+  fctx.globalCompositeOperation = dark ? 'lighter' : 'source-over';
+  for (let i = sparks.length - 1; i >= 0; i--) {
+    const s = sparks[i];
+    s.vx *= .96; s.vy = s.vy * .96 + .04;
+    s.x += s.vx; s.y += s.vy;
+    if (--s.life <= 0) { sparks.splice(i, 1); continue; }
+    const t = s.life / s.max;
+    fctx.fillStyle = `rgba(217,119,87,${t})`;
+    fctx.beginPath(); fctx.arc(s.x, s.y, s.size * t + .3, 0, Math.PI * 2); fctx.fill();
+  }
+  fctx.globalCompositeOperation = 'source-over';
+
+  updateRays();
+  requestAnimationFrame(frame);
+}
+
+/* ========== 思绪碎片 ========== */
+const words = ['为什么？', '✦', '∑', '想象', 'λ', '好奇', '♪', 'Hello', 'π', '灵感', '{ }', '→', '诗', '∞', '?', '思考'];
+function spawnThought() {
+  const el = document.createElement('span');
+  el.className = 'thought';
+  el.textContent = words[Math.floor(Math.random() * words.length)];
+  const a = Math.random() * Math.PI * 2, dist = rand(150, 230);
+  el.style.setProperty('--dx', Math.cos(a) * dist + 'px');
+  el.style.setProperty('--dy', Math.sin(a) * dist + 'px');
+  el.style.setProperty('--r', rand(-20, 20) + 'deg');
+  el.style.setProperty('--s', rand(13, 22) + 'px');
+  tilt.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+setInterval(() => { if (thinking && !document.hidden) spawnThought(); }, 850);
+
+/* ========== 交互效果 ========== */
+function ripple(x, y) {
+  const r = document.createElement('div');
+  r.className = 'ripple';
+  r.style.left = x + 'px'; r.style.top = y + 'px';
+  document.body.appendChild(r);
+  r.addEventListener('animationend', () => r.remove());
+}
+
+function burst(x, y, n) {
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2, sp = rand(1.5, 5.5);
+    spawn(x, y, Math.cos(a) * sp, Math.sin(a) * sp, rand(50, 90), rand(2, 4));
+  }
+}
+
+function megaBurst() {
+  whirl.animate(
+    [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }],
+    { duration: 900, easing: 'cubic-bezier(.2,.8,.2,1)' }
+  );
+  glow.classList.remove('flash'); void glow.offsetWidth; glow.classList.add('flash');
+  rays.forEach(r => emitFromTip(r, 10, 4));
+  for (let i = 0; i < 5; i++) setTimeout(spawnThought, i * 80);
+}
+
+function rain() {
+  for (let i = 0; i < 120; i++) {
+    spawn(Math.random() * W, rand(-60, -10), rand(-.5, .5), rand(2, 5), rand(120, 200), rand(1.5, 3));
+  }
+}
+
+function replayTitle() {
+  document.querySelectorAll('#title span').forEach(s => {
+    s.style.animation = 'none'; void s.offsetWidth; s.style.animation = '';
+  });
+}
+
+function toggleTheme() {
+  const dark = document.body.classList.toggle('dark');
+  $('#theme').textContent = dark ? '☀' : '☾';
+}
+
+/* ========== 事件 ========== */
+addEventListener('mousemove', e => {
+  mouse.x = e.clientX; mouse.y = e.clientY; mouse.active = true;
+  const nx = e.clientX / W - .5, ny = e.clientY / H - .5;
+  tilt.style.transform = `rotateY(${nx * 24}deg) rotateX(${-ny * 24}deg)`;
+});
+document.addEventListener('mouseleave', () => {
+  mouse.active = false;
+  tilt.style.transform = '';
+});
+
+document.addEventListener('click', e => {
+  if (e.target.closest('#theme')) { toggleTheme(); return; }
+  ripple(e.clientX, e.clientY);
+  if (e.target.closest('svg')) megaBurst();
+  else burst(e.clientX, e.clientY, 36);
+});
+document.addEventListener('dblclick', e => {
+  if (!e.target.closest('#theme')) rain();
+});
+
+addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); megaBurst(); }
+  else if (e.key === 'r' || e.key === 'R') { build(); replayTitle(); }
+  else if (e.key === 'd' || e.key === 'D') toggleTheme();
+});
+
+/* ========== 标题与打字机 ========== */
+'Claude'.split('').forEach((ch, i) => {
+  const s = document.createElement('span');
+  s.textContent = ch;
+  s.style.setProperty('--i', i);
+  $('#title').appendChild(s);
+});
+
+const phrases
