@@ -216,10 +216,25 @@
             </div>
             
             <div class="p-5 overflow-y-auto space-y-4">
-                <!-- Preview Canvas -->
-                <div class="relative h-52 bg-cardDark rounded-2xl overflow-hidden shadow-inner">
-                    <img id="modal-poster" class="w-full h-full object-cover" alt="Video preview" />
-                    <span id="modal-duration" class="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-black/70 text-white font-mono text-[10px]">0:25</span>
+                <!-- Direct MP4 player powered by videos.json -->
+                <div class="relative bg-cardDark rounded-2xl overflow-hidden shadow-inner">
+                    <div id="modal-player-shell" class="relative w-full aspect-video bg-black">
+                        <video id="modal-video" class="absolute inset-0 w-full h-full object-contain bg-black" controls playsinline preload="metadata" poster="" controlsList="nodownload">
+                            您的浏览器不支持 HTML5 视频播放。
+                        </video>
+                        <div id="modal-video-error" class="absolute inset-0 hidden flex-col items-center justify-center gap-2 bg-black/90 text-white text-center p-5">
+                            <span class="text-sm font-bold">视频暂时无法播放</span>
+                            <span class="text-xs text-white/70">可能是视频源暂时不可用，或网络限制了媒体请求。</span>
+                            <a id="modal-watch-link" href="#" target="_blank" rel="noopener noreferrer" class="text-xs font-bold underline text-lime-300">打开 Skillry 官方页面 ↗</a>
+                        </div>
+                    </div>
+                    <div class="px-3 py-2 bg-cardDark flex items-center justify-between gap-2">
+                        <span id="modal-video-label" class="text-[10px] text-white/80">原版视频 · MP4</span>
+                        <span id="modal-duration" class="px-2 py-0.5 rounded bg-black/70 text-white font-mono text-[10px]">Opus 5.5</span>
+                    </div>
+                    <div class="px-3 py-2 bg-white text-center">
+                        <a id="modal-watch-link-secondary" href="#" target="_blank" rel="noopener noreferrer" class="text-xs font-bold underline">打开 Skillry 官方详情页 ↗</a>
+                    </div>
                 </div>
 
                 <div>
@@ -241,53 +256,82 @@
     <script>
       // Uses the public, machine-readable dataset from the source repository,
       // not an iframe or a live embed of the Skillry webpage.
-      const DATA_URL = 'https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/data/videos.json';
-      const ITEMS_PER_PAGE = 20;
-      let cardsData = [];
-      let currentPage = 1;
-      let currentCategory = 'all';
-      let searchFilter = '';
-      let modalActivePrompt = '';
+        // Live public dataset maintained by the original Skillry showcase repository.
+        // This avoids relying on a missing local ./videos.json file.
+        const DATA_URL = './videos.json';
+        const ITEMS_PER_PAGE = 20;
+        let cardsData = [];
+        let currentPage = 1;
+        let currentCategory = 'all';
+        let searchFilter = '';
+        let modalActivePrompt = '';
+        const categoryNames = {
+          motion: 'Motion Graphics',
+          explainer: 'Explainers',
+          '3d': '3D Scenes',
+          interactive: 'Simulations',
+          games: 'Simulations'
+        };
 
-      const categoryNames = {
-        motion: 'Motion Graphics',
-        explainer: 'Explainers',
-        '3d': '3D Scenes',
-        interactive: 'Games & Interactive'
-      };
-      const esc = (v='') => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-      const titleFromSlug = slug => (slug || 'Opus 5.5 video').replace(/-\d+$/, '').replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-
-      async function loadVideoData() {
-        const container = document.getElementById('cards-container');
-        container.innerHTML = '<div class="bg-white rounded-2xl p-6 text-sm text-textMuted">正在加载真实视频数据…</div>';
-        try {
-          const response = await fetch(DATA_URL, {cache:'no-cache'});
-          if (!response.ok) throw new Error('HTTP ' + response.status);
-          const source = await response.json();
-          // The repo contains a larger prompt collection; Skillry's 418 gallery entries are has_remake=true.
-          cardsData = source.filter(v => v && v.has_remake === true).map((v, i) => ({
-            id: v.slug || `video-${i+1}`,
-            handle: '@' + String(v.author || 'creator').replace(/^@/, ''),
-            title: titleFromSlug(v.slug),
-            category: v.category || 'motion',
-            prompt: v.prompt || 'The creator did not publish a prompt for this entry.',
-            promptPartial: !!v.prompt_partial,
-            poster: v.poster_url || '',
-            postUrl: v.post_url || '',
-            authorUrl: v.author_url || '',
-            detailUrl: v.skillry_url || '',
-            tech: Array.isArray(v.tech_tags) ? v.tech_tags : [],
-            added: v.added || ''
-          }));
-          document.getElementById('all-count').textContent = cardsData.length;
-          updateCategoryCounts();
-          renderFeedCards();
-        } catch (err) {
-          container.innerHTML = `<div class="bg-white rounded-2xl border border-borderSubtle p-6 text-sm"><b>无法加载视频数据。</b><p class="mt-2 text-textMuted">浏览器可能无法访问 GitHub Raw。请确认网络连接，或将仓库的 data/videos.json 下载到本地后，将 DATA_URL 改为同目录的 ./videos.json。</p><p class="mt-2 text-xs text-textMuted">${esc(err.message)}</p><a class="inline-block mt-3 underline font-bold" href="https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/data/videos.json" target="_blank" rel="noopener">打开原始 JSON 数据</a></div>`;
-          document.getElementById('page-indicator').textContent = '数据加载失败';
+        function esc(value) {
+          return String(value ?? '').replace(/[&<>\"']/g, ch => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;'
+          }[ch]));
         }
-      }
+
+        function titleFromSlug(slug) {
+          return String(slug || 'Untitled video')
+            .replace(/[-_]+/g, ' ')
+            .replace(/\b\w/g, ch => ch.toUpperCase());
+        }
+
+        async function loadVideoData() {
+            const container = document.getElementById('cards-container');
+            const indicator = document.getElementById('page-indicator');
+            container.innerHTML = '<div class="text-center py-12 text-textMuted"><p class="text-sm font-bold">Loading video showcase…</p></div>';
+            indicator.textContent = 'Loading video records…';
+            try {
+            const response = await fetch(DATA_URL, { cache: 'no-cache' });
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status);
+            }
+
+            const source = await response.json();
+
+            cardsData = source
+                .filter(v => v && v.has_remake === true)
+                .map((v, i) => ({
+                    id: v.slug || `video-${i + 1}`,
+                    handle: '@' + String(v.author || 'creator').replace(/^@/, ''),
+                    title: titleFromSlug(v.slug),
+                    category: v.category || 'motion',
+                    prompt: v.prompt || '',
+                    promptPartial: !!v.prompt_partial,
+                    poster: v.poster_url || '',
+                    postUrl: v.post_url || '',
+                    authorUrl: v.author_url || '',
+                    detailUrl: v.skillry_url || '',
+                    tech: Array.isArray(v.tech_tags) ? v.tech_tags : [],
+                    added: v.added || '',
+                    videoUrl: v.video_url || ''
+                }));
+
+            document.getElementById('all-count').textContent = cardsData.length;
+            updateCategoryCounts();
+            renderFeedCards();
+            } catch (error) {
+              console.error('Skillry video data could not be loaded:', error);
+              document.getElementById('all-count').textContent = '—';
+              container.innerHTML = `
+                <div class="text-center py-10 px-5 bg-white rounded-3xl border border-borderSubtle">
+                  <p class="text-sm font-extrabold text-textPrimary">Unable to load video data</p>
+                  <p class="text-xs text-textMuted mt-2">Check your internet connection, then try again. If you opened this file directly, run it through a local web server.</p>
+                  <button id="retry-data" class="mt-4 px-4 py-2 rounded-full bg-cardDark text-white text-xs font-bold">Retry</button>
+                </div>`;
+              indicator.textContent = 'Video data unavailable';
+              document.getElementById('retry-data')?.addEventListener('click', loadVideoData);
+            }
+        }
 
       function updateCategoryCounts() {
         document.querySelectorAll('.cat-btn').forEach(btn => {
@@ -354,14 +398,47 @@
         document.getElementById('modal-handle').innerText=item.handle;
         document.getElementById('modal-title').innerText=item.title;
         document.getElementById('modal-prompt').innerText=item.prompt + (item.promptPartial ? '\n\n[Note: source marks this prompt as partial.]' : '');
-        const poster=document.getElementById('modal-poster'); poster.src=item.poster || ''; poster.style.display=item.poster?'block':'none';
+        const video=document.getElementById('modal-video');
+        const errorPanel=document.getElementById('modal-video-error');
+        const watchLinks=[document.getElementById('modal-watch-link'),document.getElementById('modal-watch-link-secondary')];
+        const officialUrl=item.detailUrl || item.postUrl || '#';
+        watchLinks.forEach(a=>a.href=officialUrl);
+        errorPanel.classList.add('hidden');
+        errorPanel.classList.remove('flex');
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+        video.poster=item.poster || '';
+        if(item.videoUrl){
+          video.src=item.videoUrl;
+          video.load();
+          document.getElementById('modal-video-label').innerText='原版视频 · MP4';
+          // Attempt autoplay after the user's card click; browsers may still require pressing Play.
+          const playAttempt=video.play();
+          if(playAttempt && typeof playAttempt.catch==='function') playAttempt.catch(()=>{});
+        } else {
+          document.getElementById('modal-video-label').innerText='暂无直接 MP4 地址';
+          errorPanel.classList.remove('hidden');
+          errorPanel.classList.add('flex');
+        }
         document.getElementById('modal-duration').innerText=(item.tech.join(' · ') || 'Opus 5.5');
         let links=document.getElementById('modal-source-links');
         if(!links){links=document.createElement('div');links.id='modal-source-links';links.className='flex flex-wrap gap-3 text-xs font-bold';document.getElementById('modal-prompt').parentElement.appendChild(links);}
         links.innerHTML=`${item.postUrl?`<a class="underline" target="_blank" rel="noopener" href="${esc(item.postUrl)}">Original post</a>`:''}${item.detailUrl?`<a class="underline" target="_blank" rel="noopener" href="${esc(item.detailUrl)}">Source entry</a>`:''}`;
         document.getElementById('video-modal').classList.remove('hidden');
       }
-      function closeModal(){document.getElementById('video-modal').classList.add('hidden');}
+      function closeModal(){
+        document.getElementById('video-modal').classList.add('hidden');
+        const video=document.getElementById('modal-video');
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      }
+      document.getElementById('modal-video')?.addEventListener('error',()=>{
+        const panel=document.getElementById('modal-video-error');
+        panel.classList.remove('hidden');
+        panel.classList.add('flex');
+      });
       function copyModalPrompt(){copyPromptDirect(encodeURIComponent(modalActivePrompt));}
       function copyPromptDirect(encodedText){
         const value=decodeURIComponent(encodedText);
@@ -373,6 +450,7 @@
       function closeDrawer(){document.getElementById('mobile-drawer').classList.add('hidden');}
       document.addEventListener('DOMContentLoaded',()=>{
         loadVideoData();
+        document.querySelector('#main-search + button')?.addEventListener('click', () => document.getElementById('main-search').focus());
         document.getElementById('prev-page').addEventListener('click',()=>{if(currentPage>1){currentPage--;renderFeedCards();window.scrollTo({top:0,behavior:'smooth'});}});
         document.getElementById('next-page').addEventListener('click',()=>{const pages=Math.ceil(getFilteredData().length/ITEMS_PER_PAGE);if(currentPage<pages){currentPage++;renderFeedCards();window.scrollTo({top:0,behavior:'smooth'});}});
         document.getElementById('menu-toggle').addEventListener('click',()=>document.getElementById('mobile-drawer').classList.remove('hidden'));
