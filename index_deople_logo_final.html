@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deople - Claude AI videos, with their prompts</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        creamBg: '#F5F2EA',
+                        cardDark: '#121212',
+                        cardLight: '#FFFFFF',
+                        brandLime: '#E2FE52',
+                        brandLimeHover: '#D4F23E',
+                        textPrimary: '#161616',
+                        textMuted: '#6E6E6E',
+                        borderSubtle: '#E2DDD0'
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Segoe UI"', 'Roboto', 'Inter', 'sans-serif'],
+                        mono: ['SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #F5F2EA;
+            color: #161616;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .skillry-card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Custom Toast Animation */
+        .toast-enter {
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%) scale(0.95); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-brandLime">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden toast-enter flex items-center space-x-3 bg-cardDark text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-white/10">
+        <div class="w-6 h-6 rounded-full bg-brandLime text-cardDark flex items-center justify-center font-bold text-xs">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+        </div>
+        <div>
+            <p class="text-xs font-bold text-white" id="toast-title">Copied to Clipboard</p>
+            <p class="text-[11px] text-gray-400" id="toast-desc">Prompt code ready for Claude Opus 5.5</p>
+        </div>
+    </div>
+
+    <!-- HEADER BAR (Exact to screenshot) -->
+    <header class="sticky top-0 z-40 w-full bg-creamBg/90 backdrop-blur-md border-b border-borderSubtle">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            
+            <!-- Logo Section -->
+            <a href="#" class="flex items-center space-x-2.5 group">
+                <div class="w-9 h-9 rounded-xl overflow-hidden bg-transparent flex items-center justify-center" aria-label="Deople logo">
+                    <img
+                        src="https://pbs.twimg.com/profile_images/2015666252451364864/Oyqltbfz_400x400.jpg"
+                        alt="Deople Logo"
+                        class="w-full h-full object-contain rounded-xl"
+                        referrerpolicy="no-referrer"
+                    />
+                </div>
+                <span class="text-xl font-extrabold tracking-tight text-textPrimary">Deople</span>
+            </a>
+
+            <!-- Right Actions -->
+            <div class="flex items-center space-x-2 sm:space-x-2.5">
+                <!-- Mobile Menu Hamburger -->
+                <button id="menu-toggle" class="w-9 h-9 rounded-full bg-white border border-borderSubtle hover:bg-gray-50 flex items-center justify-center text-textPrimary transition-all shadow-sm">
+                    <i data-lucide="menu" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE NAVIGATION DRAWER -->
+    <div id="mobile-drawer" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm">
+        <div class="absolute right-0 top-0 bottom-0 w-72 bg-creamBg p-6 flex flex-col justify-between shadow-2xl border-l border-borderSubtle">
+            <div>
+                <div class="flex items-center justify-between mb-8">
+                    <span class="font-extrabold text-lg">Menu</span>
+                    <button id="menu-close" class="p-2 rounded-full bg-white border border-borderSubtle"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <nav class="space-y-4 font-semibold text-sm">
+                    <a href="#feed" class="block py-2 px-3 rounded-xl bg-white border border-borderSubtle">🔥 AI Videos Feed</a>
+                    <a href="#categories" class="block py-2 px-3 rounded-xl hover:bg-white/60">📁 Categories</a>
+                    <a href="#skills" class="block py-2 px-3 rounded-xl hover:bg-white/60">⚡ Skill Prompts</a>
+                    <a href="#pricing" class="block py-2 px-3 rounded-xl hover:bg-white/60">💎 Pricing</a>
+                    <a href="#faq" class="block py-2 px-3 rounded-xl hover:bg-white/60">❓ FAQ</a>
+                </nav>
+            </div>
+            <div class="p-4 bg-brandLime rounded-2xl text-cardDark">
+                <p class="font-bold text-xs">Skillry Opus 5.5 Pro</p>
+                <p class="text-[11px] mt-0.5 opacity-80">Get 400+ prompt templates & direct video generator code.</p>
+                <a href="#pricing" onclick="closeDrawer()" class="mt-3 block text-center py-2 bg-cardDark text-white text-xs font-bold rounded-xl">Upgrade $9.99</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-3xl mx-auto px-4 pt-4 pb-16 flex-grow w-full" id="feed">
+        
+        <!-- SEARCH FIELD (Exact to screenshot) -->
+        <div class="mb-5 relative">
+            <input type="text" id="main-search" placeholder="What do you want to create?" 
+                class="w-full pl-5 pr-12 py-3.5 bg-white border border-borderSubtle rounded-full text-sm text-textPrimary placeholder-textMuted focus:outline-none focus:ring-2 focus:ring-cardDark shadow-sm font-medium transition-all">
+            <button class="absolute right-4 top-1/2 -translate-y-1/2 text-textPrimary hover:scale-110 transition-transform">
+                <i data-lucide="search" class="w-4 h-4 stroke-[2.5]"></i>
+            </button>
+        </div>
+
+        <!-- CATEGORY PILLS (Horizontal Scroll) -->
+        <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar pb-4 mb-4" id="category-pills">
+            <button data-cat="all" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-cardDark text-white shadow-sm whitespace-nowrap transition-all">
+                All Showcase <span id="all-count" class="ml-1 opacity-70 font-mono text-[10px]">418</span>
+            </button>
+            <button data-cat="motion" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all">
+                Motion Graphics
+            </button>
+            <button data-cat="explainer" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all">
+                Explainers
+            </button>
+            <button data-cat="3d" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all">
+                3D Scenes
+            </button>
+            <button data-cat="interactive" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all">
+                Simulations
+            </button>
+        </div>
+
+        <!-- FEED LIST (20 cards per page) -->
+        <div class="space-y-6" id="cards-container">
+            <!-- Rendered dynamically -->
+        </div>
+
+        <!-- PAGINATION CONTROLS (20 Pages) -->
+        <div class="mt-10 pt-6 border-t border-borderSubtle flex flex-col items-center space-y-4" id="pagination-wrapper">
+            <div class="flex items-center space-x-2 text-xs font-bold">
+                <button id="prev-page" class="px-3.5 py-2 rounded-full bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center space-x-1">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    <span>Prev</span>
+                </button>
+                
+                <!-- Page Numbers Container -->
+                <div id="page-numbers" class="flex items-center space-x-1 overflow-x-auto no-scrollbar max-w-[220px] sm:max-w-none px-1">
+                    <!-- Dynamic page buttons -->
+                </div>
+
+                <button id="next-page" class="px-3.5 py-2 rounded-full bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center space-x-1">
+                    <span>Next</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <p id="page-indicator" class="text-xs text-textMuted font-medium">Loading 418 real video records…</p>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-borderSubtle bg-creamBg text-textMuted py-8 mt-12">
+        <div class="max-w-3xl mx-auto px-4 flex items-center justify-between text-xs font-medium">
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 rounded-lg bg-cardDark text-white flex items-center justify-center font-bold text-xs">/</div>
+                <span class="font-extrabold text-textPrimary">Skillry</span>
+                <span>© 2026 Skillry.dev</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="#feed" class="hover:text-textPrimary">AI Video Feed</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- PROMPT DETAILED MODAL -->
+    <div id="video-modal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-creamBg rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl border border-borderSubtle">
+            <div class="p-4 bg-white border-b border-borderSubtle flex items-center justify-between">
+                <div>
+                    <span id="modal-handle" class="text-xs font-bold text-textMuted">@handle</span>
+                    <h3 id="modal-title" class="text-sm font-extrabold text-textPrimary">Video Prompt Title</h3>
+                </div>
+                <button onclick="closeModal()" class="p-1.5 rounded-full bg-creamBg hover:bg-borderSubtle text-textPrimary">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <div class="p-5 overflow-y-auto space-y-4">
+                <!-- Preview Canvas -->
+                <div class="relative h-52 bg-cardDark rounded-2xl overflow-hidden shadow-inner">
+                    <img id="modal-poster" class="w-full h-full object-cover" alt="Video preview" />
+                    <span id="modal-duration" class="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-black/70 text-white font-mono text-[10px]">0:25</span>
+                </div>
+
+                <div>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-textMuted block mb-1">Opus 5.5 Prompt Code</span>
+                    <pre id="modal-prompt" class="p-3.5 bg-white border border-borderSubtle rounded-2xl text-xs font-mono text-textPrimary whitespace-pre-wrap max-h-48 overflow-y-auto leading-relaxed"></pre>
+                </div>
+            </div>
+
+            <div class="p-4 bg-white border-t border-borderSubtle flex items-center justify-between">
+                <button onclick="copyModalPrompt()" class="w-full py-2.5 bg-cardDark hover:bg-black text-white text-xs font-extrabold rounded-xl transition-all flex items-center justify-center space-x-2">
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    <span>Copy Opus 5.5 Prompt</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT & REAL VIDEO DATA -->
+    <script>
+      // Uses the public, machine-readable dataset from the source repository,
+      // not an iframe or a live embed of the Skillry webpage.
+        const DATA_URL = './videos.json';
+
+        async function loadVideoData() {
+            const response = await fetch(DATA_URL);
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status);
+            }
+
+            const source = await response.json();
+
+            cardsData = source
+                .filter(v => v && v.has_remake === true)
+                .map((v, i) => ({
+                    id: v.slug || `video-${i + 1}`,
+                    handle: '@' + String(v.author || 'creator').replace(/^@/, ''),
+                    title: titleFromSlug(v.slug),
+                    category: v.category || 'motion',
+                    prompt: v.prompt || '',
+                    promptPartial: !!v.prompt_partial,
+                    poster: v.poster_url || '',
+                    postUrl: v.post_url || '',
+                    authorUrl: v.author_url || '',
+                    detailUrl: v.skillry_url || '',
+                    tech: Array.isArray(v.tech_tags) ? v.tech_tags : [],
+                    added: v.added || '',
+                    videoUrl: v.video_url || ''
+                }));
+
+            document.getElementById('all-count').textContent = cardsData.length;
+            updateCategoryCounts();
+            renderFeedCards();
+        }
+
+      function updateCategoryCounts() {
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+          const cat = btn.dataset.cat;
+          const count = cat === 'all' ? cardsData.length : cardsData.filter(v => v.category === cat).length;
+          const label = btn.textContent.trim().replace(/\s+\d+$/, '');
+          btn.innerHTML = `${esc(label)} <span class="ml-1 opacity-70 font-mono text-[10px]">${count}</span>`;
+        });
+      }
+      function getFilteredData() {
+        const q = searchFilter.toLowerCase().trim();
+        return cardsData.filter(item => {
+          const matchesCat = currentCategory === 'all' || item.category === currentCategory;
+          const matchesSearch = !q || [item.handle,item.title,item.prompt,item.tech.join(' '),item.category].join(' ').toLowerCase().includes(q);
+          return matchesCat && matchesSearch;
+        });
+      }
+      function renderFeedCards() {
+        const container = document.getElementById('cards-container');
+        container.innerHTML = '';
+        const filtered = getFilteredData();
+        const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+        currentPage = Math.min(Math.max(1, currentPage), totalPages);
+        const pageItems = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+        if (!pageItems.length) {
+          container.innerHTML = '<div class="text-center py-12 text-textMuted bg-white rounded-3xl border border-borderSubtle"><p class="text-sm font-bold">No matching videos found</p></div>';
+          renderPagination(0, 0); return;
+        }
+        pageItems.forEach(item => {
+          const card = document.createElement('article');
+          card.className = 'space-y-2 group';
+          const poster = item.poster ? `<img src="${esc(item.poster)}" alt="${esc(item.title)} preview" loading="lazy" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
+          card.innerHTML = `
+            <div role="button" tabindex="0" onclick="openCardModal('${esc(item.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCardModal('${esc(item.id)}')}" class="relative h-60 sm:h-72 w-full bg-cardDark rounded-3xl border border-borderSubtle overflow-hidden skillry-card-shadow cursor-pointer transition-transform group-hover:scale-[1.005]">
+              ${poster}<div style="display:${item.poster?'none':'flex'}" class="absolute inset-0 items-center justify-center text-white/60 text-sm">Video preview</div>
+              <div class="absolute top-3.5 left-3.5 z-10"><span class="px-3 py-1 rounded-full bg-white/90 text-cardDark text-[10px] font-bold">${esc(categoryNames[item.category] || item.category)}</span></div>
+              <div class="absolute bottom-3.5 left-3.5 right-3.5 z-10 flex items-end justify-between gap-2"><span class="text-white font-extrabold text-lg drop-shadow-lg">${esc(item.title)}</span><span class="px-2 py-1 rounded-full bg-black/70 text-white font-mono text-[10px]">${esc(item.tech.join(' · ') || 'Opus 5.5')}</span></div>
+            </div>
+            <div class="flex items-center justify-between gap-3 px-1 text-xs text-textPrimary font-semibold"><a href="${esc(item.authorUrl || item.postUrl || '#')}" target="_blank" rel="noopener" class="hover:underline">${esc(item.handle)}</a><div class="flex items-center space-x-3 text-textMuted"><button onclick="copyPromptDirect('${encodeURIComponent(item.prompt)}')" title="Copy Prompt" class="hover:text-textPrimary"><i data-lucide="copy" class="w-4 h-4"></i></button>${item.postUrl ? `<a href="${esc(item.postUrl)}" target="_blank" rel="noopener" title="Original post" class="hover:text-textPrimary"><i data-lucide="external-link" class="w-4 h-4"></i></a>` : ''}</div></div>`;
+          container.appendChild(card);
+        });
+        renderPagination(filtered.length, totalPages);
+        if (window.lucide) lucide.createIcons();
+      }
+      function renderPagination(totalCount, totalPages) {
+        const nums = document.getElementById('page-numbers');
+        const prev = document.getElementById('prev-page');
+        const next = document.getElementById('next-page');
+        prev.disabled = currentPage <= 1;
+        next.disabled = !totalPages || currentPage >= totalPages;
+        document.getElementById('page-indicator').innerText = `Showing page ${currentPage} of ${totalPages} (${totalCount} videos total)`;
+        nums.innerHTML = '';
+        for (let i=1; i<=totalPages; i++) {
+          if (i===1 || i===totalPages || Math.abs(i-currentPage)<=2) {
+            const b=document.createElement('button');
+            b.className = i===currentPage ? 'w-8 h-8 rounded-full bg-cardDark text-white text-xs font-bold shadow-sm' : 'w-8 h-8 rounded-full bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 text-xs font-bold';
+            b.textContent=i; b.onclick=()=>{currentPage=i;renderFeedCards();window.scrollTo({top:0,behavior:'smooth'});}; nums.appendChild(b);
+          } else if (Math.abs(i-currentPage)===3) { const d=document.createElement('span'); d.className='text-textMuted text-xs px-1'; d.textContent='…'; nums.appendChild(d); }
+        }
+      }
+      function openCardModal(id) {
+        const item=cardsData.find(c=>c.id===id); if(!item) return;
+        modalActivePrompt=item.prompt;
+        document.getElementById('modal-handle').innerText=item.handle;
+        document.getElementById('modal-title').innerText=item.title;
+        document.getElementById('modal-prompt').innerText=item.prompt + (item.promptPartial ? '\n\n[Note: source marks this prompt as partial.]' : '');
+        const poster=document.getElementById('modal-poster'); poster.src=item.poster || ''; poster.style.display=item.poster?'block':'none';
+        document.getElementById('modal-duration').innerText=(item.tech.join(' · ') || 'Opus 5.5');
+        let links=document.getElementById('modal-source-links');
+        if(!links){links=document.createElement('div');links.id='modal-source-links';links.className='flex flex-wrap gap-3 text-xs font-bold';document.getElementById('modal-prompt').parentElement.appendChild(links);}
+        links.innerHTML=`${item.postUrl?`<a class="underline" target="_blank" rel="noopener" href="${esc(item.postUrl)}">Original post</a>`:''}${item.detailUrl?`<a class="underline" target="_blank" rel="noopener" href="${esc(item.detailUrl)}">Source entry</a>`:''}`;
+        document.getElementById('video-modal').classList.remove('hidden');
+      }
+      function closeModal(){document.getElementById('video-modal').classList.add('hidden');}
+      function copyModalPrompt(){copyPromptDirect(encodeURIComponent(modalActivePrompt));}
+      function copyPromptDirect(encodedText){
+        const value=decodeURIComponent(encodedText);
+        if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(value).then(()=>showToast('Copied Prompt!','Prompt copied to clipboard')).catch(()=>fallbackCopy(value));
+        else fallbackCopy(value);
+      }
+      function fallbackCopy(value){const ta=document.createElement('textarea');ta.value=value;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();showToast('Copied Prompt!','Prompt copied to clipboard');}
+      function showToast(title,desc){const toast=document.getElementById('toast');document.getElementById('toast-title').innerText=title;document.getElementById('toast-desc').innerText=desc;toast.classList.remove('hidden');setTimeout(()=>toast.classList.add('hidden'),2500);}
+      function closeDrawer(){document.getElementById('mobile-drawer').classList.add('hidden');}
+      document.addEventListener('DOMContentLoaded',()=>{
+        loadVideoData();
+        document.getElementById('prev-page').addEventListener('click',()=>{if(currentPage>1){currentPage--;renderFeedCards();window.scrollTo({top:0,behavior:'smooth'});}});
+        document.getElementById('next-page').addEventListener('click',()=>{const pages=Math.ceil(getFilteredData().length/ITEMS_PER_PAGE);if(currentPage<pages){currentPage++;renderFeedCards();window.scrollTo({top:0,behavior:'smooth'});}});
+        document.getElementById('menu-toggle').addEventListener('click',()=>document.getElementById('mobile-drawer').classList.remove('hidden'));
+        document.getElementById('menu-close').addEventListener('click',closeDrawer);
+        document.getElementById('main-search').addEventListener('input',e=>{searchFilter=e.target.value;currentPage=1;renderFeedCards();});
+        document.getElementById('category-pills').addEventListener('click',e=>{const btn=e.target.closest('.cat-btn');if(!btn)return;currentCategory=btn.dataset.cat;currentPage=1;document.querySelectorAll('.cat-btn').forEach(b=>b.className=b.dataset.cat===currentCategory?'cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-cardDark text-white shadow-sm whitespace-nowrap transition-all':'cat-btn px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 whitespace-nowrap transition-all');renderFeedCards();});
+        document.getElementById('video-modal').addEventListener('click',e=>{if(e.target.id==='video-modal')closeModal();});
+      });
+    </script>
+</body>
+</html>
