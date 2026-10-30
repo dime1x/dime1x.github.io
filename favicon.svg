@@ -1,12 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
   <style>
     .bg-red { fill: #FF3B30; }
     .icon-white { fill: #FFFFFF; }
     .circle-soft { fill: rgba(255, 255, 255, 0.25); }
   </style>
 
-  <!-- 全屏满版红色背景（无圆角，填满整个正方形） -->
-  <rect width="500" height="500" class="bg-red" />
+  <!-- 将原先的 <rect> 背景换成正圆形 <circle> -->
+  <circle cx="250" cy="250" r="250" class="bg-red" />
 
   <!-- 中央背景半透明白色圆形 -->
   <circle cx="260" cy="232" r="45" class="circle-soft" />
@@ -22,7 +22,7 @@
   <circle cx="230" cy="389" r="4" class="icon-white" />
   <circle cx="270" cy="389" r="4" class="icon-white" />
 
-  <!-- 桂冠花环（右侧，通过 transform 镜像生成左侧） -->
+  <!-- 桂冠花环 -->
   <g id="laurel-wreath">
     <g class="icon-white" id="right-side">
       <path d="M 305 92 C 315 80 340 82 348 85 C 342 97 325 108 305 92 Z" />
