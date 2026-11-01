@@ -32,7 +32,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body {
-            background-color: #F5F2EA;
+            background-color: #ffffff;
             color: #161616;
             -webkit-font-smoothing: antialiased;
         }
@@ -168,39 +168,11 @@ header .flex.items-center.space-x-2 {
 </svg>
 
 </a>
-            <!-- Right Actions -->
-            <div class="flex items-center space-x-2 sm:space-x-2.5">
-                <!-- Mobile Menu Hamburger -->
-                <button id="menu-toggle" class="w-9 h-9 rounded-full bg-white border border-borderSubtle hover:bg-gray-50 flex items-center justify-center text-textPrimary transition-all shadow-sm">
-                    <i data-lucide="menu" class="w-4 h-4"></i>
-                </button>
-            </div>
+
         </div>
     </header>
 
-    <!-- MOBILE NAVIGATION DRAWER -->
-    <div id="mobile-drawer" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm">
-        <div class="absolute right-0 top-0 bottom-0 w-72 bg-creamBg p-6 flex flex-col justify-between shadow-2xl border-l border-borderSubtle">
-            <div>
-                <div class="flex items-center justify-between mb-8">
-                    <span class="font-extrabold text-lg">Menu</span>
-                    <button id="menu-close" class="p-2 rounded-full bg-white border border-borderSubtle"><i data-lucide="x" class="w-4 h-4"></i></button>
-                </div>
-                <nav class="space-y-4 font-semibold text-sm">
-                    <a href="#feed" class="block py-2 px-3 rounded-xl bg-white border border-borderSubtle">🔥 AI Videos Feed</a>
-                    <a href="#categories" class="block py-2 px-3 rounded-xl hover:bg-white/60">📁 Categories</a>
-                    <a href="#skills" class="block py-2 px-3 rounded-xl hover:bg-white/60">⚡ Skill Prompts</a>
-                    <a href="#pricing" class="block py-2 px-3 rounded-xl hover:bg-white/60">💎 Pricing</a>
-                    <a href="#faq" class="block py-2 px-3 rounded-xl hover:bg-white/60">❓ FAQ</a>
-                </nav>
-            </div>
-            <div class="p-4 bg-brandLime rounded-2xl text-cardDark">
-                <p class="font-bold text-xs">Skillry Opus 5.5 Pro</p>
-                <p class="text-[11px] mt-0.5 opacity-80">Get 400+ prompt templates & direct video generator code.</p>
-                <a href="#pricing" onclick="closeDrawer()" class="mt-3 block text-center py-2 bg-cardDark text-white text-xs font-bold rounded-xl">Upgrade $9.99</a>
-            </div>
-        </div>
-    </div>
+
 
     <!-- MAIN CONTAINER -->
     <main class="max-w-3xl mx-auto px-4 pt-4 pb-16 flex-grow w-full" id="feed">
@@ -293,28 +265,13 @@ header .flex.items-center.space-x-2 {
                 <!-- Direct MP4 player powered by videos.json -->
                 <div class="relative bg-cardDark rounded-2xl overflow-hidden shadow-inner">
                     <div id="modal-player-shell" class="relative w-full aspect-video bg-black">
-                        <video id="modal-video" class="absolute inset-0 w-full h-full object-contain bg-black" controls playsinline preload="metadata" poster="" controlsList="nodownload">
-                            您的浏览器不支持 HTML5 视频播放。
-                        </video>
-                        <div id="modal-video-error" class="absolute inset-0 hidden flex-col items-center justify-center gap-2 bg-black/90 text-white text-center p-5">
-                            <span class="text-sm font-bold">视频暂时无法播放</span>
-                            <span class="text-xs text-white/70">可能是视频源暂时不可用，或网络限制了媒体请求。</span>
-                            <a id="modal-watch-link" href="#" target="_blank" rel="noopener noreferrer" class="text-xs font-bold underline text-lime-300">打开 Skillry 官方页面 ↗</a>
-                        </div>
+ 
+
                     </div>
-                    <div class="px-3 py-2 bg-cardDark flex items-center justify-between gap-2">
-                        <span id="modal-video-label" class="text-[10px] text-white/80">原版视频 · MP4</span>
-                        <span id="modal-duration" class="px-2 py-0.5 rounded bg-black/70 text-white font-mono text-[10px]">Opus 5.5</span>
-                    </div>
-                    <div class="px-3 py-2 bg-white text-center">
-                        <a id="modal-watch-link-secondary" href="#" target="_blank" rel="noopener noreferrer" class="text-xs font-bold underline">打开 Skillry 官方详情页 ↗</a>
-                    </div>
+   
                 </div>
 
-                <div>
-                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-textMuted block mb-1">Opus 5.5 Prompt Code</span>
-                    <pre id="modal-prompt" class="p-3.5 bg-white border border-borderSubtle rounded-2xl text-xs font-mono text-textPrimary whitespace-pre-wrap max-h-48 overflow-y-auto leading-relaxed"></pre>
-                </div>
+
             </div>
 
             <div class="p-4 bg-white border-t border-borderSubtle flex items-center justify-between">
@@ -465,41 +422,7 @@ header .flex.items-center.space-x-2 {
           } else if (Math.abs(i-currentPage)===3) { const d=document.createElement('span'); d.className='text-textMuted text-xs px-1'; d.textContent='…'; nums.appendChild(d); }
         }
       }
-      function openCardModal(id) {
-        const item=cardsData.find(c=>c.id===id); if(!item) return;
-        modalActivePrompt=item.prompt;
-        document.getElementById('modal-handle').innerText=item.handle;
-        document.getElementById('modal-title').innerText=item.title;
-        document.getElementById('modal-prompt').innerText=item.prompt + (item.promptPartial ? '\n\n[Note: source marks this prompt as partial.]' : '');
-        const video=document.getElementById('modal-video');
-        const errorPanel=document.getElementById('modal-video-error');
-        const watchLinks=[document.getElementById('modal-watch-link'),document.getElementById('modal-watch-link-secondary')];
-        const officialUrl=item.detailUrl || item.postUrl || '#';
-        watchLinks.forEach(a=>a.href=officialUrl);
-        errorPanel.classList.add('hidden');
-        errorPanel.classList.remove('flex');
-        video.pause();
-        video.removeAttribute('src');
-        video.load();
-        video.poster=item.poster || '';
-        if(item.videoUrl){
-          video.src=item.videoUrl;
-          video.load();
-          document.getElementById('modal-video-label').innerText='原版视频 · MP4';
-          // Attempt autoplay after the user's card click; browsers may still require pressing Play.
-          const playAttempt=video.play();
-          if(playAttempt && typeof playAttempt.catch==='function') playAttempt.catch(()=>{});
-        } else {
-          document.getElementById('modal-video-label').innerText='暂无直接 MP4 地址';
-          errorPanel.classList.remove('hidden');
-          errorPanel.classList.add('flex');
-        }
-        document.getElementById('modal-duration').innerText=(item.tech.join(' · ') || 'Opus 5.5');
-        let links=document.getElementById('modal-source-links');
-        if(!links){links=document.createElement('div');links.id='modal-source-links';links.className='flex flex-wrap gap-3 text-xs font-bold';document.getElementById('modal-prompt').parentElement.appendChild(links);}
-        links.innerHTML=`${item.postUrl?`<a class="underline" target="_blank" rel="noopener" href="${esc(item.postUrl)}">Original post</a>`:''}${item.detailUrl?`<a class="underline" target="_blank" rel="noopener" href="${esc(item.detailUrl)}">Source entry</a>`:''}`;
-        document.getElementById('video-modal').classList.remove('hidden');
-      }
+      
       function closeModal(){
         document.getElementById('video-modal').classList.add('hidden');
         const video=document.getElementById('modal-video');

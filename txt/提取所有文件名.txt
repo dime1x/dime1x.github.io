@@ -1,0 +1,4 @@
+Get-ChildItem -Recurse -File |
+Where-Object {$_.Extension -match '\.(png|avi|mkv|mov|wmv|webm|flv)$'} |
+Select-Object -ExpandProperty Name |
+Out-File "$env:USERPROFILE\Desktop\filename.txt" -Encoding utf8
