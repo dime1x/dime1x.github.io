@@ -61,7 +61,7 @@
 
         /* 控制图片显示的高度，可随时修改此处的数值 */
         .card-thumb-height {
-            height: 240px;
+            height: 520px;
         }
 
         /* 自定义 Toast 动画 */
@@ -312,7 +312,7 @@
 
                 // 3. 图片区域
                 const imageHtml = item.image ? `
-                                    <div class="w-full h-64 sm:h-72 bg-cardDark overflow-hidden relative">
+<div class="w-full card-thumb-height bg-cardDark overflow-hidden relative">
                                         <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
                                             <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />
                                         </a>
