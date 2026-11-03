@@ -166,7 +166,7 @@
         </div>
 
         <!-- FEED LIST (卡片容器：去掉圆角和左右边距，实现无间距通栏贴边) -->
-        <div class="space-y-2 w-full bg-[#e9eaec]" id="cards-container">
+        <div class="w-full space-y-0 bg-[#E8E9EB]" id="cards-container">
             <!-- 动态渲染 -->
         </div>
 
@@ -245,10 +245,10 @@
             } catch (error) {
                 console.error('加载网站数据失败:', error);
                 container.innerHTML = `
-                            <div class="text-center py-10 px-5 bg-white border-y border-borderSubtle">
-                              <p class="text-sm font-extrabold text-textPrimary">无法加载 websites.json 数据</p>
-                              <p class="text-xs text-textMuted mt-2">提示：由于浏览器的安全限制（CORS），直接双击打开本地 HTML 文件无法读取 JSON。请使用 VS Code 的 Live Server 插件或本地服务器运行。</p>
-                            </div>`;
+                                <div class="text-center py-10 px-5 bg-white border-y border-borderSubtle">
+                                  <p class="text-sm font-extrabold text-textPrimary">无法加载 websites.json 数据</p>
+                                  <p class="text-xs text-textMuted mt-2">提示：由于浏览器的安全限制（CORS），直接双击打开本地 HTML 文件无法读取 JSON。请使用 VS Code 的 Live Server 插件或本地服务器运行。</p>
+                                </div>`;
                 indicator.textContent = '数据加载失败';
             }
         }
@@ -278,46 +278,46 @@
             pageItems.forEach(item => {
                 const card = document.createElement('article');
                 // 卡片样式：限制整体宽度、居中显示，并添加圆角和细边框
-                card.className = 'bg-white w-full overflow-hidden transition-all';
+                card.className = 'bg-white w-full max-w-[760px] mx-auto overflow-hidden transition-all mb-4';
 
                 // 1. 顶部：域名 + 访问链接
                 const headerHtml = `
-                            <div class="px-5 pt-2.5 pb-0 flex items-center justify-between gap-3">
-                                <div class="flex items-center space-x-2 min-w-0">
-                                    <div class="w-7 h-7 shrink-0 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
-                                        ${esc((item.input || 'W').charAt(0).toUpperCase())}
+                                <div class="px-5 pt-2.5 pb-0 flex items-center justify-between gap-3">
+                                    <div class="flex items-center space-x-2 min-w-0">
+                                        <div class="w-7 h-7 shrink-0 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
+                                            ${esc((item.input || 'W').charAt(0).toUpperCase())}
+                                        </div>
+                                        <span class="text-xs font-bold text-textPrimary truncate">${esc(item.input)}</span>
                                     </div>
-                                    <span class="text-xs font-bold text-textPrimary truncate">${esc(item.input)}</span>
+                                    <a href="${esc(item.url)}" target="_blank" rel="noopener" class="shrink-0 text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
+                                        <span>访问</span>
+                                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                    </a>
                                 </div>
-                                <a href="${esc(item.url)}" target="_blank" rel="noopener" class="shrink-0 text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
-                                    <span>访问</span>
-                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                                </a>
-                            </div>
-                        `;
+                            `;
 
                 // 2. 标题 + 描述
                 const bodyHtml = `
-                            <div class="px-5 pt-1 pb-2.5 space-y-1">
-                                <h3 class="text-lg sm:text-xl font-extrabold text-blue-600 leading-snug">
-                                    <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
-                                        ${esc(item.title)}
-                                    </a>
-                                </h3>
-                                <p class="text-xs text-textMuted line-clamp-2 leading-relaxed">
-                                    ${esc(item.description)}
-                                </p>
-                            </div>
-                        `;
+                                <div class="px-5 pt-1 pb-2.5 space-y-1">
+                                    <h3 class="text-lg sm:text-xl font-extrabold text-blue-600 leading-snug">
+                                        <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
+                                            ${esc(item.title)}
+                                        </a>
+                                    </h3>
+                                    <p class="text-xs text-textMuted line-clamp-2 leading-relaxed">
+                                        ${esc(item.description)}
+                                    </p>
+                                </div>
+                            `;
 
                 // 3. 图片区域
                 const imageHtml = item.image ? `
-                            <div class="w-full h-64 sm:h-72 bg-cardDark overflow-hidden relative">
-                                <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
-                                    <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />
-                                </a>
-                            </div>
-                        ` : '';
+                                <div class="w-full h-64 sm:h-72 bg-cardDark overflow-hidden relative">
+                                    <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
+                                        <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />
+                                    </a>
+                                </div>
+                            ` : '';
 
                 card.innerHTML = headerHtml + bodyHtml + imageHtml;
                 container.appendChild(card);
