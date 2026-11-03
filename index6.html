@@ -137,16 +137,26 @@ header .flex.items-center.space-x-2 {
             overflow: hidden;
         }
 
-        /* 让卡片容器在左右两侧没有间距，紧贴屏幕边缘 */
-        .card-full-width {
-            width: 100%;
-            margin-left: 0;
-            margin-right: 0;
+        #feed {
+            max-width: 100% !important;
             padding-left: 0 !important;
             padding-right: 0 !important;
-            border-left: none;
-            border-right: none;
-            border-radius: 0 !important; /* 如果需要取消卡片左右圆角 */
+        }
+
+        /* 2. 让整个页面的主内容区左右也没有边距 */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 3. 确保卡片完全通栏无间距 */
+        .card-full-width {
+            width: 100vw !important;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            border-left: none !important;
+            border-right: none !important;
+            border-radius: 0 !important;
         }
 
         /* 如果希望卡片内部的文字有内边距，但图片没有间距，可以为文字单独设置内边距容器 */
@@ -221,8 +231,9 @@ header .flex.items-center.space-x-2 {
 
 
 
-    <!-- MAIN CONTAINER -->
-    <main class="max-w-3xl mx-auto px-4 pt-4 pb-16 flex-grow w-full" id="feed">
+    <!-- 修改前可能是：<main class="max-w-3xl mx-auto px-4 pt-4 pb-16 flex-grow w-full" id="feed"> -->
+    <!-- 修改为： -->
+    <main class="w-full pt-4 pb-16 flex-grow" id="feed">
 
         <!-- SEARCH FIELD -->
         <div class="mb-5 relative">
@@ -369,42 +380,42 @@ header .flex.items-center.space-x-2 {
 
                 // 1. 顶部：图标/域名 + 访问链接（加上 card-inner-text 保证文字不贴死屏幕边缘）
                 const headerHtml = `
-            <div class="card-inner-text flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <div class="w-6 h-6 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
-                        ${esc((item.input || 'W').charAt(0).toUpperCase())}
+                <div class="card-inner-text flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-6 h-6 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
+                            ${esc((item.input || 'W').charAt(0).toUpperCase())}
+                        </div>
+                        <span class="text-xs font-bold text-textPrimary">${esc(item.input)}</span>
                     </div>
-                    <span class="text-xs font-bold text-textPrimary">${esc(item.input)}</span>
+                    <a href="${esc(item.url)}" target="_blank" rel="noopener" class="text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
+                        <span>访问</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
                 </div>
-                <a href="${esc(item.url)}" target="_blank" rel="noopener" class="text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
-                    <span>访问</span>
-                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                </a>
-            </div>
-        `;
+            `;
 
                 // 2. 中间：标题 + 描述文字（加上 card-inner-text）
                 const bodyHtml = `
-            <div class="card-inner-text space-y-1">
-                <h3 class="text-sm font-extrabold text-textPrimary leading-snug">
-                    <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
-                        ${esc(item.title)}
-                    </a>
-                </h3>
-                <p class="text-xs text-textMuted line-clamp-2 leading-relaxed">
-                    ${esc(item.description)}
-                </p>
-            </div>
-        `;
+                <div class="card-inner-text space-y-1">
+                    <h3 class="text-sm font-extrabold text-textPrimary leading-snug">
+                        <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
+                            ${esc(item.title)}
+                        </a>
+                    </h3>
+                    <p class="text-xs text-textMuted line-clamp-2 leading-relaxed">
+                        ${esc(item.description)}
+                    </p>
+                </div>
+            `;
 
                 // 3. 底部：图片区域（不加内边距容器，实现图片左右完全无间距、宽度100%撑满）
                 const imageHtml = item.image ? `
-            <div class="card-thumb-height w-full bg-cardDark overflow-hidden mt-3 relative">
-                <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
-                    <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'">
-                </a>
-            </div>
-        ` : '';
+                <div class="card-thumb-height w-full bg-cardDark overflow-hidden mt-3 relative">
+                    <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
+                        <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'">
+                    </a>
+                </div>
+            ` : '';
 
                 // 组装卡片
                 card.innerHTML = headerHtml + bodyHtml + imageHtml;

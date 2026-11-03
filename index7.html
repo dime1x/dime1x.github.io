@@ -127,14 +127,32 @@ header .flex.items-center.space-x-2 {
             overflow: hidden;
         }
 
+        #feed {
+            max-width: 100% !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
 
-        .card-image-full {
-            width: calc(100% + 32px); /* 宽度撑满父级容器再加上两侧的 padding 补偿 */
-            margin-left: -16px; /* 抵消父级左右 16px (p-4) 的内边距 */
-            margin-right: -16px;
-            margin-bottom: -16px; /* 抵消父级底部内边距 */
-            margin-top: 12px; /* 与上方文字保持间距 */
-            overflow: hidden;
+        /* 2. 让整个页面的主内容区左右也没有边距 */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 3. 确保卡片完全通栏无间距 */
+        .card-full-width {
+            width: 100vw !important;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            border-left: none !important;
+            border-right: none !important;
+            border-radius: 0 !important;
+        }
+
+        /* 文字部分保持适量安全距离，防止文字贴死屏幕边缘 */
+        .card-inner-text {
+            padding-left: 16px;
+            padding-right: 16px;
         }
 
         /* 让卡片容器在左右两侧没有间距，紧贴屏幕边缘 */
@@ -222,7 +240,7 @@ header .flex.items-center.space-x-2 {
 
 
     <!-- MAIN CONTAINER -->
-    <main class="max-w-3xl mx-auto px-4 pt-4 pb-16 flex-grow w-full" id="feed">
+    <main class="w-full pt-4 pb-16 flex-grow" id="feed">
 
         <!-- SEARCH FIELD -->
         <div class="mb-5 relative">
