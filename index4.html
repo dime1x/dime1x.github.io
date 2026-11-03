@@ -127,6 +127,15 @@ header .flex.items-center.space-x-2 {
             overflow: hidden;
         }
 
+
+        .card-image-full {
+            width: calc(100% + 32px); /* 宽度撑满父级容器再加上两侧的 padding 补偿 */
+            margin-left: -16px; /* 抵消父级左右 16px (p-4) 的内边距 */
+            margin-right: -16px;
+            margin-bottom: -16px; /* 抵消父级底部内边距 */
+            margin-top: 12px; /* 与上方文字保持间距 */
+            overflow: hidden;
+        }
  </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-brandLime">
@@ -372,7 +381,7 @@ header .flex.items-center.space-x-2 {
 
                 // 3. 底部：全宽卡片大图（如截图所示）
                 const imageHtml = item.image ? `
-<div class="card-thumb-height w-full bg-cardDark overflow-hidden mt-3 -mx-4 mb-[-1rem] relative">
+<div class="card-image-full card-thumb-height bg-cardDark relative">
         <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
             <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'">
         </a>
