@@ -100,6 +100,18 @@ header .flex.items-center.space-x-2 {
     padding: 0 8px;        /* 边缘保留极小的安全距离，防止直接贴死屏幕 */
 }
 
+
+        /* 统一控制网站缩略图容器的高度 */
+        .card-thumb-height {
+            height: 250px; /* 你可以在这里随时修改具体高度，例如 200px, 300px, 18rem 等 */
+        }
+
+        /* 屏幕较小时（手机端）可以单独调整响应式高度 */
+        @media (max-width: 640px) {
+            .card-thumb-height {
+                height: 180px;
+            }
+        }
 /* 让 SVG Logo 宽度撑满容器，实现与网页同宽 */
 .logo-text-svg {
     width: 100% !important;
@@ -360,12 +372,11 @@ header .flex.items-center.space-x-2 {
 
                 // 3. 底部：全宽卡片大图（如截图所示）
                 const imageHtml = item.image ? `
-<div class="w-full bg-cardDark rounded-xl overflow-hidden border border-borderSubtle mt-2">
-        <a href="${esc(item.url)}" target="_blank" rel="noopener">
-            <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-48 object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'">
+<div class="card-thumb-height w-full bg-cardDark rounded-xl overflow-hidden border border-borderSubtle mt-2 relative">
+        <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
+            <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'">
         </a>
     </div>
-            </div>
         ` : '';
 
                 // 组装卡片 HTML
