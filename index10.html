@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Deople - Claude AI videos ai prompts</title>
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-    <meta name="keywords" content="AI videos, claide videos,claude design,claude prompt，ai prompt">
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="keywords" content="AI videos, claide videos,claude design,claude prompt，ai prompt" />
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-    tailwind.config = {
+        tailwind.config = {
             theme: {
                 extend: {
                     colors: {
@@ -36,6 +36,10 @@
             background-color: #ffffff;
             color: #161616;
             -webkit-font-smoothing: antialiased;
+        }
+
+        .skillry-card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         }
 
         .no-scrollbar::-webkit-scrollbar {
@@ -149,19 +153,19 @@
         </div>
     </header>
 
-    <!-- MAIN CONTAINER (已去除 max-w-3xl 和 px-4，让 main 区域左右两侧无间距) -->
+    <!-- MAIN CONTAINER (去掉了 max-w-3xl 和 px-4，让 main 区域左右无间距全宽通栏) -->
     <main class="w-full mx-auto pt-4 pb-16 flex-grow" id="feed">
 
-        <!-- 搜索框区域：加上 px-4 保证搜索框不贴死屏幕边缘 -->
+        <!-- 搜索框：加上 px-4 保证输入框内部或外侧两侧有呼吸空间，不贴死边缘 -->
         <div class="px-4 mb-5 relative max-w-3xl mx-auto">
             <input type="text" id="main-search" placeholder="搜索网站标题、描述或链接..."
-                   class="w-full pl-5 pr-12 py-3.5 bg-white border border-borderSubtle rounded-full text-sm text-textPrimary placeholder-textMuted focus:outline-none focus:ring-2 focus:ring-cardDark shadow-sm font-medium transition-all">
+                   class="w-full pl-5 pr-12 py-3.5 bg-white border border-borderSubtle rounded-full text-sm text-textPrimary placeholder-textMuted focus:outline-none focus:ring-2 focus:ring-cardDark shadow-sm font-medium transition-all" />
             <button class="absolute right-7 top-1/2 -translate-y-1/2 text-textPrimary hover:scale-110 transition-transform">
                 <i data-lucide="search" class="w-4 h-4 stroke-[2.5]"></i>
             </button>
         </div>
 
-        <!-- FEED LIST (卡片容器：去掉了圆角和左右边距，图片和卡片均完美通栏贴边) -->
+        <!-- FEED LIST (卡片容器：去掉圆角和左右边距，实现无间距通栏贴边) -->
         <div class="space-y-4 w-full" id="cards-container">
             <!-- 动态渲染 -->
         </div>
@@ -241,10 +245,10 @@
             } catch (error) {
                 console.error('加载网站数据失败:', error);
                 container.innerHTML = `
-                        <div class="text-center py-10 px-5 bg-white border-y border-borderSubtle">
-                          <p class="text-sm font-extrabold text-textPrimary">无法加载 websites.json 数据</p>
-                          <p class="text-xs text-textMuted mt-2">提示：由于浏览器的安全限制（CORS），直接双击打开本地 HTML 文件无法读取 JSON。请使用 VS Code 的 Live Server 插件或本地服务器运行。</p>
-                        </div>`;
+                            <div class="text-center py-10 px-5 bg-white border-y border-borderSubtle">
+                              <p class="text-sm font-extrabold text-textPrimary">无法加载 websites.json 数据</p>
+                              <p class="text-xs text-textMuted mt-2">提示：由于浏览器的安全限制（CORS），直接双击打开本地 HTML 文件无法读取 JSON。请使用 VS Code 的 Live Server 插件或本地服务器运行。</p>
+                            </div>`;
                 indicator.textContent = '数据加载失败';
             }
         }
@@ -276,44 +280,44 @@
                 // 卡片样式：宽度 100%、左右无边距、无圆角、上下边框
                 card.className = 'bg-white border-y border-borderSubtle w-full overflow-hidden shadow-sm transition-all py-4 space-y-3';
 
-                // 1. 顶部：图标/域名 + 访问链接（加上 px-4 保证文字不贴死左右屏幕边缘）
+                // 1. 顶部：图标/域名 + 访问链接（加上 px-4 保证内部文字不紧贴屏幕边缘）
                 const headerHtml = `
-                        <div class="px-4 flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-6 h-6 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
-                                    ${esc((item.input || 'W').charAt(0).toUpperCase())}
+                            <div class="px-4 flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-6 h-6 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
+                                        ${esc((item.input || 'W').charAt(0).toUpperCase())}
+                                    </div>
+                                    <span class="text-xs font-bold text-textPrimary">${esc(item.input)}</span>
                                 </div>
-                                <span class="text-xs font-bold text-textPrimary">${esc(item.input)}</span>
+                                <a href="${esc(item.url)}" target="_blank" rel="noopener" class="text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
+                                    <span>访问</span>
+                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                </a>
                             </div>
-                            <a href="${esc(item.url)}" target="_blank" rel="noopener" class="text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
-                                <span>访问</span>
-                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
-                    `;
+                        `;
 
                 // 2. 中间：标题 + 描述文字（加上 px-4）
                 const bodyHtml = `
-                        <div class="px-4 space-y-1">
-                            <h3 class="text-sm font-extrabold text-textPrimary leading-snug">
-                                <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
-                                    ${esc(item.title)}
-                                </a>
-                            </h3>
-                            <p class="text-xs text-textMuted line-clamp-2 leading-relaxed">
-                                ${esc(item.description)}
-                            </p>
-                        </div>
-                    `;
+                            <div class="px-4 space-y-1">
+                                <h3 class="text-sm font-extrabold text-textPrimary leading-snug">
+                                    <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
+                                        ${esc(item.title)}
+                                    </a>
+                                </h3>
+                                <p class="text-xs text-textMuted line-clamp-2 leading-relaxed">
+                                    ${esc(item.description)}
+                                </p>
+                            </div>
+                        `;
 
                 // 3. 底部：图片区域（宽度 100%，左右绝对无间距、完美通栏贴边）
                 const imageHtml = item.image ? `
-                        <div class="w-full h-64 sm:h-72 bg-cardDark overflow-hidden mt-3 relative">
-                            <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
-                                <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'">
-                            </a>
-                        </div>
-                    ` : '';
+                            <div class="w-full h-64 sm:h-72 bg-cardDark overflow-hidden mt-3 relative">
+                                <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
+                                    <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />
+                                </a>
+                            </div>
+                        ` : '';
 
                 card.innerHTML = headerHtml + bodyHtml + imageHtml;
                 container.appendChild(card);
