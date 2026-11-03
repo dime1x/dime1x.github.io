@@ -136,6 +136,24 @@ header .flex.items-center.space-x-2 {
             margin-top: 12px; /* 与上方文字保持间距 */
             overflow: hidden;
         }
+
+        /* 让卡片容器在左右两侧没有间距，紧贴屏幕边缘 */
+        .card-full-width {
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            border-left: none;
+            border-right: none;
+            border-radius: 0 !important; /* 如果需要取消卡片左右圆角 */
+        }
+
+        /* 如果希望卡片内部的文字有内边距，但图片没有间距，可以为文字单独设置内边距容器 */
+        .card-inner-text {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
  </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-brandLime">
@@ -346,12 +364,12 @@ header .flex.items-center.space-x-2 {
 
             pageItems.forEach(item => {
                 const card = document.createElement('article');
-                // 卡片容器：白底、圆角、边框、深色阴影
-                card.className = 'bg-white border border-borderSubtle rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all space-y-3 p-4';
+                // 应用 card-full-width 样式，让卡片左右没有间距
+                card.className = 'bg-white border-y border-borderSubtle card-full-width overflow-hidden shadow-sm transition-all space-y-3 py-4';
 
-                // 1. 顶部：图标/域名 + 访问链接
+                // 1. 顶部：图标/域名 + 访问链接（加上 card-inner-text 保证文字不贴死屏幕边缘）
                 const headerHtml = `
-            <div class="flex items-center justify-between">
+            <div class="card-inner-text flex items-center justify-between">
                 <div class="flex items-center space-x-2">
                     <div class="w-6 h-6 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
                         ${esc((item.input || 'W').charAt(0).toUpperCase())}
@@ -365,9 +383,9 @@ header .flex.items-center.space-x-2 {
             </div>
         `;
 
-                // 2. 中间：标题 + 描述文字
+                // 2. 中间：标题 + 描述文字（加上 card-inner-text）
                 const bodyHtml = `
-            <div class="space-y-1">
+            <div class="card-inner-text space-y-1">
                 <h3 class="text-sm font-extrabold text-textPrimary leading-snug">
                     <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
                         ${esc(item.title)}
@@ -379,16 +397,16 @@ header .flex.items-center.space-x-2 {
             </div>
         `;
 
-                // 3. 底部：全宽卡片大图（如截图所示）
+                // 3. 底部：图片区域（不加内边距容器，实现图片左右完全无间距、宽度100%撑满）
                 const imageHtml = item.image ? `
-<div class="card-image-full card-thumb-height bg-cardDark relative">
-        <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
-            <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'">
-        </a>
-    </div>
+            <div class="card-thumb-height w-full bg-cardDark overflow-hidden mt-3 relative">
+                <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
+                    <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'">
+                </a>
+            </div>
         ` : '';
 
-                // 组装卡片 HTML
+                // 组装卡片
                 card.innerHTML = headerHtml + bodyHtml + imageHtml;
                 container.appendChild(card);
             });
