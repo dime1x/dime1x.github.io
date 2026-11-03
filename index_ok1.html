@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Deople - Discover Websites</title>
+    <title>Deople - Claude AI videos ai prompts</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="keywords" content="AI videos, claide videos,claude design,claude prompt，ai prompt" />
-    <meta name="description" content="Discover and explore websites from around the world. Find shopping sites, technology platforms, financial services, social networks, news, entertainment, online tools, and more.">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -99,22 +98,6 @@
             height: 138px !important;
             display: block;
         }
-
-        /* 手机端预览铺满屏幕；桌面端保持原来的居中 contain 逻辑 */
-        @media (max-width: 767px) {
-            .image-modal {
-                background: #fff;
-                backdrop-filter: none;
-                -webkit-backdrop-filter: none;
-            }
-            .image-modal .modal-img {
-                width: 100vw;
-                height: 100dvh;
-                max-height: 100dvh;
-                object-fit: cover;
-                box-shadow: none;
-            }
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-brandLime">
@@ -127,20 +110,6 @@
         <div>
             <p class="text-xs font-bold text-white" id="toast-title">Copied to Clipboard</p>
             <p class="text-[11px] text-gray-400" id="toast-desc">Prompt code ready</p>
-        </div>
-    </div>
-
-    <!-- 弹窗大图预览层 (Lightbox Modal) -->
-    <div id="image-modal" class="image-modal fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm flex items-center justify-center">
-        <!-- 右上角固定定位的关闭按钮，避免占用顶部高度或受内边距限制 -->
-        <button onclick="closeImageModal()" class="fixed top-4 right-4 z-10 text-white hover:text-brandLime transition-colors p-2 flex items-center space-x-1 text-sm font-bold bg-black/50 hover:bg-black/70 rounded-full px-4 border border-white/20">
-            <i data-lucide="x" class="w-5 h-5"></i>
-            <span>关闭</span>
-        </button>
-
-        <!-- 图片显示容器：去掉 p-4，设置 w-full 允许全宽渲染 -->
-        <div class="relative w-full h-full flex items-center justify-center">
-            <img id="modal-img" src="" alt="原图预览" class="modal-img w-full max-h-full object-contain shadow-2xl" />
         </div>
     </div>
 
@@ -222,15 +191,17 @@
 
     </main>
 
-    <!-- Footer Links Section -->
-    <footer class="bg-white border-t border-slate-200 py-4">
-        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
-            <div class="flex justify-center space-x-6 text-xs text-slate-500">
-                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Privacy</a>
-                <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Terms</a>
-                <a href="https://support.google.com/trends/?hl=zh-CN" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
+    <!-- FOOTER -->
+    <footer class="border-t border-borderSubtle bg-creamBg text-textMuted py-8 mt-12">
+        <div class="max-w-3xl mx-auto px-4 flex items-center justify-between text-xs font-medium">
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 rounded-lg bg-cardDark text-white flex items-center justify-center font-bold text-xs">/</div>
+                <span class="font-extrabold text-textPrimary">Skillry</span>
+                <span>© 2026 Skillry.dev</span>
             </div>
-            <p class="text-[11px] text-slate-400">© trendchart. Powered by Google Trends Embed API.</p>
+            <div class="flex items-center space-x-4">
+                <a href="#feed" class="hover:text-textPrimary">Website Feed</a>
+            </div>
         </div>
     </footer>
 
@@ -247,29 +218,6 @@
                 '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;'
             }[ch]));
         }
-
-        // 打开弹窗预览大图
-        function openImageModal(imgSrc) {
-            const modal = document.getElementById('image-modal');
-            const modalImg = document.getElementById('modal-img');
-            modalImg.src = imgSrc;
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // 禁止底层滚动
-        }
-
-        // 关闭弹窗
-        function closeImageModal() {
-            const modal = document.getElementById('image-modal');
-            modal.classList.add('hidden');
-            document.body.style.overflow = ''; // 恢复滚动
-        }
-
-        // 点击弹窗背景空白处也可以关闭
-        document.getElementById('image-modal').addEventListener('click', (e) => {
-            if (e.target.id === 'image-modal') {
-                closeImageModal();
-            }
-        });
 
         async function loadWebsiteData() {
             const container = document.getElementById('cards-container');
@@ -297,10 +245,10 @@
             } catch (error) {
                 console.error('加载网站数据失败:', error);
                 container.innerHTML = `
-                                                <div class="text-center py-10 px-5 bg-white border-y border-borderSubtle">
-                                                  <p class="text-sm font-extrabold text-textPrimary">无法加载 websites.json 数据</p>
-                                                  <p class="text-xs text-textMuted mt-2">提示：由于浏览器的安全限制（CORS），直接双击打开本地 HTML 文件无法读取 JSON。请使用 VS Code 的 Live Server 插件或本地服务器运行。</p>
-                                                </div>`;
+                                    <div class="text-center py-10 px-5 bg-white border-y border-borderSubtle">
+                                      <p class="text-sm font-extrabold text-textPrimary">无法加载 websites.json 数据</p>
+                                      <p class="text-xs text-textMuted mt-2">提示：由于浏览器的安全限制（CORS），直接双击打开本地 HTML 文件无法读取 JSON。请使用 VS Code 的 Live Server 插件或本地服务器运行。</p>
+                                    </div>`;
                 indicator.textContent = '数据加载失败';
             }
         }
@@ -334,42 +282,42 @@
 
                 // 1. 顶部：域名 + 访问链接
                 const headerHtml = `
-                                                <div class="px-5 pt-2.5 pb-0 flex items-center justify-between gap-3">
-                                                    <div class="flex items-center space-x-2 min-w-0">
-                                                        <div class="w-7 h-7 shrink-0 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
-                                                            ${esc((item.input || 'W').charAt(0).toUpperCase())}
-                                                        </div>
-                                                        <span class="text-xs font-bold text-textPrimary truncate">${esc(item.input)}</span>
-                                                    </div>
-                                                    <a href="${esc(item.url)}" target="_blank" rel="noopener" class="shrink-0 text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
-                                                        <span>访问</span>
-                                                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                                                    </a>
-                                                </div>
-                                            `;
+                                    <div class="px-5 pt-2.5 pb-0 flex items-center justify-between gap-3">
+                                        <div class="flex items-center space-x-2 min-w-0">
+                                            <div class="w-7 h-7 shrink-0 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
+                                                ${esc((item.input || 'W').charAt(0).toUpperCase())}
+                                            </div>
+                                            <span class="text-xs font-bold text-textPrimary truncate">${esc(item.input)}</span>
+                                        </div>
+                                        <a href="${esc(item.url)}" target="_blank" rel="noopener" class="shrink-0 text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
+                                            <span>访问</span>
+                                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                        </a>
+                                    </div>
+                                `;
 
                 // 2. 标题 + 描述
                 const bodyHtml = `
-                                                <div class="px-5 pt-1 pb-2.5 space-y-1">
-                                                    <h3 class="text-lg sm:text-xl font-extrabold text-blue-600 leading-snug">
-                                                        <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
-                                                            ${esc(item.title)}
-                                                        </a>
-                                                    </h3>
-                                                    <p class="text-xs text-textMuted line-clamp-2 leading-relaxed">
-                                                        ${esc(item.description)}
-                                                    </p>
-                                                </div>
-                                            `;
+                                    <div class="px-5 pt-1 pb-2.5 space-y-1">
+                                        <h3 class="text-lg sm:text-xl font-extrabold text-blue-600 leading-snug">
+                                            <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
+                                                ${esc(item.title)}
+                                            </a>
+                                        </h3>
+                                        <p class="text-xs text-textMuted line-clamp-2 leading-relaxed">
+                                            ${esc(item.description)}
+                                        </p>
+                                    </div>
+                                `;
 
-                // 3. 图片区域：点击图片触发 openImageModal 弹出显示大图，卡片显示逻辑保持 object-cover 不变
+                // 3. 图片区域
                 const imageHtml = item.image ? `
-                                                <div class="w-full card-thumb-height bg-cardDark overflow-hidden relative cursor-zoom-in" onclick="openImageModal('${esc(item.image)}')">
-                                                    <div class="block w-full h-full">
-                                                        <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />
-                                                    </div>
-                                                </div>
-                                            ` : '';
+<div class="w-full card-thumb-height bg-cardDark overflow-hidden relative">
+                                        <a href="${esc(item.url)}" target="_blank" rel="noopener" class="block w-full h-full">
+                                            <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />
+                                        </a>
+                                    </div>
+                                ` : '';
 
                 card.innerHTML = headerHtml + bodyHtml + imageHtml;
                 container.appendChild(card);
