@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Deople -Explore websites. Discover ideas. Understand businesses.</title>
+    <title>Deople - Explore websites. Discover ideas. Understand businesses.</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="keywords" content="discover websites, interesting websites, cool websites, useful websites, new websites, website directory, website discovery, AI websites, AI tools, shopping websites, online shopping, technology websites, finance websites, social media websites, entertainment websites, gaming websites, education websites, design websites, online tools, news websites, travel websites">
     <meta name="description" content="Discover and explore websites from around the world. Find shopping sites, technology platforms, financial services, social networks, news, entertainment, online tools, and more.">
@@ -52,7 +52,6 @@
             scrollbar-width: none;
         }
 
-        /* 限制描述最多显示 2 行 */
         .line-clamp-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -60,12 +59,11 @@
             overflow: hidden;
         }
 
-        /* 控制图片显示的高度，可随时修改此处的数值 */
         .card-thumb-height {
             height: 520px;
         }
 
-        /* 自定义 Toast 动画 */
+        /* Toast Animation */
         .toast-enter {
             animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -100,20 +98,20 @@
             display: block;
         }
 
-        /* 手机端预览铺满屏幕；桌面端保持原来的居中 contain 逻辑 */
         @media (max-width: 767px) {
             .image-modal {
                 background: #fff;
                 backdrop-filter: none;
                 -webkit-backdrop-filter: none;
             }
-            .image-modal .modal-img {
-                width: 100vw;
-                height: 100dvh;
-                max-height: 100dvh;
-                object-fit: cover;
-                box-shadow: none;
-            }
+
+                .image-modal .modal-img {
+                    width: 100vw;
+                    height: 100dvh;
+                    max-height: 100dvh;
+                    object-fit: cover;
+                    box-shadow: none;
+                }
         }
     </style>
 </head>
@@ -130,17 +128,15 @@
         </div>
     </div>
 
-    <!-- 弹窗大图预览层 (Lightbox Modal) -->
+    <!-- Lightbox Modal -->
     <div id="image-modal" class="image-modal fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm flex items-center justify-center">
-        <!-- 右上角固定定位的关闭按钮，避免占用顶部高度或受内边距限制 -->
         <button onclick="closeImageModal()" class="fixed top-4 right-4 z-10 text-white hover:text-brandLime transition-colors p-2 flex items-center space-x-1 text-sm font-bold bg-black/50 hover:bg-black/70 rounded-full px-4 border border-white/20">
             <i data-lucide="x" class="w-5 h-5"></i>
-            <span>关闭</span>
+            <span>Close</span>
         </button>
 
-        <!-- 图片显示容器：去掉 p-4，设置 w-full 允许全宽渲染 -->
         <div class="relative w-full h-full flex items-center justify-center">
-            <img id="modal-img" src="" alt="原图预览" class="modal-img w-full max-h-full object-contain shadow-2xl" />
+            <img id="modal-img" src="" alt="Image Preview" class="modal-img w-full max-h-full object-contain shadow-2xl" />
         </div>
     </div>
 
@@ -149,7 +145,7 @@
         <div class="max-w-4xl mx-auto px-4 py-6 flex items-center justify-between">
             <a href="#" class="logo-section-container group">
                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 2230 724" class="logo-text-svg" role="img">
-                    <title>彩色几何字母标志 (2)</title>
+                    <title>Deople Logo</title>
                     <path filter="url(#softShadow)" id="color-0173fd" d="M112 152 L350 152 C392 152 428 186 428 229 L428 468 C428 511 394 545 351 545 L112 545 C69 545 35 511 35 468 L35 229 C35 186 69 152 112 152 Z " fill="#0173FD" />
                     <path filter="url(#softShadow)" id="color-fb050f" d="M630 154 C735 154 820 239 820 344 C820 449 735 544 630 544 C525 544 440 449 440 344 C440 239 525 154 630 154 Z " fill="#FB050F" transform="translate(8 0)" />
                     <path filter="url(#softShadow)" id="color-fd6b02" d="M1995 156 L2137.609 238.656 C2146.374 244.715 2150.365 252.181 2150.394 262.722 L2150.655 425.22 C2150.538 441.411 2145.902 449.444 2131.789 457.734 L1998.75 535.041 C1982.68 544.317 1971.299 549.431 1953.828 539.805 L1813.914 458.83 C1798.466 449.93 1793.585 441.148 1793.469 423.51 L1793.582 271.355 C1793.68 256.695 1795.735 246.61 1808.512 237.938 L1954.742 153.32 C1970.36 144.809 1980.198 147.496 1995 156 Z " fill="#FD6B02" transform="translate(57 0)" />
@@ -184,21 +180,21 @@
         </div>
     </header>
 
-    <!-- MAIN CONTAINER (去掉了 max-w-3xl 和 px-4，让 main 区域左右无间距全宽通栏) -->
+    <!-- MAIN CONTAINER -->
     <main class="w-full mx-auto pt-4 pb-16 flex-grow" id="feed">
 
-        <!-- 搜索框：加上 px-4 保证输入框内部或外侧两侧有呼吸空间，不贴死边缘 -->
+        <!-- SEARCH BOX -->
         <div class="px-4 mb-5 relative max-w-3xl mx-auto">
-            <input type="text" id="main-search" placeholder="搜索网站标题、描述或链接..."
+            <input type="text" id="main-search" placeholder="Search website title, description, or URL..."
                    class="w-full pl-5 pr-12 py-3.5 bg-white border border-borderSubtle rounded-full text-sm text-textPrimary placeholder-textMuted focus:outline-none focus:ring-2 focus:ring-cardDark shadow-sm font-medium transition-all" />
             <button class="absolute right-7 top-1/2 -translate-y-1/2 text-textPrimary hover:scale-110 transition-transform">
                 <i data-lucide="search" class="w-4 h-4 stroke-[2.5]"></i>
             </button>
         </div>
 
-        <!-- FEED LIST (卡片容器：去掉圆角和左右边距，实现无间距通栏贴边) -->
+        <!-- FEED LIST -->
         <div class="space-y-4 w-full bg-[#E8E9EB]" id="cards-container">
-            <!-- 动态渲染 -->
+            <!-- Dynamic Rendering -->
         </div>
 
         <!-- PAGINATION CONTROLS -->
@@ -217,7 +213,7 @@
                 </button>
             </div>
 
-            <p id="page-indicator" class="text-xs text-textMuted font-medium">加载中…</p>
+            <p id="page-indicator" class="text-xs text-textMuted font-medium">Loading...</p>
         </div>
 
     </main>
@@ -228,7 +224,7 @@
             <div class="flex justify-center space-x-6 text-xs text-slate-500">
                 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Privacy</a>
                 <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">Terms</a>
-                <a href="https://support.google.com/trends/?hl=zh-CN" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
+                <a href="https://support.google.com/trends/?hl=en" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition">About</a>
             </div>
             <p class="text-[11px] text-slate-400">© trendchart. Powered by Google Trends Embed API.</p>
         </div>
@@ -236,7 +232,6 @@
 
     <!-- JAVASCRIPT & DATA LOGIC -->
     <script>
-        // 同时加载两个 JSON 数据文件
         const DATA_URLS = [
             './websites_20261104.json',
             './websites.json'
@@ -246,7 +241,6 @@
         let currentPage = 1;
         let searchFilter = '';
 
-        // 图片懒加载：图片距离视口 600px 时开始加载
         const imageObserver = ('IntersectionObserver' in window)
             ? new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
@@ -275,7 +269,6 @@
                 if (imageObserver) {
                     imageObserver.observe(img);
                 } else {
-                    // 兼容不支持 IntersectionObserver 的旧浏览器
                     img.src = img.dataset.src;
                     img.removeAttribute('data-src');
                 }
@@ -283,28 +276,25 @@
         }
 
         function esc(value) {
-            return String(value ?? '').replace(/[&<>\"']/g, ch => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;'
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
             }[ch]));
         }
 
-        // 打开弹窗预览大图
         function openImageModal(imgSrc) {
             const modal = document.getElementById('image-modal');
             const modalImg = document.getElementById('modal-img');
             modalImg.src = imgSrc;
             modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // 禁止底层滚动
+            document.body.style.overflow = 'hidden';
         }
 
-        // 关闭弹窗
         function closeImageModal() {
             const modal = document.getElementById('image-modal');
             modal.classList.add('hidden');
-            document.body.style.overflow = ''; // 恢复滚动
+            document.body.style.overflow = '';
         }
 
-        // 点击弹窗背景空白处也可以关闭
         document.getElementById('image-modal').addEventListener('click', (e) => {
             if (e.target.id === 'image-modal') {
                 closeImageModal();
@@ -314,51 +304,48 @@
         async function loadWebsiteData() {
             const container = document.getElementById('cards-container');
             const indicator = document.getElementById('page-indicator');
-            container.innerHTML = '<div class="text-center py-12 text-textMuted"><p class="text-sm font-bold">正在加载网站列表...</p></div>';
-            indicator.textContent = '加载中…';
+            container.innerHTML = '<div class="text-center py-12 text-textMuted"><p class="text-sm font-bold">Loading website list...</p></div>';
+            indicator.textContent = 'Loading...';
 
             try {
-                // 并行读取两个 JSON 文件
                 const results = await Promise.all(
                     DATA_URLS.map(async (url) => {
                         const response = await fetch(url, { cache: 'no-cache' });
                         if (!response.ok) {
-                            throw new Error(`${url} 加载失败：HTTP ${response.status}`);
+                            throw new Error(`Failed to load ${url}: HTTP ${response.status}`);
                         }
 
                         const data = await response.json();
 
-                        // 兼容 JSON 数组，以及包含 data 数组的对象格式
                         if (Array.isArray(data)) return data;
                         if (data && Array.isArray(data.data)) return data.data;
 
-                        throw new Error(`${url} 的 JSON 格式不正确，应该是数组或包含 data 数组的对象`);
+                        throw new Error(`Invalid JSON format in ${url}. Expected an array or object containing a 'data' array.`);
                     })
                 );
 
-                // 合并两个文件的数据
                 const source = results.flat();
 
                 cardsData = source.map((v, i) => ({
                     id: `site-${i + 1}`,
                     input: v.input || '',
                     url: v.url || '#',
-                    title: v.title || '未命名网站',
-                    description: v.description || '暂无描述信息...',
+                    title: v.title || 'Untitled Website',
+                    description: v.description || 'No description available...',
                     image: v.image || '',
                     status: v.status || 200
                 }));
 
-                console.log(`两个 JSON 文件加载完成，共 ${cardsData.length} 条网站数据`);
+                console.log(`Successfully loaded ${cardsData.length} websites from JSON files.`);
                 renderFeedCards();
             } catch (error) {
-                console.error('加载网站数据失败:', error);
+                console.error('Failed to load website data:', error);
                 container.innerHTML = `
-                                                <div class="text-center py-10 px-5 bg-white border-y border-borderSubtle">
-                                                  <p class="text-sm font-extrabold text-textPrimary">无法加载 websites.json 数据</p>
-                                                  <p class="text-xs text-textMuted mt-2">提示：由于浏览器的安全限制（CORS），直接双击打开本地 HTML 文件无法读取 JSON。请使用 VS Code 的 Live Server 插件或本地服务器运行。</p>
-                                                </div>`;
-                indicator.textContent = '数据加载失败';
+                                                    <div class="text-center py-10 px-5 bg-white border-y border-borderSubtle">
+                                                      <p class="text-sm font-extrabold text-textPrimary">Failed to load website data</p>
+                                                      <p class="text-xs text-textMuted mt-2">Note: Due to browser CORS security restrictions, opening local HTML files directly cannot fetch JSON files. Please use VS Code Live Server or a local HTTP server.</p>
+                                                    </div>`;
+                indicator.textContent = 'Failed to load data';
             }
         }
 
@@ -379,61 +366,56 @@
             const pageItems = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
             if (!pageItems.length) {
-                container.innerHTML = '<div class="text-center py-12 text-textMuted bg-white border-y border-borderSubtle"><p class="text-sm font-bold">没有找到匹配的网站</p></div>';
+                container.innerHTML = '<div class="text-center py-12 text-textMuted bg-white border-y border-borderSubtle"><p class="text-sm font-bold">No matching websites found</p></div>';
                 renderPagination(0, 0);
                 return;
             }
 
             pageItems.forEach(item => {
                 const card = document.createElement('article');
-                // 卡片样式：限制整体宽度、居中显示，并添加圆角和细边框
                 card.className = 'bg-white border border-borderSubtle rounded-t-2xl rounded-b-none w-full max-w-[760px] mx-auto overflow-hidden shadow-sm transition-all';
 
-                // 1. 顶部：域名 + 访问链接
                 const headerHtml = `
-                                                <div class="px-5 pt-2.5 pb-0 flex items-center justify-between gap-3">
-                                                    <div class="flex items-center space-x-2 min-w-0">
-                                                        <div class="w-7 h-7 shrink-0 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
-                                                            ${esc((item.input || 'W').charAt(0).toUpperCase())}
+                                                    <div class="px-5 pt-2.5 pb-0 flex items-center justify-between gap-3">
+                                                        <div class="flex items-center space-x-2 min-w-0">
+                                                            <div class="w-7 h-7 shrink-0 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
+                                                                ${esc((item.input || 'W').charAt(0).toUpperCase())}
+                                                            </div>
+                                                            <span class="text-xs font-bold text-textPrimary truncate">${esc(item.input)}</span>
                                                         </div>
-                                                        <span class="text-xs font-bold text-textPrimary truncate">${esc(item.input)}</span>
-                                                    </div>
-                                                    <a href="${esc(item.url)}" target="_blank" rel="noopener" class="shrink-0 text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
-                                                        <span>访问</span>
-                                                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                                                    </a>
-                                                </div>
-                                            `;
-
-                // 2. 标题 + 描述
-                const bodyHtml = `
-                                                <div class="px-5 pt-1 pb-2.5 space-y-1">
-                                                    <h3 class="text-lg sm:text-xl font-extrabold text-blue-600 leading-snug">
-                                                        <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
-                                                            ${esc(item.title)}
+                                                        <a href="${esc(item.url)}" target="_blank" rel="noopener" class="shrink-0 text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
+                                                            <span>Visit</span>
+                                                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                                                         </a>
-                                                    </h3>
-                                                    <p class="text-xs text-textMuted line-clamp-2 leading-relaxed">
-                                                        ${esc(item.description)}
-                                                    </p>
-                                                </div>
-                                            `;
-
-                // 3. 图片区域：点击图片触发 openImageModal 弹出显示大图，卡片显示逻辑保持 object-cover 不变
-                const imageHtml = item.image ? `
-                                                <div class="w-full card-thumb-height bg-cardDark overflow-hidden relative cursor-zoom-in" onclick="openImageModal('${esc(item.image)}')">
-                                                    <div class="block w-full h-full">
-                                                        ${pageItems.indexOf(item) === 0
-                                                            ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />`
-                                                            : `<img data-src="${esc(item.image)}" alt="${esc(item.title)}" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />`
-                                                        }
                                                     </div>
-                                                </div>
-                                            ` : '';
+                                                `;
+
+                const bodyHtml = `
+                                                    <div class="px-5 pt-1 pb-2.5 space-y-1">
+                                                        <h3 class="text-lg sm:text-xl font-extrabold text-blue-600 leading-snug">
+                                                            <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
+                                                                ${esc(item.title)}
+                                                            </a>
+                                                        </h3>
+                                                        <p class="text-xs text-textMuted line-clamp-2 leading-relaxed">
+                                                            ${esc(item.description)}
+                                                        </p>
+                                                    </div>
+                                                `;
+
+                const imageHtml = item.image ? `
+                                                    <div class="w-full card-thumb-height bg-cardDark overflow-hidden relative cursor-zoom-in" onclick="openImageModal('${esc(item.image)}')">
+                                                        <div class="block w-full h-full">
+                                                            ${pageItems.indexOf(item) === 0
+                        ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />`
+                        : `<img data-src="${esc(item.image)}" alt="${esc(item.title)}" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />`
+                    }
+                                                        </div>
+                                                    </div>
+                                                ` : '';
 
                 card.innerHTML = headerHtml + bodyHtml + imageHtml;
                 container.appendChild(card);
-                // 新生成的卡片插入页面后，注册其中尚未加载的图片
                 observeLazyImages(card);
             });
 
@@ -447,7 +429,7 @@
             const next = document.getElementById('next-page');
             prev.disabled = currentPage <= 1;
             next.disabled = !totalPages || currentPage >= totalPages;
-            document.getElementById('page-indicator').innerText = `显示第 ${currentPage} 页 / 共 ${totalPages} 页 (总计 ${totalCount} 个网站)`;
+            document.getElementById('page-indicator').innerText = `Showing page ${currentPage} of ${totalPages} (${totalCount} total websites)`;
 
             nums.innerHTML = '';
             for (let i = 1; i <= totalPages; i++) {
@@ -477,7 +459,6 @@
             });
         });
     </script>
-
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-384RKFQQZQ"></script>
