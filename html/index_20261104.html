@@ -236,11 +236,7 @@
 
     <!-- JAVASCRIPT & DATA LOGIC -->
     <script>
-        // 同时加载两个 JSON 数据文件
-        const DATA_URLS = [
-            './websites_20261104.json',
-            './websites.json'
-        ];
+        const DATA_URL = './websites.json';
         const ITEMS_PER_PAGE = 10;
         let cardsData = [];
         let currentPage = 1;
@@ -318,26 +314,10 @@
             indicator.textContent = '加载中…';
 
             try {
-                // 并行读取两个 JSON 文件
-                const results = await Promise.all(
-                    DATA_URLS.map(async (url) => {
-                        const response = await fetch(url, { cache: 'no-cache' });
-                        if (!response.ok) {
-                            throw new Error(`${url} 加载失败：HTTP ${response.status}`);
-                        }
+                const response = await fetch(DATA_URL, { cache: 'no-cache' });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
 
-                        const data = await response.json();
-
-                        // 兼容 JSON 数组，以及包含 data 数组的对象格式
-                        if (Array.isArray(data)) return data;
-                        if (data && Array.isArray(data.data)) return data.data;
-
-                        throw new Error(`${url} 的 JSON 格式不正确，应该是数组或包含 data 数组的对象`);
-                    })
-                );
-
-                // 合并两个文件的数据
-                const source = results.flat();
+                const source = await response.json();
 
                 cardsData = source.map((v, i) => ({
                     id: `site-${i + 1}`,
@@ -349,7 +329,6 @@
                     status: v.status || 200
                 }));
 
-                console.log(`两个 JSON 文件加载完成，共 ${cardsData.length} 条网站数据`);
                 renderFeedCards();
             } catch (error) {
                 console.error('加载网站数据失败:', error);
