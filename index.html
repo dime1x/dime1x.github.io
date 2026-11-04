@@ -242,6 +242,42 @@
         let currentPage = 1;
         let searchFilter = '';
 
+        // 图片懒加载：图片距离视口 600px 时开始加载
+        const imageObserver = ('IntersectionObserver' in window)
+            ? new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+
+                    const img = entry.target;
+                    const imageUrl = img.dataset.src;
+
+                    if (imageUrl) {
+                        img.src = imageUrl;
+                        img.removeAttribute('data-src');
+                    }
+
+                    observer.unobserve(img);
+                });
+            }, {
+                rootMargin: '600px 0px',
+                threshold: 0
+            })
+            : null;
+
+        function observeLazyImages(root = document) {
+            const images = root.querySelectorAll('img[data-src]');
+
+            images.forEach(img => {
+                if (imageObserver) {
+                    imageObserver.observe(img);
+                } else {
+                    // 兼容不支持 IntersectionObserver 的旧浏览器
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                }
+            });
+        }
+
         function esc(value) {
             return String(value ?? '').replace(/[&<>\"']/g, ch => ({
                 '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;'
@@ -366,13 +402,18 @@
                 const imageHtml = item.image ? `
                                                 <div class="w-full card-thumb-height bg-cardDark overflow-hidden relative cursor-zoom-in" onclick="openImageModal('${esc(item.image)}')">
                                                     <div class="block w-full h-full">
-                                                        <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />
+                                                        ${pageItems.indexOf(item) === 0
+                                                            ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />`
+                                                            : `<img data-src="${esc(item.image)}" alt="${esc(item.title)}" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />`
+                                                        }
                                                     </div>
                                                 </div>
                                             ` : '';
 
                 card.innerHTML = headerHtml + bodyHtml + imageHtml;
                 container.appendChild(card);
+                // 新生成的卡片插入页面后，注册其中尚未加载的图片
+                observeLazyImages(card);
             });
 
             renderPagination(filtered.length, totalPages);
