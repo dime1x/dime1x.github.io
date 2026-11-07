@@ -61,7 +61,7 @@ export async function onRequestGet({ request, env }) {
   }
 
   const redirectUri =
-    "https://deople.ai/instagram/callback";
+    "https://instagram.deople.ai/instagram/callback";
 
   const tokenUrl = new URL(
     `https://graph.facebook.com/${env.GRAPH_API_VERSION}/oauth/access_token`

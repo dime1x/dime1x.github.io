@@ -3,7 +3,7 @@ export async function onRequestGet({ request, env }) {
   const state = crypto.randomUUID();
 
   const redirectUri =
-    "https://deople.ai/instagram/callback";
+    "https://instagram.deople.ai/instagram/callback";
 
   const version = env.GRAPH_API_VERSION;
   const appId = env.META_APP_ID;
