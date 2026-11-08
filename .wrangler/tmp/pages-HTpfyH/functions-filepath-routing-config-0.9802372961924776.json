@@ -1,0 +1,21 @@
+{
+  "routes": [
+    {
+      "routePath": "/instagram/callback",
+      "mountPath": "/instagram",
+      "method": "GET",
+      "module": [
+        "instagram/callback.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/instagram/login",
+      "mountPath": "/instagram",
+      "method": "GET",
+      "module": [
+        "instagram/login.js:onRequestGet"
+      ]
+    }
+  ],
+  "baseURL": "/"
+}
