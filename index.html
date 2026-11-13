@@ -374,39 +374,38 @@
 
             pageItems.forEach((item, index) => {
                 const card = document.createElement('article');
-                card.className = 'bg-white border border-borderSubtle rounded-2xl w-full max-w-[760px] h-[170px] sm:h-[190px] mx-auto overflow-hidden shadow-sm transition-all hover:shadow-md';
+                card.className = 'bg-white border border-borderSubtle rounded-2xl w-full max-w-[760px] h-[190px] sm:h-[220px] mx-auto overflow-hidden shadow-sm transition-all hover:shadow-md';
 
                 const imageHtml = item.image ? `
-                    <div class="w-[38%] sm:w-[220px] h-full shrink-0 bg-gray-100 overflow-hidden relative cursor-zoom-in" onclick="openImageModal('${esc(item.image)}')">
+                    <div class="w-[38%] sm:w-[220px] h-full shrink-0 self-stretch bg-gray-100 overflow-hidden relative cursor-zoom-in" onclick="openImageModal('${esc(item.image)}')">
                         ${index === 0
-                            ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-center hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
-                            : `<img data-src="${esc(item.image)}" alt="${esc(item.title)}" decoding="async" class="w-full h-full object-cover object-center hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
+                            ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
+                            : `<img data-src="${esc(item.image)}" alt="${esc(item.title)}" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
                         }
                     </div>
                 ` : '';
 
                 const contentHtml = `
-                    <div class="flex-1 min-w-0 h-full p-3 sm:p-5 flex flex-col justify-center gap-2 overflow-hidden">
+                    <div class="flex-1 min-w-0 p-3 sm:p-5 flex flex-col justify-start gap-2">
                         <div class="flex items-center justify-between gap-2 min-w-0">
                             <div class="flex items-center gap-2 min-w-0">
-                                <div class="w-6 h-6 shrink-0 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
+                                <div class="w-6 h-6 shrink-0 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] font-medium">
                                     ${esc((item.input || 'W').charAt(0).toUpperCase())}
                                 </div>
                                 <span class="text-xs font-semibold text-textMuted truncate">${esc(item.input || item.url)}</span>
                             </div>
                             <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="shrink-0 text-xs text-blue-600 hover:underline font-semibold">访问 ↗</a>
                         </div>
-                        <h3 class="text-base sm:text-xl font-extrabold text-textPrimary leading-snug line-clamp-2">
-                            <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="hover:text-blue-600 hover:underline">
+                        <h3 class="text-base sm:text-xl font-normal text-blue-600 leading-snug line-clamp-2">
+                            <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-normal hover:underline">
                                 ${esc(item.title)}
                             </a>
                         </h3>
-                        <p class="text-xs sm:text-sm text-textMuted line-clamp-3 leading-relaxed">${esc(item.description)}</p>
-                        <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="text-[11px] sm:text-xs text-blue-600 hover:underline truncate">${esc(item.url)}</a>
+                        <p class="text-xs sm:text-sm text-textMuted line-clamp-4 leading-relaxed">${esc(item.description)}</p>
                     </div>
                 `;
 
-                card.innerHTML = `<div class="flex items-stretch w-full h-full">${imageHtml}${contentHtml}</div>`;
+                card.innerHTML = `<div class="flex items-stretch w-full h-full overflow-hidden">${imageHtml}${contentHtml}</div>`;
                 container.appendChild(card);
                 observeLazyImages(card);
             });
