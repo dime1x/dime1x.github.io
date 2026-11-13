@@ -234,11 +234,8 @@
 
     <!-- JAVASCRIPT & DATA LOGIC -->
     <script>
-        const DATA_URLS = [
- 	  './data/websites.json'
-            './websites_20261104.json',
-            './websites.json'
-        ];
+        // index.html 与 websites.json 放在同一目录时，使用此路径
+        const DATA_URLS = ['./data/websites.json'];
         const ITEMS_PER_PAGE = 10;
         let cardsData = [];
         let currentPage = 1;
@@ -321,9 +318,10 @@
                         const data = await response.json();
 
                         if (Array.isArray(data)) return data;
+                        if (data && Array.isArray(data.websites)) return data.websites;
                         if (data && Array.isArray(data.data)) return data.data;
 
-                        throw new Error(`Invalid JSON format in ${url}. Expected an array or object containing a 'data' array.`);
+                        throw new Error(`Invalid JSON format in ${url}. Expected an array or an object containing a 'websites' or 'data' array.`);
                     })
                 );
 
@@ -331,11 +329,11 @@
 
                 cardsData = source.map((v, i) => ({
                     id: `site-${i + 1}`,
-                    input: v.input || '',
-                    url: v.url || '#',
+                    input: v.input || v.domain || '',
+                    url: v.url || (v.domain ? `https://${v.domain}` : '#'),
                     title: v.title || 'Untitled Website',
                     description: v.description || 'No description available...',
-                    image: v.image || '',
+                    image: v.image || v.image_mobile || '',
                     status: v.status || 200
                 }));
 
@@ -374,54 +372,44 @@
                 return;
             }
 
-            pageItems.forEach(item => {
+            pageItems.forEach((item, index) => {
                 const card = document.createElement('article');
-                card.className = 'bg-white border border-borderSubtle rounded-t-2xl rounded-b-none w-full max-w-[760px] mx-auto overflow-hidden shadow-sm transition-all';
-
-                const headerHtml = `
-                                                    <div class="px-5 pt-2.5 pb-0 flex items-center justify-between gap-3">
-                                                        <div class="flex items-center space-x-2 min-w-0">
-                                                            <div class="w-7 h-7 shrink-0 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
-                                                                ${esc((item.input || 'W').charAt(0).toUpperCase())}
-                                                            </div>
-                                                            <span class="text-xs font-bold text-textPrimary truncate">${esc(item.input)}</span>
-                                                        </div>
-                                                        <a href="${esc(item.url)}" target="_blank" rel="noopener" class="shrink-0 text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
-                                                            <span>Visit</span>
-                                                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                                                        </a>
-                                                    </div>
-                                                `;
-
-                const bodyHtml = `
-                                                    <div class="px-5 pt-1 pb-2.5 space-y-1">
-                                                        <h3 class="text-lg sm:text-xl font-extrabold text-blue-600 leading-snug">
-                                                            <a href="${esc(item.url)}" target="_blank" rel="noopener" class="hover:underline">
-                                                                ${esc(item.title)}
-                                                            </a>
-                                                        </h3>
-                                                        <p class="text-xs text-textMuted line-clamp-2 leading-relaxed">
-                                                            ${esc(item.description)}
-                                                        </p>
-                                                    </div>
-                                                `;
+                card.className = 'bg-white border border-borderSubtle rounded-2xl w-full max-w-[760px] h-[170px] sm:h-[190px] mx-auto overflow-hidden shadow-sm transition-all hover:shadow-md';
 
                 const imageHtml = item.image ? `
-                                                    <div class="w-full card-thumb-height bg-cardDark overflow-hidden relative cursor-zoom-in" onclick="openImageModal('${esc(item.image)}')">
-                                                        <div class="block w-full h-full">
-                                                            ${pageItems.indexOf(item) === 0
-                        ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />`
-                        : `<img data-src="${esc(item.image)}" alt="${esc(item.title)}" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.parentElement.style.display='none'" />`
-                    }
-                                                        </div>
-                                                    </div>
-                                                ` : '';
+                    <div class="w-[38%] sm:w-[220px] h-full shrink-0 bg-gray-100 overflow-hidden relative cursor-zoom-in" onclick="openImageModal('${esc(item.image)}')">
+                        ${index === 0
+                            ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-center hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
+                            : `<img data-src="${esc(item.image)}" alt="${esc(item.title)}" decoding="async" class="w-full h-full object-cover object-center hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
+                        }
+                    </div>
+                ` : '';
 
-                card.innerHTML = headerHtml + bodyHtml + imageHtml;
+                const contentHtml = `
+                    <div class="flex-1 min-w-0 h-full p-3 sm:p-5 flex flex-col justify-center gap-2 overflow-hidden">
+                        <div class="flex items-center justify-between gap-2 min-w-0">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <div class="w-6 h-6 shrink-0 rounded-md bg-cardDark text-white flex items-center justify-center text-[10px] font-bold">
+                                    ${esc((item.input || 'W').charAt(0).toUpperCase())}
+                                </div>
+                                <span class="text-xs font-semibold text-textMuted truncate">${esc(item.input || item.url)}</span>
+                            </div>
+                            <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="shrink-0 text-xs text-blue-600 hover:underline font-semibold">访问 ↗</a>
+                        </div>
+                        <h3 class="text-base sm:text-xl font-extrabold text-textPrimary leading-snug line-clamp-2">
+                            <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="hover:text-blue-600 hover:underline">
+                                ${esc(item.title)}
+                            </a>
+                        </h3>
+                        <p class="text-xs sm:text-sm text-textMuted line-clamp-3 leading-relaxed">${esc(item.description)}</p>
+                        <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="text-[11px] sm:text-xs text-blue-600 hover:underline truncate">${esc(item.url)}</a>
+                    </div>
+                `;
+
+                card.innerHTML = `<div class="flex items-stretch w-full h-full">${imageHtml}${contentHtml}</div>`;
                 container.appendChild(card);
                 observeLazyImages(card);
             });
-
             renderPagination(filtered.length, totalPages);
             if (window.lucide) lucide.createIcons();
         }
