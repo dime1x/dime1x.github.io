@@ -1,0 +1,421 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deople Motion Studio</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;background:#080b13;color:white;
+  font-family:Arial, sans-serif;padding:24px 16px 50px;
+}
+h1{text-align:center;font-size:26px;letter-spacing:2px}
+.sub{text-align:center;color:#8290a6;font-size:13px}
+.stage{
+  height:360px;max-width:1000px;margin:28px auto 20px;
+  border:1px solid #263247;border-radius:24px;
+  background:radial-gradient(circle at center,#1c2c45,#0a101b 65%,#080b13);
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  perspective:1000px;isolation:isolate;
+}
+.stage .ring{
+  position:absolute;border:1px solid #ffffff12;border-radius:50%;
+  width:250px;height:250px;pointer-events:none;
+}
+.stage .ring.r2{width:390px;height:390px}
+.stage .ring.r3{width:540px;height:540px}
+.stage .glow{
+  position:absolute;width:180px;height:180px;border-radius:50%;
+  background:#1684ff12;filter:blur(55px);
+}
+.logo{
+  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:2;
+  font-size:clamp(55px,12vw,105px);
+  font-weight:900;letter-spacing:-7px;
+  transform-style:preserve-3d;
+}
+.letter{
+  display:inline-block;position:relative;
+  transform-origin:center;
+  will-change:transform,filter,opacity;
+}
+.letter:nth-child(1){color:#1684ff;--dx:-125px;--dy:-85px;--delay:0ms}
+.letter:nth-child(2){color:#ea4335;--dx:-70px;--dy:95px;--delay:100ms}
+.letter:nth-child(3){color:#fbbc05;--dx:0px;--dy:-125px;--delay:200ms}
+.letter:nth-child(4){color:#9870ff;--dx:70px;--dy:95px;--delay:300ms}
+.letter:nth-child(5){color:#34a853;--dx:110px;--dy:-75px;--delay:400ms}
+.letter:nth-child(6){color:#ff6d01;--dx:145px;--dy:70px;--delay:500ms}
+
+.controls{
+  max-width:1000px;margin:auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:9px;
+}
+button{
+  border:1px solid #2a3850;background:#141e2d;
+  color:#dbe5f4;padding:12px 8px;border-radius:10px;
+  font-size:13px;cursor:pointer;
+}
+button.active{background:#1769d2;border-color:#4898ff;color:white}
+button:hover{background:#263b58}
+.info{
+  max-width:1000px;margin:24px auto 0;
+  border:1px solid #29374b;background:#111a29;
+  border-radius:15px;padding:19px;
+}
+.info h2{font-size:18px;margin:0 0 9px}
+.info p{font-size:14px;line-height:1.8;color:#aab9ce;margin:0}
+.meta{font-size:12px;color:#6f88a9;margin-top:12px}
+.replay{
+  display:block;margin:18px auto 0;background:#1769d2;
+  border:0;padding:13px 30px;font-size:14px;
+}
+@media(max-width:600px){
+  .stage{height:270px}
+  .logo{letter-spacing:-5px}
+  .controls{grid-template-columns:repeat(3,1fr)}
+  button{font-size:12px;padding:11px 4px}
+}
+</style>
+</head>
+<body>
+
+<h1>Ðeople Motion Studio</h1>
+<p class="sub">独立运动编排 · 多阶段动作 · 10–12 秒动态</p>
+
+<div class="stage" id="stage">
+  <div class="ring"></div>
+  <div class="ring r2"></div>
+  <div class="ring r3"></div>
+  <div class="glow"></div>
+  <div class="logo" id="logo">
+    <span class="letter">Ð</span>
+    <span class="letter">e</span>
+    <span class="letter">o</span>
+    <span class="letter">p</span>
+    <span class="letter">l</span>
+    <span class="letter">e</span>
+  </div>
+</div>
+
+<div class="controls" id="controls"></div>
+
+<div class="info">
+  <h2 id="title">01 · 超新星爆发</h2>
+  <p id="desc">字母聚集能量，向中心压缩，短暂凝固后发生超新星式爆发。六个字母沿不同方向飞散，绕行、翻转，最后受到引力牵引重新组合。</p>
+  <div class="meta" id="meta">持续时间：12 秒 · 多阶段独立运动</div>
+</div>
+
+<button class="replay" onclick="play(current)">↻ 重新播放</button>
+
+<style>
+/* 01 超新星爆发 */
+.a1 .letter{animation:supernova 12s cubic-bezier(.22,.75,.2,1) both;animation-delay:var(--delay)}
+@keyframes supernova{
+  0%{transform:translate(0,0) scale(1) rotate(0);filter:brightness(1)}
+  10%{transform:translate(0,0) scale(.9);filter:brightness(1.2)}
+  20%{transform:translate(-5px,4px) scale(.65,.8);filter:brightness(2)}
+  29%{transform:translate(0,0) scale(.35);filter:brightness(4)}
+  34%{transform:translate(var(--dx),var(--dy)) scale(1.5) rotate(130deg);filter:brightness(3)}
+  48%{transform:translate(var(--dx),var(--dy)) scale(1.1) rotate(260deg);filter:brightness(2)}
+  59%{transform:translate(-80px,60px) scale(.8) rotate(400deg)}
+  69%{transform:translate(55px,-45px) scale(1.25) rotate(530deg)}
+  80%{transform:translate(-20px,20px) scale(.85) rotate(650deg)}
+  91%{transform:translate(0,0) scale(1.08) rotate(700deg)}
+  100%{transform:translate(0,0) scale(1) rotate(720deg);filter:brightness(1)}
+}
+
+/* 02 黑洞引力 */
+.a2 .letter{animation:blackhole 11s cubic-bezier(.3,.1,.2,1) both;animation-delay:var(--delay)}
+@keyframes blackhole{
+  0%{transform:translate(0,0) scale(1)}
+  12%{transform:translate(var(--dx),var(--dy)) scale(1.1)}
+  24%{transform:translate(0,0) scale(.8) rotate(60deg)}
+  36%{transform:translate(70px,-40px) scale(.7) rotate(160deg)}
+  48%{transform:translate(0,0) scale(.15) rotate(360deg);opacity:.3}
+  56%{transform:translate(0,0) scale(.08);opacity:0}
+  65%{transform:translate(0,0) scale(.2);opacity:.3}
+  74%{transform:translate(var(--dx),var(--dy)) scale(1.5) rotate(540deg);opacity:1}
+  84%{transform:translate(25px,-20px) scale(.9) rotate(650deg)}
+  93%{transform:translate(-8px,5px) scale(1.1)}
+  100%{transform:translate(0,0) scale(1) rotate(720deg)}
+}
+
+/* 03 三维螺旋 */
+.a3 .letter{animation:helix 12s ease-in-out both;animation-delay:var(--delay)}
+@keyframes helix{
+  0%{transform:translateZ(0) rotateY(0) scale(1)}
+  12%{transform:translateZ(-180px) rotateY(90deg) scale(.4)}
+  25%{transform:translateZ(100px) rotateY(180deg) scale(1.2)}
+  38%{transform:translateZ(200px) rotateY(270deg) rotateX(90deg) scale(1.5)}
+  51%{transform:translateZ(-100px) rotateY(360deg) rotateX(180deg) scale(.6)}
+  64%{transform:translateZ(120px) rotateY(500deg) rotateX(270deg) scale(1.2)}
+  76%{transform:translateZ(-50px) rotateY(620deg) rotateX(360deg) scale(.85)}
+  88%{transform:translateZ(30px) rotateY(700deg) scale(1.08)}
+  100%{transform:translateZ(0) rotateY(720deg) scale(1)}
+}
+
+/* 04 机械齿轮组 */
+.a4 .letter{animation:machine 11s cubic-bezier(.4,0,.2,1) both;animation-delay:var(--delay)}
+@keyframes machine{
+  0%{transform:translate(0,0) rotate(0) scale(1)}
+  12%{transform:translateY(15px) scaleY(.55)}
+  24%{transform:translateY(-12px) rotate(-18deg) scaleX(.7)}
+  36%{transform:translate(var(--dx),var(--dy)) rotate(90deg) scale(.9)}
+  49%{transform:translate(var(--dx),var(--dy)) rotate(180deg) scale(1.2)}
+  61%{transform:translate(30px,-35px) rotate(270deg) scale(.75)}
+  72%{transform:translate(-25px,30px) rotate(360deg) scale(1.15)}
+  84%{transform:translate(0,12px) rotate(390deg) scaleY(1.2)}
+  94%{transform:translate(0,-4px) rotate(355deg) scale(.96)}
+  100%{transform:translate(0,0) rotate(360deg) scale(1)}
+}
+
+/* 05 海浪传导 */
+.a5 .letter{animation:ocean 11s cubic-bezier(.3,.7,.2,1) both;animation-delay:var(--delay)}
+@keyframes ocean{
+  0%{transform:translateY(0) skewX(0) scaleY(1)}
+  12%{transform:translateY(-60px) skewX(-18deg) scaleY(1.25)}
+  24%{transform:translateY(45px) skewX(15deg) scaleY(.75)}
+  36%{transform:translateY(-85px) skewX(-12deg) scaleY(1.3)}
+  48%{transform:translateY(65px) skewX(18deg) scaleY(.8)}
+  60%{transform:translateY(-42px) skewX(-9deg) scaleY(1.15)}
+  72%{transform:translateY(30px) skewX(8deg) scaleY(.9)}
+  83%{transform:translateY(-18px) skewX(-4deg)}
+  93%{transform:translateY(8px) skewX(2deg)}
+  100%{transform:translateY(0) skewX(0) scaleY(1)}
+}
+
+/* 06 维度折叠 */
+.a6 .letter{animation:fold 12s ease-in-out both;animation-delay:var(--delay)}
+@keyframes fold{
+  0%{transform:perspective(700px) rotateY(0) rotateX(0) scale(1)}
+  14%{transform:perspective(700px) rotateY(90deg) scaleX(.05)}
+  27%{transform:perspective(700px) rotateY(180deg) rotateX(90deg) scale(1.2)}
+  40%{transform:perspective(700px) rotateY(270deg) rotateX(180deg) scale(.6)}
+  52%{transform:perspective(700px) rotateY(360deg) rotateX(270deg) scale(1.4)}
+  65%{transform:perspective(700px) rotateY(450deg) rotateX(360deg) scale(.8)}
+  77%{transform:perspective(700px) rotateY(540deg) rotateX(450deg) scale(1.15)}
+  89%{transform:perspective(700px) rotateY(650deg) rotateX(360deg) scale(.95)}
+  100%{transform:perspective(700px) rotateY(720deg) rotateX(360deg) scale(1)}
+}
+
+/* 07 冲击波 */
+.a7 .letter{animation:shockwave 10.5s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--delay)}
+@keyframes shockwave{
+  0%{transform:scale(1);filter:brightness(1)}
+  15%{transform:scale(.65);filter:brightness(1.5)}
+  25%{transform:scale(1.8);filter:brightness(3)}
+  33%{transform:scale(.8);filter:brightness(1)}
+  43%{transform:scale(1.5) rotate(12deg);filter:brightness(2)}
+  53%{transform:scale(.75) rotate(-12deg)}
+  64%{transform:scale(1.3) rotate(8deg)}
+  74%{transform:scale(.88) rotate(-5deg)}
+  85%{transform:scale(1.12) rotate(3deg)}
+  94%{transform:scale(.97)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+
+/* 08 液态弹性 */
+.a8 .letter{animation:liquid 12s cubic-bezier(.25,1.4,.5,1) both;animation-delay:var(--delay)}
+@keyframes liquid{
+  0%{transform:scale(1,1) skew(0)}
+  12%{transform:scale(.45,1.5) skew(-12deg)}
+  24%{transform:scale(1.6,.55) skew(15deg)}
+  36%{transform:translateY(-60px) scale(.8,1.4) skew(-8deg)}
+  48%{transform:translateY(35px) scale(1.4,.65) skew(12deg)}
+  60%{transform:translateY(-25px) scale(.85,1.2) skew(-5deg)}
+  72%{transform:translateY(15px) scale(1.15,.9) skew(4deg)}
+  84%{transform:translateY(-8px) scale(.96,1.06)}
+  94%{transform:translateY(3px) scale(1.02,.98)}
+  100%{transform:translateY(0) scale(1,1) skew(0)}
+}
+
+/* 09 时空跃迁 */
+.a9 .letter{animation:warp 12s cubic-bezier(.15,.8,.2,1) both;animation-delay:var(--delay)}
+@keyframes warp{
+  0%{transform:translateZ(0) scale(1);filter:blur(0)}
+  12%{transform:translateZ(-300px) scale(.1);filter:blur(5px)}
+  24%{transform:translateZ(300px) scale(2.4);filter:blur(0) brightness(3)}
+  36%{transform:translate(var(--dx),var(--dy)) translateZ(100px) rotate(180deg) scale(1.3)}
+  48%{transform:translate(-100px,80px) translateZ(-200px) rotate(360deg) scale(.4);filter:blur(3px)}
+  61%{transform:translate(90px,-70px) translateZ(250px) rotate(540deg) scale(1.7);filter:blur(0)}
+  73%{transform:translate(-40px,30px) translateZ(80px) rotate(650deg) scale(.8)}
+  84%{transform:translate(20px,-15px) translateZ(-50px) rotate(700deg) scale(1.15)}
+  94%{transform:translate(0,0) scale(.95)}
+  100%{transform:translate(0,0) translateZ(0) rotate(720deg) scale(1);filter:blur(0)}
+}
+
+/* 10 霓虹能量 */
+.a10 .letter{animation:neon 11s ease-in-out both;animation-delay:var(--delay)}
+@keyframes neon{
+  0%{opacity:0;transform:translateY(40px) scale(.5);filter:brightness(.2)}
+  14%{opacity:1;transform:translateY(0) scale(1.2);filter:brightness(3) drop-shadow(0 0 25px currentColor)}
+  27%{transform:translateY(-15px) scale(.85);filter:brightness(.6)}
+  39%{transform:translateY(10px) scale(1.3);filter:brightness(3) drop-shadow(0 0 35px currentColor)}
+  52%{transform:translateY(-8px) scale(.95);filter:brightness(1)}
+  64%{transform:translateY(5px) scale(1.15);filter:brightness(2.5) drop-shadow(0 0 20px currentColor)}
+  77%{transform:translateY(-3px) scale(.97);filter:brightness(1.4)}
+  89%{transform:scale(1.05);filter:brightness(1.2)}
+  100%{transform:translateY(0) scale(1);filter:brightness(1);opacity:1}
+}
+
+/* 11 龙卷风聚合 */
+.a11 .letter{animation:tornado 12s cubic-bezier(.2,.7,.1,1) both;animation-delay:var(--delay)}
+@keyframes tornado{
+  0%{transform:translate(var(--dx),var(--dy)) rotate(0) scale(.4);opacity:0}
+  14%{transform:translate(100px,-100px) rotate(180deg) scale(.7);opacity:1}
+  27%{transform:translate(-90px,70px) rotate(420deg) scale(1.2)}
+  40%{transform:translate(70px,90px) rotate(720deg) scale(.7)}
+  53%{transform:translate(-60px,-80px) rotate(1000deg) scale(1.4)}
+  66%{transform:translate(35px,45px) rotate(1260deg) scale(.85)}
+  77%{transform:translate(-15px,-20px) rotate(1450deg) scale(1.15)}
+  88%{transform:translate(5px,5px) rotate(1600deg) scale(.95)}
+  100%{transform:translate(0,0) rotate(1800deg) scale(1);opacity:1}
+}
+
+/* 12 心跳共振 */
+.a12 .letter{animation:heartbeat 12s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--delay)}
+@keyframes heartbeat{
+  0%{transform:scale(1)}
+  10%{transform:scale(1.12)}
+  17%{transform:scale(.9)}
+  24%{transform:scale(1.35)}
+  32%{transform:scale(.95)}
+  42%{transform:scale(1) rotate(0)}
+  52%{transform:scale(.8) rotate(-8deg)}
+  62%{transform:scale(1.2) rotate(8deg)}
+  72%{transform:scale(.9) rotate(-5deg)}
+  82%{transform:scale(1.1) rotate(3deg)}
+  92%{transform:scale(.97)}
+  100%{transform:scale(1) rotate(0)}
+}
+
+/* 背景也参与运动 */
+.a1 .ring{animation:ring1 12s ease-out both}
+@keyframes ring1{
+  0%{transform:scale(.2);opacity:0}
+  30%{transform:scale(.5);opacity:.5}
+  50%{transform:scale(1.6);opacity:.2}
+  100%{transform:scale(2.3);opacity:0}
+}
+.a2 .ring{animation:ring2 11s ease-in-out both}
+@keyframes ring2{
+  0%{transform:scale(1);opacity:.3}
+  45%{transform:scale(.1);opacity:0}
+  70%{transform:scale(1.8);opacity:.5}
+  100%{transform:scale(1);opacity:.1}
+}
+.a3 .ring{animation:ring3 12s linear both}
+@keyframes ring3{
+  0%{transform:rotate(0) scale(.5)}
+  50%{transform:rotate(180deg) scale(1.5)}
+  100%{transform:rotate(360deg) scale(.5)}
+}
+.a4 .ring{animation:ring4 11s ease-in-out both}
+@keyframes ring4{
+  0%{transform:rotate(0) scale(1)}
+  30%{transform:rotate(90deg) scale(.7)}
+  65%{transform:rotate(270deg) scale(1.3)}
+  100%{transform:rotate(360deg) scale(1)}
+}
+.a5 .ring{animation:ring5 11s ease-in-out both}
+@keyframes ring5{
+  0%{transform:scale(.6);opacity:0}
+  50%{transform:scale(1.4);opacity:.6}
+  100%{transform:scale(1.8);opacity:0}
+}
+.a6 .ring{animation:ring6 12s linear both}
+@keyframes ring6{
+  0%{transform:rotateX(0) rotateY(0)}
+  50%{transform:rotateX(180deg) rotateY(180deg)}
+  100%{transform:rotateX(360deg) rotateY(360deg)}
+}
+.a7 .ring{animation:ring7 10.5s ease-out both}
+@keyframes ring7{
+  0%{transform:scale(.1);opacity:0}
+  25%{transform:scale(1);opacity:.7}
+  50%{transform:scale(1.6);opacity:.2}
+  75%{transform:scale(.7);opacity:.5}
+  100%{transform:scale(1.8);opacity:0}
+}
+.a8 .ring{animation:ring8 12s ease-in-out both}
+@keyframes ring8{
+  0%{transform:scale(1,1)}
+  30%{transform:scale(1.5,.5)}
+  60%{transform:scale(.6,1.5)}
+  100%{transform:scale(1,1)}
+}
+.a9 .ring{animation:ring9 12s ease-in-out both}
+@keyframes ring9{
+  0%{transform:scale(.1);opacity:0}
+  30%{transform:scale(2);opacity:.6}
+  60%{transform:scale(.3);opacity:.1}
+  100%{transform:scale(1.5);opacity:0}
+}
+.a10 .ring{animation:ring10 11s ease-in-out both}
+@keyframes ring10{
+  0%,100%{opacity:.1}
+  20%,60%{opacity:.8;transform:scale(1.3)}
+  40%,80%{opacity:.2;transform:scale(.8)}
+}
+.a11 .ring{animation:ring11 12s linear both}
+@keyframes ring11{
+  0%{transform:rotate(0) scale(.5)}
+  100%{transform:rotate(1080deg) scale(1.5)}
+}
+.a12 .ring{animation:ring12 12s ease-in-out both}
+@keyframes ring12{
+  0%,100%{transform:scale(1);opacity:.15}
+  20%,60%{transform:scale(1.3);opacity:.6}
+  40%,80%{transform:scale(.85);opacity:.2}
+}
+</style>
+
+<script>
+const data=[
+["超新星爆发","字母向内压缩，能量凝聚后突然爆发。字母沿不同方向飞散、翻转、二次偏移，最终被引力拉回。","12 秒"],
+["黑洞引力","字母被外围引力牵引，绕行黑洞，逐渐坍缩消失，再从中心重新出现并扩张。","11 秒"],
+["三维螺旋","每个字母沿三维纵深翻转，前进、后退、旋转，在不同空间层次中穿行。","12 秒"],
+["机械齿轮组","字母压缩、错位、旋转、分段展开，再通过多次校正完成机械式重组。","11 秒"],
+["海浪传导","波峰从左向右传递，每个字母依次上升、下沉、反弹，形成连续的海浪运动。","11 秒"],
+["维度折叠","字母绕三维轴线翻转，经历多个维度折叠与展开，最终恢复正面。","12 秒"],
+["冲击波","两轮不同强度的冲击依次发生，字母扩张、收缩、振荡，逐渐稳定。","10.5 秒"],
+["液态弹性","字母像软胶一样被拉伸、压扁、扭曲、弹起，经过多次回弹恢复形态。","12 秒"],
+["时空跃迁","字母经历远离、急速靠近、空间漂移、再次穿越，最后回到初始位置。","12 秒"],
+["霓虹能量","字母依次亮起，经过多轮亮度脉冲和位移，形成连续的能量点亮过程。","11 秒"],
+["龙卷风聚合","字母从不同方向进入旋风，经历多圈不同位置的环绕，最终聚合。","12 秒"],
+["心跳共振","品牌经历多轮强弱不同的心跳脉冲，伴随旋转和缩放，最后恢复平静。","12 秒"]
+];
+
+const controls=document.getElementById("controls");
+const logo=document.getElementById("logo");
+let current=0;
+
+data.forEach((item,i)=>{
+  const b=document.createElement("button");
+  b.textContent=String(i+1).padStart(2,"0")+" "+item[0];
+  b.onclick=()=>play(i);
+  controls.appendChild(b);
+});
+
+function play(i){
+  current=i;
+  logo.className="logo";
+  void logo.offsetWidth;
+  logo.classList.add("a"+(i+1));
+  document.getElementById("title").textContent=
+    String(i+1).padStart(2,"0")+" · "+data[i][0];
+  document.getElementById("desc").textContent=data[i][1];
+  document.getElementById("meta").textContent=
+    "持续时间："+data[i][2]+" · 多阶段独立运动";
+  [...controls.children].forEach((b,n)=>{
+    b.classList.toggle("active",n===i);
+  });
+}
+play(0);
+</script>
+</body>
+</html>
