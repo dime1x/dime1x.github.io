@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deople 几何徽章 100种超维长周期复合动态引擎</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+        body.dark-theme {
+            background-color: #090d16;
+            color: #f8fafc;
+        }
+        .badge-wrapper {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            will-change: transform;
+            cursor: pointer;
+            transition: filter 0.3s ease;
+        }
+        .badge-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.12));
+            transition: filter 0.3s ease;
+        }
+        body.dark-theme .badge-svg {
+            filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.5));
+        }
+        .badge-shape, .badge-char {
+            transform-origin: center center;
+            transform-box: fill-box;
+            will-change: transform;
+        }
+        @keyframes popBurst {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.25) rotate(8deg); }
+            70% { transform: scale(0.92) rotate(-5deg); }
+            100% { transform: scale(1); }
+        }
+        .click-explosion {
+            animation: popBurst 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(150, 150, 150, 0.3);
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white relative">
+
+    <!-- 顶栏：标题与全局控制 -->
+    <header class="w-full max-w-7xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4 z-20 border-b border-slate-200/60 dark:border-zinc-800/80 backdrop-blur-md bg-white/70 dark:bg-zinc-950/70 sticky top-0">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-rose-500 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-500/25">
+                D
+            </div>
+            <div>
+                <h1 class="font-black text-base sm:text-lg tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-sky-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                    Deople 100种多阶段长周期复合动态引擎
+                </h1>
+                <p id="mode-info" class="text-xs text-slate-500 dark:text-zinc-400 font-medium">加载中...</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button id="random-btn" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-all border border-amber-500/30 flex items-center gap-1.5 shadow-sm">
+                🎲 随机特效
+            </button>
+            <button id="autoplay-btn" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all border border-emerald-500/30 flex items-center gap-1.5 shadow-sm">
+                <span id="autoplay-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                <span id="autoplay-text">展演轮播: 关</span>
+            </button>
+            <button id="combo-btn" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-md shadow-blue-600/30 active:scale-95">
+                ✨ 全员跃动
+            </button>
+            <button id="theme-btn" class="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:scale-105 transition-all shadow-sm">
+                🌓
+            </button>
+        </div>
+    </header>
+
+    <!-- 主舞台：展示 6 个几何徽章 -->
+    <main class="flex-1 flex flex-col items-center justify-center px-4 py-12 z-10 my-auto">
+        <div id="stage" class="w-full max-w-5xl flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8">
+            <!-- 动态生成 6 个徽章 -->
+        </div>
+    </main>
+
+    <!-- 底栏：100 种模式控制台与分类筛选 -->
+    <footer class="w-full max-w-7xl mx-auto px-4 pb-6 z-20">
+        <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-slate-200/80 dark:border-zinc-800 rounded-2xl p-4 shadow-2xl">
+            
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-zinc-800">
+                <div id="category-tabs" class="flex flex-wrap items-center gap-1.5">
+                    <button class="cat-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white dark:bg-white dark:text-zinc-950 transition-all" data-cat="all">全部 (100)</button>
+                    <button class="cat-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all" data-cat="wave">🌊 谐波流体 (20)</button>
+                    <button class="cat-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all" data-cat="3d">🧊 空间 3D (20)</button>
+                    <button class="cat-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all" data-cat="physics">⚡ 物理碰撞 (20)</button>
+                    <button class="cat-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all" data-cat="split">🧩 分层异构 (20)</button>
+                    <button class="cat-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all" data-cat="cyber">🔮 赛博光效 (20)</button>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <input type="text" id="search-input" placeholder="搜索编号或效果名称..." class="px-3 py-1.5 bg-slate-100 dark:bg-zinc-800/80 text-xs rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-48 text-slate-800 dark:text-zinc-200">
+                    <button id="prev-btn" class="px-3 py-1.5 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-xs font-bold rounded-xl transition-all">◀ 上一个</button>
+                    <button id="next-btn" class="px-3 py-1.5 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-xs font-bold rounded-xl transition-all">下一个 ▶</button>
+                </div>
+            </div>
+
+            <div id="mode-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-1.5 max-h-48 overflow-y-auto pt-3 pr-1">
+                <!-- 动态填充 100 个模式按钮 -->
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const stage = document.getElementById('stage');
+            const modeGrid = document.getElementById('mode-grid');
+            const modeInfo = document.getElementById('mode-info');
+            const categoryTabs = document.getElementById('category-tabs');
+            const searchInput = document.getElementById('search-input');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const randomBtn = document.getElementById('random-btn');
+            const autoplayBtn = document.getElementById('autoplay-btn');
+            const autoplayDot = document.getElementById('autoplay-dot');
+            const autoplayText = document.getElementById('autoplay-text');
+            const comboBtn = document.getElementById('combo-btn');
+            const themeBtn = document.getElementById('theme-btn');
+
+            const pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+            window.addEventListener('mousemove', e => { pointer.x = e.clientX; pointer.y = e.clientY; });
+            window.addEventListener('touchmove', e => {
+                if (e.touches.length > 0) {
+                    pointer.x = e.touches[0].clientX;
+                    pointer.y = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            const badgesData = [
+                {
+                    name: 'Đ', color: '#0b7ef4', widthClass: 'w-24 sm:w-28 md:w-32 aspect-square', viewBox: '0 0 200 200',
+                    shapeSVG: '<rect x="15" y="15" width="170" height="170" rx="45" fill="#0b7ef4" />',
+                    textSVG: '<text x="100" y="138" font-size="110" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="Inter, sans-serif">Đ</text>'
+                },
+                {
+                    name: 'e', color: '#e61919', widthClass: 'w-20 sm:w-24 md:w-28 aspect-square', viewBox: '0 0 200 200',
+                    shapeSVG: '<circle cx="100" cy="100" r="85" fill="#e61919" />',
+                    textSVG: '<text x="100" y="132" font-size="105" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="Inter, sans-serif">e</text>'
+                },
+                {
+                    name: 'o', color: '#f7be16', widthClass: 'w-20 sm:w-24 md:w-28 aspect-square', viewBox: '0 0 200 200',
+                    shapeSVG: '<rect x="25" y="25" width="150" height="150" rx="35" transform="rotate(45 100 100)" fill="#f7be16" />',
+                    textSVG: '<circle cx="100" cy="100" r="42" fill="#0f172a" />'
+                },
+                {
+                    name: 'p', color: '#801ce8', widthClass: 'w-20 sm:w-24 md:w-28 aspect-square', viewBox: '0 0 200 200',
+                    shapeSVG: '<path d="M 40,30 Q 30,30 30,40 L 30,160 Q 30,170 40,170 L 150,100 Q 160,100 150,90 Z" rx="20" fill="#801ce8" />',
+                    textSVG: '<text x="92" y="130" font-size="95" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="Inter, sans-serif">p</text>'
+                },
+                {
+                    name: 'l', color: '#219e3b', widthClass: 'w-14 sm:w-16 md:w-20 aspect-[3/4]', viewBox: '0 0 150 200',
+                    shapeSVG: '<rect x="20" y="15" width="110" height="170" rx="35" fill="#219e3b" />',
+                    textSVG: '<rect x="52" y="45" width="46" height="110" rx="23" fill="#ffffff" />'
+                },
+                {
+                    name: 'e', color: '#f56b00', widthClass: 'w-22 sm:w-26 md:w-30 aspect-square', viewBox: '0 0 200 200',
+                    shapeSVG: '<path d="M 60,20 L 140,20 Q 160,20 170,35 L 195,85 Q 200,95 195,105 L 170,155 Q 160,170 140,170 L 60,170 Q 40,170 30,155 L 5,105 Q 0,95 5,85 L 30,35 Q 40,20 60,20 Z" fill="#f56b00" />',
+                    textSVG: '<circle cx="100" cy="98" r="46" fill="#0f172a" />'
+                }
+            ];
+
+            const modes = [];
+            function addMode(cat, name, desc, dark, fn) {
+                const num = String(modes.length + 1).padStart(3, '0');
+                modes.push({ id: modes.length, num, cat, name, desc, dark, fn });
+            }
+
+            const sin = Math.sin, cos = Math.cos, abs = Math.abs, PI = Math.PI;
+
+            // 🌊 长周期谐波流体 (001 - 020) [10-15秒多阶段演变]
+            for (let i = 1; i <= 20; i++) {
+                addMode('wave', `复合长周期谐波流体 #${i}`, `包含多频拍频干涉与长时相变波形 #${i}`, i % 3 === 0, (t, idx) => {
+                    const st = t * (0.25 + i * 0.01); // 降低频率，延长至12-15秒完整周期
+                    const p = st + idx * 0.4;
+                    const stagePhase = (st % 3) / 3; // 阶段三段式变化
+                    const waveY = sin(p * 2) * (25 + i * 1.5) + cos(p * 0.5) * 15;
+                    const waveRot = sin(p * 1.5) * (15 + i);
+                    const scaleFactor = 1 + sin(p * 3) * 0.12 * (stagePhase > 0.5 ? 1.5 : 0.8);
+                    return { y: waveY, rot: waveRot, sx: scaleFactor, sy: scaleFactor };
+                });
+            }
+
+            // 🧊 长周期空间 3D (021 - 040) [10-15秒多阶段演变]
+            for (let i = 1; i <= 20; i++) {
+                addMode('3d', `空间全景三维矩阵演变 #${i}`, `多轴万向节交错旋转与景深透视跃迁 #${i}`, i % 4 === 0, (t, idx) => {
+                    const st = t * (0.22 + i * 0.012);
+                    const p = st + idx * 0.35;
+                    const rotX = sin(p) * 45 + cos(p * 0.5) * 20;
+                    const rotY = cos(p * 1.2) * 55;
+                    const zDepth = sin(p * 2) * 50;
+                    return { rotX, rotY, z: zDepth, sx: 1 + sin(p) * 0.1 };
+                });
+            }
+
+            // ⚡ 长周期物理阻尼与冲击 (041 - 060) [10-15秒多阶段演变]
+            for (let i = 1; i <= 20; i++) {
+                addMode('physics', `物理弹性动量传导重击 #${i}`, `模拟多段蓄力下落、体积守恒与阻尼回弹 #${i}`, i % 3 === 1, (t, idx) => {
+                    const st = t * (0.28 + i * 0.01);
+                    const cycle = st % 4; // 4秒一个冲击小节，连续变奏
+                    let y = 0, sx = 1, sy = 1;
+                    if (cycle < 1.5) {
+                        // 蓄力上升
+                        y = -cycle * 30;
+                        sx = 1 - cycle * 0.05;
+                        sy = 1 + cycle * 0.1;
+                    } else if (cycle < 3.0) {
+                        // 猛烈下砸与回弹
+                        const dropT = cycle - 1.5;
+                        const bounce = Math.exp(-dropT * 3) * sin(dropT * 12) * 40;
+                        y = bounce;
+                        sx = 1 + bounce * 0.003;
+                        sy = 1 - bounce * 0.003;
+                    } else {
+                        // 悬浮晃动平息
+                        y = sin(cycle * 5) * 5;
+                    }
+                    return { y, sx, sy };
+                });
+            }
+
+            // 🧩 长周期分层异构解构 (061 - 080) [10-15秒多阶段演变]
+            for (let i = 1; i <= 20; i++) {
+                addMode('split', `分层异构错位解构重组 #${i}`, `几何外框与内含字符彻底解耦并交错异向旋转 #${i}`, i % 2 === 0, (t, idx) => {
+                    const st = t * (0.2 + i * 0.008);
+                    const p = st + idx * 0.25;
+                    const shapeRot = (st * (40 + i * 3)) % 360;
+                    const charRot = -(st * (30 + i * 2)) % 360;
+                    const floatY = sin(p * 2) * 20;
+                    return {
+                        shape: { rot: shapeRot, sx: 1 + sin(p) * 0.15, sy: 1 + cos(p) * 0.15 },
+                        char: { rot: charRot, y: floatY }
+                    };
+                });
+            }
+
+            // 🔮 长周期赛博光效幻象 (081 - 100) [10-15秒多阶段演变]
+            for (let i = 1; i <= 20; i++) {
+                addMode('cyber', `赛博朋克光谱流转与故障 #${i}`, `全息渐变光谱、RGB 色散频闪与动态毛刺干扰 #${i}`, true, (t, idx) => {
+                    const st = t * (0.3 + i * 0.015);
+                    const hue = (st * 40 + i * 20) % 360;
+                    const glitch = (sin(st * 8 + idx) > 0.75) ? sin(st * 35) * 20 : 0;
+                    const skew = sin(st * 2) * 8;
+                    return {
+                        x: glitch,
+                        skewX: skew,
+                        filter: `hue-rotate(${hue}deg) drop-shadow(0 0 ${12 + i}px rgba(0,245,255,0.9))`
+                    };
+                });
+            }
+
+            let currentModeIndex = 0;
+            let currentCategory = 'all';
+            let searchQuery = '';
+            let badgeNodes = [];
+            let autoplayTimer = null;
+
+            function renderBadges() {
+                stage.innerHTML = '';
+                badgeNodes = [];
+                badgesData.forEach((item) => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = `badge-wrapper ${item.widthClass}`;
+                    wrapper.innerHTML = `
+                        <svg class="badge-svg" viewBox="${item.viewBox}" xmlns="http://www.w3.org/2000/svg">
+                            <g class="badge-shape">${item.shapeSVG}</g>
+                            <g class="badge-char">${item.textSVG}</g>
+                        </svg>
+                    `;
+                    wrapper.addEventListener('click', (e) => {
+                        triggerBadgePop(wrapper, item.color, e.clientX, e.clientY);
+                    });
+                    stage.appendChild(wrapper);
+                    badgeNodes.push({
+                        wrapper,
+                        svg: wrapper.querySelector('.badge-svg'),
+                        shape: wrapper.querySelector('.badge-shape'),
+                        char: wrapper.querySelector('.badge-char'),
+                        color: item.color
+                    });
+                });
+            }
+
+            function renderModeButtons() {
+                modeGrid.innerHTML = '';
+                const filtered = modes.filter(m => {
+                    const matchCat = currentCategory === 'all' || m.cat === currentCategory;
+                    const matchSearch = !searchQuery || m.name.toLowerCase().includes(searchQuery) || m.num.includes(searchQuery);
+                    return matchCat && matchSearch;
+                });
+
+                filtered.forEach((m) => {
+                    const btn = document.createElement('button');
+                    const isActive = m.id === currentModeIndex;
+                    btn.dataset.modeId = m.id;
+                    btn.className = `mode-btn py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all truncate text-left ${
+                        isActive
+                        ? 'bg-slate-900 text-white dark:bg-white dark:text-zinc-950 shadow-sm ring-2 ring-blue-500/50'
+                        : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800'
+                    }`;
+                    btn.textContent = `${m.num} ${m.name}`;
+                    btn.addEventListener('click', () => {
+                        stopAutoplay();
+                        selectMode(m.id);
+                    });
+                    modeGrid.appendChild(btn);
+                });
+            }
+
+            function selectMode(index) {
+                currentModeIndex = (index + modes.length) % modes.length;
+                const mode = modes[currentModeIndex];
+
+                badgeNodes.forEach(n => {
+                    n.wrapper.style.transform = '';
+                    n.wrapper.style.opacity = '1';
+                    n.svg.style.filter = '';
+                    n.shape.style.transform = '';
+                    n.char.style.transform = '';
+                });
+
+                if (mode.dark) {
+                    document.body.classList.add('dark-theme');
+                } else {
+                    document.body.classList.remove('dark-theme');
+                }
+
+                renderModeButtons();
+                const activeBtn = modeGrid.querySelector(`[data-mode-id="${currentModeIndex}"]`);
+                if (activeBtn) {
+                    activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+
+                modeInfo.innerHTML = `<span class="font-extrabold text-blue-600 dark:text-sky-400">#${mode.num} ${mode.name}</span> · <span class="opacity-85">${mode.desc}</span>`;
+            }
+
+            const startTime = performance.now();
+            function animationLoop(now) {
+                const t = (now - startTime) * 0.001;
+                const mode = modes[currentModeIndex];
+
+                for (let i = 0; i < badgeNodes.length; i++) {
+                    const node = badgeNodes[i];
+                    const res = mode.fn(t, i, node.wrapper, node.shape, node.char) || {};
+
+                    const x = res.x || 0;
+                    const y = res.y || 0;
+                    const z = res.z || 0;
+                    const rotX = res.rotX || 0;
+                    const rotY = res.rotY || 0;
+                    const rot = res.rot !== undefined ? res.rot : (res.rotZ || 0);
+                    const sx = res.sx !== undefined ? res.sx : 1;
+                    const sy = res.sy !== undefined ? res.sy : 1;
+                    const skewX = res.skewX || 0;
+                    const skewY = res.skewY || 0;
+
+                    node.wrapper.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, ${z.toFixed(2)}px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) rotateZ(${rot.toFixed(2)}deg) skew(${skewX.toFixed(2)}deg, ${skewY.toFixed(2)}deg) scale(${sx.toFixed(3)}, ${sy.toFixed(3)})`;
+                    node.wrapper.style.opacity = res.opacity !== undefined ? res.opacity : 1;
+                    node.svg.style.filter = res.filter || '';
+
+                    if (res.shape) {
+                        const s = res.shape;
+                        node.shape.style.transform = `translate(${(s.x || 0).toFixed(2)}px, ${(s.y || 0).toFixed(2)}px) rotate(${(s.rot || 0).toFixed(2)}deg) scale(${(s.sx || 1).toFixed(3)}, ${(s.sy || 1).toFixed(3)})`;
+                    } else {
+                        node.shape.style.transform = '';
+                    }
+
+                    if (res.char) {
+                        const c = res.char;
+                        node.char.style.transform = `translate(${(c.x || 0).toFixed(2)}px, ${(c.y || 0).toFixed(2)}px) rotate(${(c.rot || 0).toFixed(2)}deg) scale(${(c.sx || 1).toFixed(3)}, ${(c.sy || 1).toFixed(3)})`;
+                    } else {
+                        node.char.style.transform = '';
+                    }
+                }
+                requestAnimationFrame(animationLoop);
+            }
+
+            categoryTabs.addEventListener('click', (e) => {
+                const btn = e.target.closest('.cat-btn');
+                if (!btn) return;
+                currentCategory = btn.dataset.cat;
+                categoryTabs.querySelectorAll('.cat-btn').forEach(b => {
+                    b.className = 'cat-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800';
+                });
+                btn.className = 'cat-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white dark:bg-white dark:text-zinc-950';
+                renderModeButtons();
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.trim().toLowerCase();
+                renderModeButtons();
+            });
+
+            prevBtn.addEventListener('click', () => { stopAutoplay(); selectMode(currentModeIndex - 1); });
+            nextBtn.addEventListener('click', () => { stopAutoplay(); selectMode(currentModeIndex + 1); });
+            randomBtn.addEventListener('click', () => {
+                stopAutoplay();
+                let next = Math.floor(Math.random() * modes.length);
+                if (next === currentModeIndex) next = (next + 1) % modes.length;
+                selectMode(next);
+            });
+
+            function triggerBadgePop(el, color, clientX, clientY) {
+                el.classList.remove('click-explosion');
+                void el.offsetWidth;
+                el.classList.add('click-explosion');
+            }
+
+            comboBtn.addEventListener('click', () => {
+                badgeNodes.forEach((node, i) => {
+                    setTimeout(() => {
+                        node.wrapper.classList.remove('click-explosion');
+                        void node.wrapper.offsetWidth;
+                        node.wrapper.classList.add('click-explosion');
+                    }, i * 60);
+                });
+            });
+
+            themeBtn.addEventListener('click', () => document.body.classList.toggle('dark-theme'));
+
+            function toggleAutoplay() {
+                if (autoplayTimer) {
+                    stopAutoplay();
+                } else {
+                    autoplayDot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-ping';
+                    autoplayText.textContent = '展演轮播: 开';
+                    autoplayTimer = setInterval(() => { selectMode(currentModeIndex + 1); }, 4000);
+                }
+            }
+
+            function stopAutoplay() {
+                if (autoplayTimer) {
+                    clearInterval(autoplayTimer);
+                    autoplayTimer = null;
+                    autoplayDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+                    autoplayText.textContent = '展演轮播: 关';
+                }
+            }
+
+            autoplayBtn.addEventListener('click', toggleAutoplay);
+
+            renderBadges();
+            selectMode(0);
+            requestAnimationFrame(animationLoop);
+        });
+    </script>
+</body>
+</html>
