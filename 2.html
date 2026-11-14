@@ -1,0 +1,616 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deople Motion Studio</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#f6f7fb;color:#171923;
+ font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+main{max-width:1200px;margin:auto;padding:28px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:21px;font-weight:850;letter-spacing:-1px}
+.brand span{color:#0878ed}
+.badge{font-size:12px;background:#eaf0ff;color:#3973d9;padding:8px 13px;border-radius:30px}
+h1{font-size:clamp(28px,5vw,43px);letter-spacing:-2px;margin:35px 0 8px}
+.sub{color:#858b99;font-size:14px;line-height:1.8;margin-bottom:24px}
+.stage{
+ height:470px;background:#fff;border:1px solid #e8eaf0;
+ border-radius:25px;position:relative;overflow:hidden;
+ display:flex;align-items:center;justify-content:center;
+}
+#fx{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.logo{display:flex;align-items:center;gap:9px;position:relative;z-index:2}
+.tile{
+ width:clamp(48px,10vw,118px);height:clamp(48px,10vw,118px);
+ display:flex;align-items:center;justify-content:center;
+ position:relative;box-shadow:0 5px 12px #0002;
+ will-change:transform,filter;
+}
+.glyph{font-size:clamp(38px,8vw,91px);font-weight:850;line-height:1}
+.d{background:#0878ed;border-radius:25%}.d .glyph{color:white}
+.e1{background:#ed1528;border-radius:50%}.e1 .glyph{color:white}
+.o{background:#ffc400;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.o .glyph{color:#050505}
+.p{background:#7c20df;clip-path:polygon(0 0,100% 50%,0 100%)}
+.p .glyph{color:white}
+.l{background:#20a64b;border-radius:25%}.l .glyph{color:white}
+.e2{
+ background:#ff6900;
+ clip-path:polygon(25% 0,75% 0,100% 25%,100% 75%,75% 100%,25% 100%,0 75%,0 25%)
+}
+.e2 .glyph{color:black}
+.caption{
+ position:absolute;bottom:25px;z-index:3;
+ color:#b9bdc8;letter-spacing:2px;font-size:14px
+}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}
+button,select{
+ background:white;border:1px solid #e4e7ee;border-radius:11px;
+ padding:11px 14px;font-size:13px;cursor:pointer;color:#252a36
+}
+button:hover,select:hover{border-color:#0878ed}
+.primary{background:#0878ed;color:white;border-color:#0878ed}
+.meta{display:flex;justify-content:space-between;color:#858b99;font-size:13px}
+.progress{height:5px;background:#e9edf5;border-radius:8px;margin:13px 0 20px;overflow:hidden}
+.progress div{height:100%;width:0;background:#0878ed}
+.panel{background:white;border:1px solid #e8eaf0;border-radius:17px;padding:19px;margin-top:17px}
+.panel h3{font-size:15px;margin:0 0 12px}
+.panel p{font-size:13px;color:#858b99;line-height:1.8}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:12px;background:#f0f3f8;padding:7px 10px;border-radius:8px;color:#626b7c}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px}
+.mode{
+ text-align:left;background:white;border:1px solid #e8eaf0;
+ border-radius:13px;padding:13px;line-height:1.6
+}
+.mode b{display:block;font-size:13px}
+.mode small{color:#9298a5;font-size:11px}
+.mode.active{border-color:#0878ed;background:#f1f6ff}
+@media(max-width:650px){
+ main{padding:20px 12px}
+ .stage{height:320px}
+ .logo{gap:4px}
+ .grid{grid-template-columns:repeat(2,1fr)}
+ .controls button,.controls select{padding:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ .tile{transition:none!important}
+}
+</style>
+</head>
+
+<body>
+<main>
+
+<header>
+ <div class="brand">Ðeople <span>Motion Studio</span></div>
+ <div class="badge">120 MOTION DESIGNS</div>
+</header>
+
+<h1>Deople in Motion.</h1>
+<div class="sub">
+ Six letters. Six motion engines. Endless possibilities.<br>
+ 六种不同动画引擎，120 种动态编排。
+</div>
+
+<section class="stage" id="stage">
+ <canvas id="fx"></canvas>
+
+ <div class="logo" id="logo">
+  <div class="tile d"><span class="glyph">Ð</span></div>
+  <div class="tile e1"><span class="glyph">e</span></div>
+  <div class="tile o"><span class="glyph">o</span></div>
+  <div class="tile p"><span class="glyph">p</span></div>
+  <div class="tile l"><span class="glyph">l</span></div>
+  <div class="tile e2"><span class="glyph">e</span></div>
+ </div>
+
+ <div class="caption">“People”</div>
+</section>
+
+<div class="controls">
+ <button class="primary" id="play">▶ 播放</button>
+ <button id="prev">← 上一个</button>
+ <button id="next">下一个 →</button>
+ <button id="random">随机</button>
+ <button id="auto">自动播放：关闭</button>
+ <select id="selector"></select>
+ <select id="speed">
+  <option value="1">正常速度</option>
+  <option value=".7">慢速</option>
+  <option value="1.3">快速</option>
+  <option value="1.7">极速</option>
+ </select>
+</div>
+
+<div class="meta">
+ <span id="number">001 / 120</span>
+ <span id="status">等待播放</span>
+</div>
+<div class="progress"><div id="bar"></div></div>
+
+<section class="panel">
+ <h3 id="title">01 · 粒子爆炸</h3>
+ <p id="description"></p>
+ <div class="tags" id="steps"></div>
+</section>
+
+<section class="panel">
+ <h3>选择动画引擎</h3>
+ <div class="grid" id="modes"></div>
+</section>
+
+</main>
+
+<!-- SVG 液态滤镜 -->
+<svg width="0" height="0" style="position:absolute">
+ <filter id="liquid">
+  <feTurbulence type="fractalNoise" baseFrequency=".025"
+   numOctaves="2" seed="4" result="noise">
+   <animate attributeName="baseFrequency"
+    values=".025;.07;.025" dur="3s" repeatCount="indefinite"/>
+  </feTurbulence>
+  <feDisplacementMap in="SourceGraphic" in2="noise"
+   scale="0" xChannelSelector="R" yChannelSelector="G">
+   <animate attributeName="scale"
+    values="0;32;65;15;0" dur="3.5s" repeatCount="indefinite"/>
+  </feDisplacementMap>
+ </filter>
+</svg>
+
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const tiles=[...document.querySelectorAll('.tile')];
+const letters=tiles.map(x=>x.querySelector('.glyph'));
+const canvas=$('fx');
+const ctx=canvas.getContext('2d');
+const duration=10000;
+
+const engines=[
+ {
+  name:'粒子爆炸',
+  desc:'字母分解成粒子，向四周爆发，粒子回流，重新组成完整品牌。',
+  steps:['能量蓄积','碎片分解','粒子爆发','自由漂移','粒子回流','品牌重组']
+ },
+ {
+  name:'液态变形',
+  desc:'字母融化、拉伸、互相融合，形成流动的彩色形态，再重新分离。',
+  steps:['表面融化','向外拉伸','液态融合','形状扭曲','逐渐分离','恢复原形']
+ },
+ {
+  name:'能量风暴',
+  desc:'电流、光环、能量脉冲穿越六个字母，最后形成强烈的能量释放。',
+  steps:['能量聚集','电流启动','闪电穿梭','光环扩张','能量爆发','光芒收束']
+ },
+ {
+  name:'机械变形',
+  desc:'字母分组拆解、旋转、错位、交换位置，像精密机械一样重新装配。',
+  steps:['机械启动','字母拆解','齿轮转动','零件换位','机械合拢','完整装配']
+ },
+ {
+  name:'宇宙穿梭',
+  desc:'六个字母进入空间隧道，产生深度透视、星际穿越和空间折叠。',
+  steps:['空间开启','远近分离','高速穿越','空间翻转','折叠收缩','重新出现']
+ },
+ {
+  name:'弹性动力',
+  desc:'字母具有真实的弹性节奏，碰撞、挤压、拉伸、追逐、连续反弹。',
+  steps:['弹簧蓄力','连续弹射','字母碰撞','拉伸变形','追逐反弹','弹性归位']
+ }
+];
+
+const formations=[
+ '经典节奏','极速爆发','慢速电影感','左右交替',
+ '中心扩散','两端聚合','波浪传递','螺旋轨道',
+ '阶梯运动','反向运动','连续弹跳','空间旋转',
+ '脉冲节奏','不规则节奏','渐进爆发','镜像运动',
+ '交错穿越','分组运动','反弹节奏','终极演出'
+];
+
+let current=0, speed=1, auto=false, playing=false;
+let start=0, raf=0, particles=[], sparks=[];
+let lastPhase=-1;
+
+function resize(){
+ const r=$('stage').getBoundingClientRect();
+ const dpr=Math.min(devicePixelRatio||1,2);
+ canvas.width=r.width*dpr;
+ canvas.height=r.height*dpr;
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener('resize',resize);
+resize();
+
+function rand(a,b){return a+Math.random()*(b-a)}
+function clamp(x){return Math.max(0,Math.min(1,x))}
+function ease(x){return x*x*(3-2*x)}
+function smooth(x){return 1-Math.pow(1-x,3)}
+
+function reset(){
+ if(raf)cancelAnimationFrame(raf);
+ playing=false;
+ tiles.forEach((t,i)=>{
+  t.style.transform='';
+  t.style.filter='';
+  t.style.opacity='1';
+  t.style.borderRadius='';
+  letters[i].style.transform='';
+ });
+ $('logo').style.filter='';
+ $('logo').style.opacity='1';
+ $('bar').style.width='0%';
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ particles=[];
+ sparks=[];
+}
+
+function makeParticles(){
+ particles=[];
+ const r=$('stage').getBoundingClientRect();
+ const cx=r.width/2,cy=r.height/2;
+ for(let i=0;i<500;i++){
+  let angle=rand(0,Math.PI*2);
+  let dist=rand(20,190);
+  particles.push({
+   x:cx+Math.cos(angle)*dist*.12,
+   y:cy+Math.sin(angle)*dist*.12,
+   tx:cx+Math.cos(angle)*dist,
+   ty:cy+Math.sin(angle)*dist,
+   vx:Math.cos(angle)*rand(1,5),
+   vy:Math.sin(angle)*rand(1,5),
+   size:rand(1,4),
+   color:['#0878ed','#ed1528','#ffc400','#7c20df','#20a64b','#ff6900'][i%6]
+  });
+ }
+}
+
+function makeSparks(){
+ sparks=[];
+ for(let i=0;i<100;i++){
+  sparks.push({
+   angle:rand(0,Math.PI*2),
+   radius:rand(30,240),
+   size:rand(1,3),
+   speed:rand(.4,2),
+   color:['#0878ed','#7c20df','#ffc400','#ff6900'][i%4]
+  });
+ }
+}
+
+function info(){
+ const engine=engines[Math.floor(current/20)];
+ const variation=current%20;
+ $('number').textContent=String(current+1).padStart(3,'0')+' / 120';
+ $('title').textContent=String(current+1).padStart(3,'0')+' · '+engine.name+' · '+formations[variation];
+ $('description').textContent=engine.desc;
+ $('steps').innerHTML=engine.steps.map((x,i)=>
+  `<span class="tag">${i+1}. ${x}</span>`).join('');
+ $('selector').value=current;
+ document.querySelectorAll('.mode').forEach((x,i)=>{
+  x.classList.toggle('active',i===Math.floor(current/20));
+ });
+}
+
+function select(n){
+ current=(n+120)%120;
+ reset();
+ info();
+ $('status').textContent='等待播放';
+}
+
+function phaseLabel(p){
+ return ['蓄力','爆发','变形','旋转','重组','归位'][p];
+}
+
+// Canvas 粒子绘制
+function drawParticles(t){
+ const r=$('stage').getBoundingClientRect();
+ const cx=r.width/2,cy=r.height/2;
+ const out=clamp((t-.13)/.22);
+ const back=clamp((t-.72)/.18);
+ ctx.save();
+ ctx.globalCompositeOperation='lighter';
+
+ particles.forEach(p=>{
+  let x=p.x+(p.tx-p.x)*ease(out);
+  let y=p.y+(p.ty-p.y)*ease(out);
+  x=x*(1-ease(back))+cx*ease(back);
+  y=y*(1-ease(back))+cy*ease(back);
+  ctx.globalAlpha=.9*(1-back);
+  ctx.fillStyle=p.color;
+  ctx.beginPath();
+  ctx.arc(x,y,p.size,0,Math.PI*2);
+  ctx.fill();
+ });
+ ctx.restore();
+}
+
+// 能量风暴
+function drawEnergy(t,variation){
+ const r=$('stage').getBoundingClientRect();
+ const cx=r.width/2,cy=r.height/2;
+ const power=Math.sin(Math.PI*clamp((t-.1)/.8));
+ ctx.save();
+ ctx.globalCompositeOperation='lighter';
+
+ for(let i=0;i<8;i++){
+  let radius=30+((t*600+i*37+variation*9)%230);
+  ctx.beginPath();
+  ctx.arc(cx,cy,radius,0,Math.PI*2);
+  ctx.strokeStyle=i%2?'#0878ed55':'#7c20df55';
+  ctx.lineWidth=2+power*3;
+  ctx.stroke();
+ }
+
+ sparks.forEach(s=>{
+  let a=s.angle+t*s.speed*7;
+  let rad=s.radius*(.5+power);
+  ctx.beginPath();
+  ctx.moveTo(cx+Math.cos(a)*rad,cy+Math.sin(a)*rad);
+  ctx.lineTo(cx+Math.cos(a+.2)*rad+rand(-3,3),cy+Math.sin(a+.2)*rad+rand(-3,3));
+  ctx.strokeStyle=s.color;
+  ctx.lineWidth=s.size;
+  ctx.stroke();
+ });
+ ctx.restore();
+}
+
+// 机械齿轮绘制
+function drawGears(t,variation){
+ const r=$('stage').getBoundingClientRect();
+ const cx=r.width/2,cy=r.height/2;
+ ctx.save();
+ ctx.globalAlpha=.35;
+ for(let i=0;i<5;i++){
+  let x=cx+(i-2)*90;
+  let y=cy+Math.sin(t*5+i)*65;
+  let rad=15+(i%3)*7;
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.rotate(t*(i%2?1:-1)*3+variation*.1);
+  ctx.strokeStyle=['#0878ed','#ed1528','#7c20df'][i%3];
+  ctx.lineWidth=3;
+  for(let j=0;j<12;j++){
+   ctx.rotate(Math.PI/6);
+   ctx.beginPath();
+   ctx.moveTo(rad-4,0);
+   ctx.lineTo(rad+5,0);
+   ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.arc(0,0,rad,0,Math.PI*2);
+  ctx.stroke();
+  ctx.restore();
+ }
+ ctx.restore();
+}
+
+// 宇宙隧道
+function drawSpace(t,variation){
+ const r=$('stage').getBoundingClientRect();
+ const cx=r.width/2,cy=r.height/2;
+ ctx.save();
+ ctx.globalCompositeOperation='lighter';
+ for(let i=0;i<150;i++){
+  let angle=i*2.399+variation*.15;
+  let z=((i*31+t*500)%500)/500;
+  let rad=8+z*z*360;
+  let x=cx+Math.cos(angle+t*.4)*rad;
+  let y=cy+Math.sin(angle+t*.4)*rad*.6;
+  ctx.globalAlpha=z;
+  ctx.fillStyle=i%3?'#0878ed':'#7c20df';
+  ctx.beginPath();
+  ctx.arc(x,y,1+z*3,0,Math.PI*2);
+  ctx.fill();
+ }
+ ctx.restore();
+}
+
+function draw(t,engine,variation){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ if(engine===0)drawParticles(t);
+ if(engine===2)drawEnergy(t,variation);
+ if(engine===3)drawGears(t,variation);
+ if(engine===4)drawSpace(t,variation);
+}
+
+// 每套引擎有独立的运动逻辑
+function animateLetters(t,engine,v){
+ const variation=v;
+ const phase=Math.min(5,Math.floor(t*6));
+ const strength=1+variation*.025;
+ const offset=(variation%5)*.12;
+
+ tiles.forEach((tile,i)=>{
+  const center=i-2.5;
+  const side=i%2===0?1:-1;
+  const delay=i*.035+(variation%4)*.012;
+  const local=clamp((t-delay)/(1-delay*.5));
+  const pulse=Math.sin(local*Math.PI*2+variation*.3+i);
+  const rot=(variation%8)*9;
+
+  let x=0,y=0,angle=0,scale=1,skew=0,opacity=1;
+  let filter='';
+
+  // 01 粒子爆炸：字母碎裂、飞散、回流
+  if(engine===0){
+   const explosion=ease(clamp((t-.18)/.25));
+   const recovery=ease(clamp((t-.70)/.22));
+   const spread=(1-recovery)*explosion;
+   x=side*center*spread*(50+variation*1.8);
+   y=Math.sin(i*3+variation)*spread*90;
+   angle=side*spread*(90+rot);
+   scale=1-spread*.55+recovery*.55;
+   opacity=1;
+   filter=`brightness(${1+spread*.8})`;
+  }
+
+  // 02 液态变形：融化、伸展、融合、恢复
+  if(engine===1){
+   const melt=ease(clamp((t-.12)/.25));
+   const merge=ease(clamp((t-.42)/.2));
+   const split=ease(clamp((t-.68)/.2));
+   const back=ease(clamp((t-.83)/.15));
+   x=center*(melt*(1-merge)*25+split*15)*(1-back);
+   y=side*(melt*35+Math.sin(t*12+i)*20)*(1-back);
+   angle=side*Math.sin(t*9+i)*25*(1-back);
+   scaleX_dummy=1;
+   scale=1+melt*.3-merge*.4+split*.3;
+   skew=Math.sin(t*9+i)*22*(1-back);
+   tile.style.filter='url(#liquid)';
+   tile.style.borderRadius=`${30+Math.sin(t*8+i)*25}%`;
+  }
+
+  // 03 能量风暴：脉冲、电流、能量爆发
+  if(engine===2){
+   const charge=ease(clamp(t/.22));
+   const burst=ease(clamp((t-.28)/.18));
+   const calm=ease(clamp((t-.76)/.2));
+   x=side*Math.sin(t*25+i)*burst*13*(1-calm);
+   y=Math.sin(t*19+i)*burst*18*(1-calm);
+   angle=Math.sin(t*20+i)*8*(1-calm);
+   scale=1+charge*.12+Math.sin(t*35+i)*.07*burst*(1-calm);
+   filter=`brightness(${1+burst*.8}) drop-shadow(0 0 ${burst*15}px #398aff)`;
+  }
+
+  // 04 机械变形：拆卸、换位、机械装配
+  if(engine===3){
+   const dis=ease(clamp((t-.13)/.2));
+   const swap=ease(clamp((t-.40)/.2));
+   const assemble=ease(clamp((t-.72)/.2));
+   x=center*dis*45*(1-assemble)+side*swap*center*25*(1-assemble);
+   y=side*dis*35*(1-assemble)+Math.sin(t*8+i)*10;
+   angle=side*dis*(160+rot)*(1-assemble);
+   scale=1-dis*.25+assemble*.25;
+  }
+
+  // 05 宇宙穿梭：远近透视、穿越、重现
+  if(engine===4){
+   const enter=ease(clamp(t/.35));
+   const emerge=ease(clamp((t-.57)/.3));
+   const travel=Math.sin(t*Math.PI*3+variation*.3+i*.4);
+   const disappear=ease(clamp((t-.32)/.12))*(1-ease(clamp((t-.50)/.13)));
+   x=center*(1-enter)*90+center*travel*25;
+   y=side*travel*30;
+   angle=travel*(110+rot);
+   scale=.2+enter*.8+Math.abs(travel)*.3;
+   opacity=1-disappear*.85;
+   filter=`blur(${disappear*5}px)`;
+  }
+
+  // 06 弹性动力：碰撞、压缩、弹射、反弹
+  if(engine===5){
+   const hit=Math.sin(t*Math.PI*(4+variation%4)+i*.8);
+   const impact=ease(clamp((t-.18)/.15));
+   const finish=ease(clamp((t-.82)/.15));
+   x=side*hit*25*impact*(1-finish);
+   y=Math.abs(hit)*-45*impact*(1-finish);
+   angle=side*hit*18*(1-finish);
+   scale=1+Math.abs(hit)*.23*impact*(1-finish);
+   skew=hit*12*(1-finish);
+  }
+
+  // 统一的阶段节奏，不覆盖引擎自身特征
+  if(t>.91){
+   const q=ease(clamp((t-.91)/.09));
+   x*=1-q;y*=1-q;angle*=1-q;skew*=1-q;
+   scale=scale*(1-q)+q;
+   opacity=opacity*(1-q)+q;
+  }
+
+  tile.style.opacity=opacity;
+  tile.style.transform=
+   `translate3d(${x}px,${y}px,0)
+    rotate(${angle}deg)
+    skew(${skew}deg)
+    scale(${scale})`;
+
+  if(engine!==1)tile.style.filter=filter;
+  letters[i].style.transform=
+   `rotate(${Math.sin(t*5+i+variation)*8*(1-t*.7)}deg)`;
+ });
+}
+
+function play(){
+ reset();
+ playing=true;
+ makeParticles();
+ makeSparks();
+ start=performance.now();
+ lastPhase=-1;
+ const engine=Math.floor(current/20);
+ const variation=current%20;
+
+ function frame(now){
+  if(!playing)return;
+  let t=clamp((now-start)*speed/duration);
+  let phase=Math.min(5,Math.floor(t*6));
+
+  $('bar').style.width=(t*100)+'%';
+  if(phase!==lastPhase){
+   $('status').textContent=phaseLabel(phase)+' · '+(phase+1)+'/6';
+   lastPhase=phase;
+  }
+
+  animateLetters(t,engine,variation);
+  draw(t,engine,variation);
+
+  if(t<1){
+   raf=requestAnimationFrame(frame);
+  }else{
+   reset();
+   $('status').textContent='完成 · 品牌已归位';
+   if(auto){
+    setTimeout(()=>{
+     current=(current+1)%120;
+     info();
+     play();
+    },500);
+   }
+  }
+ }
+ raf=requestAnimationFrame(frame);
+}
+
+// 初始化下拉菜单
+for(let i=0;i<120;i++){
+ let option=document.createElement('option');
+ option.value=i;
+ option.textContent=
+  String(i+1).padStart(3,'0')+' · '+
+  engines[Math.floor(i/20)].name+' / '+formations[i%20];
+ $('selector').appendChild(option);
+}
+
+// 六套引擎选择
+engines.forEach((engine,i)=>{
+ let b=document.createElement('button');
+ b.className='mode';
+ b.innerHTML=`<b>${String(i+1).padStart(2,'0')} · ${engine.name}</b>
+ <small>20 种编排</small>`;
+ b.onclick=()=>{select(i*20);play()};
+ $('modes').appendChild(b);
+});
+
+$('play').onclick=play;
+$('prev').onclick=()=>{select(current-1);play()};
+$('next').onclick=()=>{select(current+1);play()};
+$('random').onclick=()=>{select(Math.floor(Math.random()*120));play()};
+$('selector').onchange=e=>{select(+e.target.value);play()};
+$('speed').onchange=e=>speed=+e.target.value;
+$('auto').onclick=()=>{
+ auto=!auto;
+ $('auto').textContent='自动播放：'+(auto?'开启':'关闭');
+};
+
+select(0);
+})();
+</script>
+</body>
+</html>
