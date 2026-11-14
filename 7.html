@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deople Logo 动效实验室</title>
+    <style>
+        :root {
+            /* 品牌配色 */
+            --color-d: #0084FF;
+            --color-e1: #FF1E1E;
+            --color-o: #FFC107;
+            --color-p: #8B2DF2;
+            --color-l: #00A63F;
+            --color-e2: #FF6B00;
+            --bg-color: #F8F9FA;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        /* 核心展示区 */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            height: 300px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 字母包装器 */
+        .letter-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            will-change: transform, opacity;
+            transform-style: preserve-3d;
+        }
+
+        /* 字母样式 */
+        .letter-text {
+            position: absolute;
+            font-size: 48px;
+            font-weight: 900;
+            z-index: 2;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* 形状基础样式 */
+        .shape {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            will-change: transform;
+        }
+
+        /* D - 蓝方块 */
+        .letter-d .shape {
+            background-color: var(--color-d);
+            border-radius: 20px;
+        }
+        .letter-d .letter-text { color: white; }
+
+        /* e - 红圆圈 */
+        .letter-e1 .shape {
+            background-color: var(--color-e1);
+            border-radius: 50%;
+        }
+        .letter-e1 .letter-text { color: white; }
+
+        /* o - 黄菱形 */
+        .letter-o .shape {
+            background-color: var(--color-o);
+            transform: rotate(45deg) scale(0.85);
+            border-radius: 10px;
+        }
+        .letter-o .letter-text { color: black; }
+
+        /* p - 紫三角 */
+        .letter-p .shape {
+            background-color: var(--color-p);
+            /* 使用 clip-path 绘制带圆角的三角形 */
+            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+            transform: rotate(90deg) scale(0.95);
+        }
+        .letter-p .letter-text { color: white; }
+
+        /* l - 绿胶囊 */
+        .letter-l .shape {
+            background-color: var(--color-l);
+            border-radius: 50px;
+            width: 50%;
+        }
+        .letter-l .letter-text { color: white; }
+
+        /* e - 橙六边形 */
+        .letter-e2 .shape {
+            background-color: var(--color-e2);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            transform: scale(0.9);
+        }
+        .letter-e2 .letter-text { color: black; }
+
+        /* 控制面板 */
+        .control-panel {
+            position: fixed;
+            bottom: 40px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            background: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background-color: #333;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 120px;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--color-d);
+            cursor: pointer;
+            margin-top: -6px;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #ddd;
+            border-radius: 2px;
+        }
+
+        .footer-text {
+            position: fixed;
+            bottom: 15px;
+            color: #999;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container" id="logoContainer">
+        <!-- 字母按照原图结构 -->
+        <div class="letter-wrapper letter-d">
+            <div class="shape"></div>
+            <div class="letter-text">D</div>
+        </div>
+        <div class="letter-wrapper letter-e1">
+            <div class="shape"></div>
+            <div class="letter-text">e</div>
+        </div>
+        <div class="letter-wrapper letter-o">
+            <div class="shape"></div>
+            <div class="letter-text">o</div>
+        </div>
+        <div class="letter-wrapper letter-p">
+            <div class="shape"></div>
+            <div class="letter-text">p</div>
+        </div>
+        <div class="letter-wrapper letter-l">
+            <div class="shape"></div>
+            <div class="letter-text">l</div>
+        </div>
+        <div class="letter-wrapper letter-e2">
+            <div class="shape"></div>
+            <div class="letter-text">e</div>
+        </div>
+    </div>
+
+    <!-- 控制面板 -->
+    <div class="control-panel">
+        <button id="playBtn">播放 / 暂停</button>
+        <button id="randomBtn">🎲 随机变换 (120+ 种)</button>
+        <div class="slider-container">
+            <span>速度:</span>
+            <input type="range" id="speedSlider" min="0.2" max="2.5" step="0.1" value="1">
+            <span id="speedVal">1.0x</span>
+        </div>
+    </div>
+
+    <div class="footer-text">"People"</div>
+
+    <script>
+        // 获取所有字母元素
+        const letters = document.querySelectorAll('.letter-wrapper');
+        const playBtn = document.getElementById('playBtn');
+        const randomBtn = document.getElementById('randomBtn');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedVal = document.getElementById('speedVal');
+
+        let currentAnimations = [];
+        let isPlaying = true;
+        let currentSpeed = 1;
+        let autoLoopTimeout;
+
+        // 动画风格分类池
+        const styles = [
+            'mechanical', 'tech', 'futuristic', 'liquid', 
+            'particle', 'space', 'elastic', 'flip3d', 'collision'
+        ];
+
+        // 随机工具函数
+        const rand = (min, max) => Math.random() * (max - min) + min;
+        const randInt = (min, max) => Math.floor(rand(min, max + 1));
+        const randomChoice = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+        // 缓动函数集合
+        const easings = {
+            mechanical: 'steps(10, end)',
+            elastic: 'cubic-bezier(0.68, -0.55, 0.27, 1.55)',
+            smooth: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+            tech: 'cubic-bezier(0.77, 0, 0.175, 1)',
+            liquid: 'cubic-bezier(0.47, 0, 0.745, 0.715)',
+            bounce: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+        };
+
+        /**
+         * 核心：生成随机的关键帧序列
+         * 实现"起承转合"
+         */
+        function generateKeyframes(index, style) {
+            const isEven = index % 2 === 0;
+            const direction = isEven ? 1 : -1;
+            
+            // 基础关键帧 (0% - 100%)
+            let frames = [];
+            
+            // 0% 起 (初始状态)
+            frames.push({
+                transform: `translate(0, 0) rotate(0deg) scale(1) translateZ(0)`,
+                opacity: 1,
+                offset: 0
+            });
+
+            // 20% 承 (预备动作)
+            frames.push({
+                transform: `translate(${direction * rand(20, 50)}px, ${rand(-20, 20)}px) rotate(${direction * rand(10, 45)}deg) scale(${rand(0.9, 1.1)}) translateZ(20px)`,
+                opacity: rand(0.8, 1),
+                offset: 0.2,
+                easing: randomChoice(Object.values(easings))
+            });
+
+            // 50% 转 (高潮部分，最激烈的动作)
+            let midTransform = '';
+            let midOpacity = 1;
+            
+            switch(style) {
+                case 'mechanical':
+                case 'tech':
+                    midTransform = `translate(${direction * rand(50, 150)}px, ${rand(-80, 80)}px) rotate(${direction * rand(90, 180)}deg) scale(${rand(0.5, 1.5)}) translateZ(${rand(50, 100)}px)`;
+                    midOpacity = rand(0.5, 1);
+                    break;
+                case 'space':
+                    midTransform = `translate(${direction * rand(100, 250)}px, ${rand(-100, 100)}px) rotate(${direction * rand(180, 360)}deg) scale(${rand(0.2, 2)}) translateZ(${rand(-100, 200)}px)`;
+                    midOpacity = rand(0.3, 0.8);
+                    break;
+                case 'liquid':
+                    midTransform = `translate(${direction * rand(-30, 30)}px, ${rand(-50, 50)}px) rotate(${direction * rand(-45, 45)}deg) scale(${rand(0.8, 1.3)}, ${rand(0.8, 1.3)}) skew(${rand(-15, 15)}deg, ${rand(-15, 15)}deg)`;
+                    break;
+                case 'elastic':
+                case 'collision':
+                    midTransform = `translate(${direction * rand(30, 90)}px, ${rand(-60, 60)}px) rotate(${direction * rand(-90, 90)}deg) scale(${rand(0.7, 1.4)})`;
+                    break;
+                case 'flip3d':
+                    midTransform = `translate(0, 0) rotateX(${randInt(1, 2) * 180}deg) rotateY(${randInt(1, 2) * 180}deg) scale(${rand(0.8, 1.2)})`;
+                    break;
+                default:
+                    midTransform = `translate(${rand(-50, 50)}px, ${rand(-50, 50)}px) rotate(${rand(-90, 90)}deg) scale(${rand(0.5, 1.5)})`;
+            }
+
+            frames.push({
+                transform: midTransform,
+                opacity: midOpacity,
+                offset: rand(0.4, 0.6), // 随机高潮点
+                easing: randomChoice(Object.values(easings))
+            });
+
+            // 80% 合 (回落/重组)
+            frames.push({
+                transform: `translate(${direction * rand(-20, 20)}px, ${rand(-20, 20)}px) rotate(${direction * rand(-30, 30)}deg) scale(${rand(0.9, 1.05)})`,
+                opacity: rand(0.8, 1),
+                offset: 0.8,
+                easing: easings.bounce
+            });
+
+            // 100% (回归原位)
+            frames.push({
+                transform: `translate(0, 0) rotate(0deg) scale(1) translateZ(0)`,
+                opacity: 1,
+                offset: 1,
+                easing: easings.smooth
+            });
+
+            return frames;
+        }
+
+        /**
+         * 启动动画
+         */
+        function startAnimation() {
+            // 清理旧的动画
+            currentAnimations.forEach(anim => anim.cancel());
+            currentAnimations = [];
+            clearTimeout(autoLoopTimeout);
+
+            // 随机选择一种整体风格
+            const globalStyle = randomChoice(styles);
+            
+            // 随机设置动画持续时间 (6秒 - 12秒)
+            const duration = randInt(6000, 12000);
+
+            letters.forEach((letter, index) => {
+                // 单个字母也可以有微调的风格，制造交错感
+                const localStyle = Math.random() > 0.7 ? randomChoice(styles) : globalStyle;
+                
+                const keyframes = generateKeyframes(index, localStyle);
+                
+                // 利用 WAAPI 创建动画
+                const animation = letter.animate(keyframes, {
+                    duration: duration,
+                    iterations: 1,
+                    fill: 'forwards',
+                    playbackRate: currentSpeed,
+                    // 给每个字母加上不同的延迟，制造交错和碰撞感
+                    delay: index * randInt(100, 300) 
+                });
+
+                currentAnimations.push(animation);
+
+                // 动画结束监听（最后一个字母结束后自动进入下一轮）
+                if (index === letters.length - 1) {
+                    animation.onfinish = () => {
+                        if (isPlaying) {
+                            autoLoopTimeout = setTimeout(startAnimation, 500); // 停顿半秒后开始下一轮
+                        }
+                    };
+                }
+            });
+        }
+
+        // 播放/暂停控制
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                currentAnimations.forEach(anim => anim.play());
+                if (currentAnimations.length === 0) startAnimation();
+            } else {
+                currentAnimations.forEach(anim => anim.pause());
+            }
+        });
+
+        // 随机切换按钮
+        randomBtn.addEventListener('click', () => {
+            isPlaying = true;
+            startAnimation();
+        });
+
+        // 速度控制
+        speedSlider.addEventListener('input', (e) => {
+            currentSpeed = parseFloat(e.target.value);
+            speedVal.textContent = currentSpeed.toFixed(1) + 'x';
+            currentAnimations.forEach(anim => {
+                anim.playbackRate = currentSpeed;
+            });
+        });
+
+        // 初始化启动
+        window.onload = () => {
+            startAnimation();
+        };
+
+    </script>
+</body>
+</html>
