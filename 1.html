@@ -1,0 +1,705 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deople Motion Lab</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ background:#f7f8fc;
+ color:#171923;
+ font-family:Arial,-apple-system,sans-serif;
+}
+
+main{
+ max-width:1200px;
+ margin:auto;
+ padding:30px 20px 60px;
+}
+
+header{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:35px;
+}
+
+.brand{
+ font-size:20px;
+ font-weight:800;
+ letter-spacing:-1px;
+}
+
+.brand span{color:#0878ed}
+
+.badge{
+ background:#eaf0ff;
+ color:#3973d9;
+ padding:8px 13px;
+ border-radius:30px;
+ font-size:12px;
+}
+
+h1{
+ font-size:38px;
+ margin:0 0 10px;
+ letter-spacing:-2px;
+}
+
+.subtitle{
+ color:#858b99;
+ font-size:14px;
+ line-height:1.8;
+ margin-bottom:30px;
+}
+
+.stage{
+ min-height:410px;
+ background:white;
+ border:1px solid #e9ebf1;
+ border-radius:25px;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ position:relative;
+ overflow:hidden;
+}
+
+.stage:before{
+ content:"";
+ position:absolute;
+ width:500px;
+ height:500px;
+ border:1px solid #f0f1f5;
+ border-radius:50%;
+}
+
+.stage:after{
+ content:"";
+ position:absolute;
+ width:350px;
+ height:350px;
+ border:1px solid #f5f6f9;
+ border-radius:50%;
+}
+
+.logo{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:9px;
+ position:relative;
+ z-index:2;
+}
+
+.tile{
+ width:clamp(48px,10vw,125px);
+ height:clamp(48px,10vw,125px);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ position:relative;
+ transform-origin:center;
+ will-change:transform,filter;
+ box-shadow:0 5px 10px #0002;
+}
+
+.glyph{
+ font-size:clamp(38px,8vw,95px);
+ font-weight:800;
+ line-height:1;
+}
+
+.d{
+ background:#0878ed;
+ border-radius:25%;
+}
+.d .glyph{color:white}
+
+.e1{
+ background:#ed1528;
+ border-radius:50%;
+}
+.e1 .glyph{color:white}
+
+.o{
+ background:#ffc400;
+ clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
+}
+.o .glyph{color:#000}
+
+.p{
+ background:#7c20df;
+ clip-path:polygon(0 0,100% 50%,0 100%);
+}
+.p .glyph{color:white}
+
+.l{
+ background:#20a64b;
+ border-radius:25%;
+}
+.l .glyph{color:white}
+
+.e2{
+ background:#ff6900;
+ clip-path:polygon(
+ 25% 0,75% 0,100% 25%,100% 75%,
+ 75% 100%,25% 100%,0 75%,0 25%
+ );
+}
+.e2 .glyph{color:black}
+
+.caption{
+ position:absolute;
+ bottom:22px;
+ color:#c0c3cb;
+ font-size:16px;
+ z-index:3;
+}
+
+.controls{
+ display:flex;
+ flex-wrap:wrap;
+ gap:10px;
+ margin:22px 0;
+ align-items:center;
+}
+
+button,select{
+ border:1px solid #e5e8ef;
+ background:white;
+ border-radius:12px;
+ padding:12px 16px;
+ font-size:14px;
+ cursor:pointer;
+}
+
+button:hover,select:hover{
+ border-color:#0878ed;
+}
+
+.primary{
+ background:#0878ed;
+ color:white;
+ border-color:#0878ed;
+}
+
+select{max-width:100%}
+
+.info{
+ display:flex;
+ justify-content:space-between;
+ gap:15px;
+ flex-wrap:wrap;
+ color:#858b99;
+ font-size:13px;
+}
+
+.progress{
+ margin-top:15px;
+ height:5px;
+ background:#e9edf5;
+ border-radius:10px;
+ overflow:hidden;
+}
+
+.progress div{
+ width:0;
+ height:100%;
+ background:#0878ed;
+}
+
+.description{
+ background:white;
+ padding:20px;
+ border:1px solid #e9ebf1;
+ border-radius:18px;
+ margin-top:22px;
+}
+
+.description h3{
+ font-size:15px;
+ margin:0 0 12px;
+}
+
+.steps{
+ display:flex;
+ gap:8px;
+ flex-wrap:wrap;
+}
+
+.step{
+ background:#f1f4f9;
+ padding:8px 11px;
+ border-radius:9px;
+ font-size:12px;
+ color:#687184;
+}
+
+@media(max-width:600px){
+ main{padding:20px 12px}
+ h1{font-size:30px}
+ .stage{min-height:280px}
+ .logo{gap:4px}
+ .controls button{padding:10px 12px}
+}
+</style>
+</head>
+
+<body>
+<main>
+
+<header>
+ <div class="brand">Ðeople <span>Motion Lab</span></div>
+ <div class="badge">120+ 动态编排</div>
+</header>
+
+<h1>Deople in Motion.</h1>
+
+<div class="subtitle">
+ Explore the motion of Deople.<br>
+ 六个字母，120 种动态编排，无限创意。
+</div>
+
+<div class="stage">
+
+ <div class="logo" id="logo">
+
+  <div class="tile d"><span class="glyph">Ð</span></div>
+  <div class="tile e1"><span class="glyph">e</span></div>
+  <div class="tile o"><span class="glyph">o</span></div>
+  <div class="tile p"><span class="glyph">p</span></div>
+  <div class="tile l"><span class="glyph">l</span></div>
+  <div class="tile e2"><span class="glyph">e</span></div>
+
+ </div>
+
+ <div class="caption">“People”</div>
+
+</div>
+
+<div class="controls">
+
+ <button class="primary" id="play">▶ 播放</button>
+ <button id="prev">← 上一个</button>
+ <button id="next">下一个 →</button>
+ <button id="random">随机</button>
+
+ <select id="selector"></select>
+
+ <select id="speed">
+  <option value="1">正常速度</option>
+  <option value="0.7">慢速 0.7x</option>
+  <option value="1.3">快速 1.3x</option>
+  <option value="1.7">极速 1.7x</option>
+ </select>
+
+ <button id="auto">自动播放：关闭</button>
+
+</div>
+
+<div class="info">
+ <span id="number">01 / 120</span>
+ <span id="status">等待播放</span>
+</div>
+
+<div class="progress">
+ <div id="progress"></div>
+</div>
+
+<div class="description">
+ <h3 id="title">破晓集结</h3>
+ <div class="steps" id="steps"></div>
+</div>
+
+</main>
+
+<script>
+const tiles=[...document.querySelectorAll('.tile')];
+const glyphs=tiles.map(x=>x.querySelector('.glyph'));
+
+const selector=document.getElementById('selector');
+const progress=document.getElementById('progress');
+const status=document.getElementById('status');
+
+const duration=8400;
+
+const choreography=[
+ {
+ name:'破晓集结',
+ steps:['蓄力压缩','逐字爆发','错位升空','翻转变形','轨道汇聚','归位定格'],
+ mode:0
+ },
+ {
+ name:'脉冲引擎',
+ steps:['静默呼吸','中心脉冲','波浪传递','外扩震荡','反向收束','柔和定格'],
+ mode:1
+ },
+ {
+ name:'轨道交响',
+ steps:['低位蓄势','依次升轨','环绕旋转','高低交错','轨道交叉','精准落位'],
+ mode:2
+ },
+ {
+ name:'折纸风暴',
+ steps:['边缘折叠','扇形展开','斜切滑行','立体翻页','折线重排','展开归位'],
+ mode:3
+ },
+ {
+ name:'弹簧矩阵',
+ steps:['弹簧压缩','连续弹射','错拍跳跃','空中翻滚','缓冲回弹','稳定落地'],
+ mode:4
+ },
+ {
+ name:'流星归队',
+ steps:['远方微光','加速冲刺','流星掠过','尾迹旋转','减速并轨','静止闪耀'],
+ mode:5
+ },
+ {
+ name:'镜像裂变',
+ steps:['镜像分离','双向拉开','交错换位','镜面翻转','合并重叠','对称归一'],
+ mode:6
+ },
+ {
+ name:'重力反转',
+ steps:['失重漂浮','向上飘升','重力翻转','自由落体','反弹悬停','回到基准'],
+ mode:7
+ },
+ {
+ name:'光环穿梭',
+ steps:['环形蓄光','切入光环','穿环旋转','光圈扩张','逐个出环','余韵归位'],
+ mode:8
+ },
+ {
+ name:'节拍跃迁',
+ steps:['节拍预热','第一拍弹起','第二拍扭转','第三拍扩散','重拍聚拢','尾拍定格'],
+ mode:9
+ },
+ {
+ name:'粒子重构',
+ steps:['碎片松动','分解飞散','多轴翻转','碎片回流','轮廓重建','完整显现'],
+ mode:10
+ },
+ {
+ name:'终章回响',
+ steps:['全体蓄势','中心引爆','波纹扩散','连续翻转','光芒收敛','品牌定格'],
+ mode:11
+ }
+];
+
+const formations=[
+ '直线推进',
+ 'V字展开',
+ '中心向外',
+ '两端向内',
+ '波浪错拍',
+ '左右交替',
+ '奇偶分组',
+ '中轴旋转',
+ '阶梯升降',
+ '散点汇聚'
+];
+
+const phaseNames=[
+ '蓄力',
+ '爆发',
+ '变形',
+ '旋转',
+ '重组',
+ '归位'
+];
+
+let current=0;
+let animations=[];
+let raf=0;
+let startTime=0;
+let autoPlay=false;
+let speed=1;
+
+function buildOptions(){
+ for(let i=0;i<120;i++){
+  const option=document.createElement('option');
+  option.value=i;
+  option.textContent=
+   String(i+1).padStart(3,'0')+
+   ' · '+choreography[i%12].name+
+   ' / '+formations[Math.floor(i/12)];
+  selector.appendChild(option);
+ }
+}
+
+function reset(){
+ animations.forEach(a=>{
+  try{a.cancel()}catch(e){}
+ });
+ animations=[];
+
+ if(raf)cancelAnimationFrame(raf);
+
+ tiles.forEach((tile,i)=>{
+  tile.style.transform='';
+  tile.style.filter='';
+  tile.style.borderRadius='';
+  glyphs[i].style.transform='';
+ });
+ progress.style.width='0%';
+}
+
+function update(){
+ const item=choreography[current%12];
+ const formation=formations[Math.floor(current/12)];
+
+ document.getElementById('number').textContent=
+  String(current+1).padStart(3,'0')+' / 120';
+
+ document.getElementById('title').textContent=
+  item.name+' · '+formation;
+
+ document.getElementById('steps').innerHTML=
+  item.steps.map((s,i)=>
+   `<span class="step">${i+1}. ${s}</span>`
+  ).join('');
+
+ selector.value=current;
+}
+
+function choose(n){
+ current=(n+120)%120;
+ reset();
+ update();
+ status.textContent='等待播放';
+}
+
+function getRadius(i){
+ return ['25%','50%','0%','0%','25%','0%'][i];
+}
+
+function play(){
+
+ reset();
+ update();
+
+ const script=choreography[current%12];
+ const formation=Math.floor(current/12);
+
+ startTime=performance.now();
+
+ const delayFactor=formation%5;
+ const speedValue=speed;
+
+ tiles.forEach((tile,i)=>{
+
+  const center=i-2.5;
+  const sign=i%2===0?1:-1;
+
+  const spread=
+   formation%3===0?center:
+   formation%3===1?sign*(i+1):
+   -center;
+
+  const amp=1+(formation%4)*0.12;
+
+  const x=spread*(16+formation%4*5)*amp;
+  const y=sign*(12+script.mode*2);
+
+  const rotation=
+   (script.mode*25+formation*17+i*30)%360-180;
+
+  const tilt=i%2===0?1:-1;
+
+  const delay=(i%3)*65+delayFactor*55;
+
+  const frames=[
+
+   // 0. 初始
+   {
+    offset:0,
+    transform:'translate(0,0) rotate(0) scale(1)',
+    filter:'brightness(1)'
+   },
+
+   // 1. 蓄力
+   {
+    offset:.10,
+    transform:
+     `translate(${x*.3}px,${y*.3}px)
+      rotate(${sign*8}deg)
+      scale(.84)`,
+    filter:'brightness(1.15)'
+   },
+
+   // 2. 爆发
+   {
+    offset:.23,
+    transform:
+     `translate(${x}px,${-sign*(30+script.mode*4)}px)
+      rotate(${sign*30}deg)
+      scale(${1.18+script.mode*.015})`,
+    filter:'brightness(1.35)'
+   },
+
+   // 3. 变形
+   {
+    offset:.40,
+    transform:
+     `translate(${-x*1.2}px,${y*2}px)
+      rotate(${rotation}deg)
+      skew(${tilt*script.mode*3}deg)
+      scale(.78)`,
+    filter:'brightness(1.15)'
+   },
+
+   // 4. 旋转
+   {
+    offset:.57,
+    transform:
+     `translate(${spread*10}px,${-spread*6}px)
+      rotate(${-rotation*.7}deg)
+      scale(1.18)`,
+    filter:'brightness(1.3)'
+   },
+
+   // 5. 重组
+   {
+    offset:.76,
+    transform:
+     `translate(${center*8}px,${sign*12}px)
+      rotate(${tilt*90}deg)
+      scale(.94)`,
+    filter:'brightness(1.1)'
+   },
+
+   // 6. 缓冲
+   {
+    offset:.91,
+    transform:
+     `translate(${center*3}px,${-sign*3}px)
+      rotate(${tilt*7}deg)
+      scale(1.04)`,
+    filter:'brightness(1.04)'
+   },
+
+   // 7. 完成
+   {
+    offset:1,
+    transform:'translate(0,0) rotate(0) scale(1)',
+    filter:'brightness(1)'
+   }
+
+  ];
+
+  const animation=tile.animate(frames,{
+   duration:(duration-delay)/speedValue,
+   delay:delay/speedValue,
+   easing:'cubic-bezier(.22,.8,.25,1)',
+   fill:'both'
+  });
+
+  animations.push(animation);
+
+  // 字母自身的第二层动画
+  const letterAnimation=glyphs[i].animate([
+   {transform:'scale(1) rotate(0deg)'},
+   {
+    offset:.23,
+    transform:`scale(1.2) rotate(${sign*15}deg)`
+   },
+   {
+    offset:.48,
+    transform:`scale(.8) rotate(${tilt*25}deg)`
+   },
+   {
+    offset:.72,
+    transform:`scale(1.15) rotate(${tilt*-10}deg)`
+   },
+   {
+    offset:1,
+    transform:'scale(1) rotate(0deg)'
+   }
+  ],{
+   duration:(duration-delay)/speedValue,
+   delay:delay/speedValue,
+   easing:'cubic-bezier(.2,.8,.3,1)',
+   fill:'both'
+  });
+
+  animations.push(letterAnimation);
+
+ });
+
+ function tick(now){
+
+  const elapsed=(now-startTime)*speedValue;
+  const p=Math.min(1,elapsed/duration);
+
+  progress.style.width=(p*100)+'%';
+
+  const phase=Math.min(5,Math.floor(p*6));
+
+  status.textContent=
+   phaseNames[phase]+' · '+Math.round(p*100)+'%';
+
+  if(p<1){
+   raf=requestAnimationFrame(tick);
+  }else{
+
+   status.textContent='完成 · Logo 已归位';
+
+   reset();
+
+   if(autoPlay){
+    setTimeout(()=>{
+     current=(current+1)%120;
+     update();
+     play();
+    },500);
+   }
+  }
+ }
+
+ raf=requestAnimationFrame(tick);
+}
+
+// 按钮
+document.getElementById('play').onclick=play;
+
+document.getElementById('prev').onclick=()=>{
+ choose(current-1);
+ play();
+};
+
+document.getElementById('next').onclick=()=>{
+ choose(current+1);
+ play();
+};
+
+document.getElementById('random').onclick=()=>{
+ choose(Math.floor(Math.random()*120));
+ play();
+};
+
+selector.onchange=()=>{
+ choose(Number(selector.value));
+};
+
+document.getElementById('speed').onchange=e=>{
+ speed=Number(e.target.value);
+};
+
+document.getElementById('auto').onclick=e=>{
+ autoPlay=!autoPlay;
+ e.target.textContent=
+  '自动播放：'+(autoPlay?'开启':'关闭');
+};
+
+buildOptions();
+choose(0);
+
+</script>
+</body>
+</html>
