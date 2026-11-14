@@ -1,0 +1,84 @@
+
+name: Deople Publisher
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deople-publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      # 检出 crawler 仓库
+      - name: Checkout crawler repository
+        uses: actions/checkout@v4
+        with:
+          path: crawler
+
+      # 检出网站数据目标仓库
+      - name: Checkout website repository
+        uses: actions/checkout@v4
+        with:
+          repository: dime1x/dime1x.github.io
+          ref: main
+          token: ${{ secrets.DATA_REPO_TOKEN }}
+          path: website
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: crawler/requirements.txt
+
+      - name: Install dependencies
+        working-directory: crawler
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+
+      # publisher.py 生成 JSON 到网站仓库
+      - name: Generate websites.json
+        working-directory: crawler
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          IMAGE_BASE_URL: https://img.deople.ai
+          PUBLISH_BATCH_SIZE: "500"
+          PUBLISH_OUTPUT: ../website/data/websites.json
+        run: python -u publisher.py
+
+      # 检查 JSON
+      - name: Validate JSON
+        working-directory: website
+        run: python -m json.tool data/websites.json > /dev/null
+
+      # 提交到 dime1x/dime1x.github.io
+      - name: Commit and push JSON
+        working-directory: website
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/websites.json
+
+          if git diff --cached --quiet; then
+            echo "websites.json 没有变化，无需提交"
+            exit 0
+          fi
+
+          git commit -m "Update website directory data"
+          git push origin main
