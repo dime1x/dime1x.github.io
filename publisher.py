@@ -1,189 +1,63 @@
-
-import os
-import re
 import json
-import logging
-import tempfile
-
-from pathlib import Path
+import os
+import sys
 from datetime import datetime, timezone
+from pathlib import Path
 
 from database import _query, _rows
 
+BATCH_SIZE = int(os.getenv("PUBLISH_BATCH_SIZE", "500"))
+IMAGE_BASE_URL = os.getenv("IMAGE_BASE_URL", "https://img.deople.ai").rstrip("/")
+OUTPUT_FILE = Path(os.getenv("PUBLISH_OUTPUT", "website/data/websites.json"))
 
-# ============================================================
-# 1. 基础配置
-# ============================================================
-
-# 每次从 D1 读取多少条
-BATCH_SIZE = int(
-    os.getenv("PUBLISH_BATCH_SIZE", "500")
-)
-
-# R2 图片域名
-IMAGE_BASE_URL = os.getenv(
-    "IMAGE_BASE_URL",
-    "https://img.deople.ai"
-).rstrip("/")
-
-# JSON 输出路径
-OUTPUT_FILE = Path(
-    os.getenv(
-        "PUBLISH_OUTPUT",
-        "data/websites.json"
-    )
-)
-
-# 日志
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
-
-logger = logging.getLogger("DeoplePublisher")
-
-
-# ============================================================
-# 2. 处理关键词
-# ============================================================
 
 def normalize_keywords(value):
-    """
-    将数据库中的 keywords 统一转换成字符串数组。
-    支持：
-    - JSON 数组
-    - 逗号分隔字符串
-    - 空值
-    """
-
+    """Convert D1 keyword values into a JSON array."""
     if not value:
         return []
 
     if isinstance(value, list):
+        return [str(item).strip() for item in value if str(item).strip()]
 
-        return [
-            str(item).strip()
-            for item in value
-            if str(item).strip()
-        ]
+    text = str(value).strip()
+    if not text:
+        return []
 
-    if isinstance(value, str):
+    try:
+        parsed = json.loads(text)
+        if isinstance(parsed, list):
+            return [str(item).strip() for item in parsed if str(item).strip()]
+    except (json.JSONDecodeError, TypeError):
+        pass
 
-        value = value.strip()
-
-        if not value:
-            return []
-
-        # 尝试解析 JSON 数组
-        try:
-
-            parsed = json.loads(value)
-
-            if isinstance(parsed, list):
-
-                return [
-                    str(item).strip()
-                    for item in parsed
-                    if str(item).strip()
-                ]
-
-        except (json.JSONDecodeError, TypeError):
-            pass
-
-        # 兼容逗号、分号、竖线分隔
-        parts = re.split(
-            r"[,;|，；]",
-            value
-        )
-
-        return [
-            item.strip()
-            for item in parts
-            if item.strip()
-        ]
-
-    return []
+    # Support comma- or semicolon-separated legacy values.
+    separator = ";" if ";" in text else ","
+    return [item.strip() for item in text.split(separator) if item.strip()]
 
 
-# ============================================================
-# 3. 生成手机端图片地址
-# ============================================================
+def normalize_website(row):
+    domain = (row.get("domain") or "").strip().lower()
+    image = (row.get("image_url") or "").strip()
 
-def get_mobile_image(domain, desktop_image):
-    """
-    桌面端图片：domain_240.jpg
-    手机端图片：domain_120.jpg
-    """
+    # New screenshot format: one {domain}.jpg image per website.
+    if not image and domain:
+        image = f"{IMAGE_BASE_URL}/{domain}.jpg"
 
-    if desktop_image:
-
-        if desktop_image.endswith("_240.jpg"):
-
-            return desktop_image[:-8] + "_120.jpg"
-
-    return f"{IMAGE_BASE_URL}/{domain}_120.jpg"
-
-
-# ============================================================
-# 4. 清理网站数据
-# ============================================================
-
-def normalize_website(item):
-
-    domain = str(
-        item.get("domain") or ""
-    ).strip().lower()
-
-    if not domain:
-        return None
-
-    title = str(
-        item.get("title") or domain
-    ).strip()
-
-    description = str(
-        item.get("description") or ""
-    ).strip()
-
-    url = str(
-        item.get("final_url")
-        or item.get("url")
-        or ""
-    ).strip()
-
-    image = str(
-        item.get("image_url") or ""
-    ).strip()
-
-    if not url or not image:
-        return None
-
-    mobile_image = get_mobile_image(
-        domain,
-        image
-    )
-
-    keywords = normalize_keywords(
-        item.get("keywords")
-    )
+    url = (row.get("url") or row.get("final_url") or "").strip()
+    if not url and domain:
+        url = f"https://{domain}"
 
     return {
         "domain": domain,
         "url": url,
-        "title": title,
-        "description": description,
-        "keywords": keywords,
+        "title": (row.get("title") or domain).strip(),
+        "description": (row.get("description") or "").strip(),
+        "keywords": normalize_keywords(row.get("keywords")),
         "image": image,
-        "image_mobile": mobile_image
     }
 
 
-# ============================================================
-# 5. 从 D1 获取一批合格网站
-# ============================================================
-
-def get_publish_batch(limit, offset):
-
+def get_publish_batch(offset, limit):
     sql = """
         SELECT
             domain,
@@ -201,228 +75,99 @@ def get_publish_batch(limit, offset):
           AND image_url IS NOT NULL
           AND image_url != ''
         ORDER BY first_seen DESC, domain ASC
-        LIMIT ?
-        OFFSET ?
+        LIMIT ? OFFSET ?
     """
-
-    result = _query(
-        sql,
-        [
-            limit,
-            offset
-        ]
-    )
-
+    result = _query(sql, [limit, offset])
     return _rows(result)
 
 
-# ============================================================
-# 6. 读取全部符合条件的网站
-# ============================================================
-
 def get_all_websites():
-
     websites = []
-
+    seen_domains = set()
     offset = 0
 
     while True:
-
-        logger.info(
-            "读取 D1 数据：offset=%s，limit=%s",
-            offset,
-            BATCH_SIZE
-        )
-
-        batch = get_publish_batch(
-            BATCH_SIZE,
-            offset
-        )
-
-        if not batch:
+        rows = get_publish_batch(offset, BATCH_SIZE)
+        if not rows:
             break
 
-        websites.extend(batch)
+        for row in rows:
+            item = normalize_website(row)
+            domain = item["domain"]
+            if domain and domain not in seen_domains:
+                websites.append(item)
+                seen_domains.add(domain)
 
-        logger.info(
-            "本批读取：%s 条，累计：%s 条",
-            len(batch),
-            len(websites)
-        )
-
-        if len(batch) < BATCH_SIZE:
+        if len(rows) < BATCH_SIZE:
             break
 
         offset += BATCH_SIZE
+        print(f"已读取 {offset} 条数据库记录")
 
     return websites
 
 
-# ============================================================
-# 7. 网站去重
-# ============================================================
-
-def deduplicate_websites(items):
-
-    unique = {}
-
-    for item in items:
-
-        website = normalize_website(item)
-
-        if not website:
-            continue
-
-        domain = website["domain"]
-
-        # 同一个域名只保留一条
-        if domain not in unique:
-
-            unique[domain] = website
-
-    result = list(
-        unique.values()
-    )
-
-    return result
-
-
-# ============================================================
-# 8. 生成 JSON 文件
-# ============================================================
-
 def save_json(websites):
+    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
 
-    OUTPUT_FILE.parent.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    # 使用临时文件，避免写入过程中产生不完整 JSON
-    temp_file = OUTPUT_FILE.with_suffix(
-        OUTPUT_FILE.suffix + ".tmp"
-    )
-
-    data = {
-        "generated_at": datetime.now(
-            timezone.utc
-        ).isoformat(),
-
+    payload = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
         "total": len(websites),
-
-        "websites": websites
+        "websites": websites,
     }
 
-    with open(
-        temp_file,
-        "w",
-        encoding="utf-8"
-    ) as f:
+    temp_file = OUTPUT_FILE.with_suffix(OUTPUT_FILE.suffix + ".tmp")
+    with temp_file.open("w", encoding="utf-8") as file:
+        json.dump(payload, file, ensure_ascii=False, separators=(",", ":"))
+        file.write("\n")
 
-        json.dump(
-            data,
-            f,
-            ensure_ascii=False,
-            indent=2
-        )
+    os.replace(temp_file, OUTPUT_FILE)
+    print(f"JSON 已生成：{OUTPUT_FILE}")
+    print(f"网站数量：{len(websites)}")
 
-    # 写入成功后再替换正式文件
-    os.replace(
-        temp_file,
-        OUTPUT_FILE
-    )
-
-    logger.info(
-        "JSON 文件生成成功：%s",
-        OUTPUT_FILE
-    )
-
-
-# ============================================================
-# 9. 检查 JSON 文件
-# ============================================================
 
 def verify_json():
+    with OUTPUT_FILE.open("r", encoding="utf-8") as file:
+        payload = json.load(file)
 
-    with open(
-        OUTPUT_FILE,
-        "r",
-        encoding="utf-8"
-    ) as f:
+    websites = payload.get("websites")
+    if not isinstance(websites, list):
+        raise ValueError("JSON 格式错误：websites 必须是数组")
 
-        data = json.load(f)
-
-    websites = data.get(
-        "websites",
-        []
-    )
-
-    logger.info(
-        "JSON 验证成功，网站数量：%s",
-        len(websites)
-    )
-
-    if len(websites) != data.get("total"):
-
-        raise RuntimeError(
-            "JSON total 数量与 websites 数组长度不一致"
+    if payload.get("total") != len(websites):
+        raise ValueError(
+            f"JSON 数量不一致：total={payload.get('total')}，"
+            f"实际 websites={len(websites)}"
         )
 
-    return len(websites)
+    required_fields = {"domain", "url", "title", "description", "keywords", "image"}
+    for index, item in enumerate(websites):
+        missing = required_fields - set(item)
+        if missing:
+            raise ValueError(f"第 {index + 1} 条记录缺少字段：{sorted(missing)}")
 
+    print(f"JSON 校验通过：{len(websites)} 条网站记录")
 
-# ============================================================
-# 10. 主程序
-# ============================================================
 
 def main():
+    print("开始从 Cloudflare D1 发布网站数据")
 
-    logger.info("===================================")
-    logger.info("Deople Publisher 启动")
-    logger.info("D1 批次大小：%s", BATCH_SIZE)
-    logger.info("JSON 输出：%s", OUTPUT_FILE)
-    logger.info("===================================")
+    websites = get_all_websites()
 
-    # 第一步：从 D1 读取网站
-    raw_websites = get_all_websites()
+    # Avoid accidentally replacing the live site's JSON with an empty file.
+    if not websites:
+        raise RuntimeError(
+            "没有找到符合发布条件的网站；为避免覆盖线上 JSON，本次停止发布。"
+        )
 
-    logger.info(
-        "D1 原始记录数量：%s",
-        len(raw_websites)
-    )
-
-    # 第二步：清理和去重
-    websites = deduplicate_websites(
-        raw_websites
-    )
-
-    logger.info(
-        "去重后网站数量：%s",
-        len(websites)
-    )
-
-    # 第三步：生成 JSON
     save_json(websites)
-
-    # 第四步：检查 JSON
-    total = verify_json()
-
-    logger.info("===================================")
-    logger.info("Deople Publisher 完成")
-    logger.info("发布网站数量：%s", total)
-    logger.info("输出文件：%s", OUTPUT_FILE)
-    logger.info("===================================")
+    verify_json()
+    print("Publisher 完成")
 
 
 if __name__ == "__main__":
     try:
-
         main()
-
-    except Exception:
-
-        logger.exception(
-            "Publisher 执行失败"
-        )
-
+    except Exception as exc:
+        print(f"[ERROR] Publisher 失败：{exc}", file=sys.stderr)
         raise
