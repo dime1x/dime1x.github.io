@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,10 +8,10 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="keywords" content="discover websites, interesting websites, cool websites, useful websites, new websites, website directory, website discovery, AI websites, AI tools, shopping websites, online shopping, technology websites, finance websites, social media websites, entertainment websites, gaming websites, education websites, design websites, online tools, news websites, travel websites">
     <meta name="description" content="Discover and explore websites from around the world. Find shopping sites, technology platforms, financial services, social networks, news, entertainment, online tools, and more.">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7043421450416431"
-     crossorigin="anonymous"></script>
-    <!-- Tailwind CSS CDN -->
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7043421450416431" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -31,9 +32,11 @@
                     }
                 }
             }
-        }</script>
-    <!-- Lucide Icons CDN -->
+        }
+    </script>
+
     <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
         body {
             background-color: #ffffff;
@@ -65,7 +68,6 @@
             height: 520px;
         }
 
-        /* Toast Animation */
         .toast-enter {
             animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -75,7 +77,6 @@
                 transform: translateY(100%) scale(0.95);
                 opacity: 0;
             }
-
             to {
                 transform: translateY(0) scale(1);
                 opacity: 1;
@@ -99,24 +100,9 @@
             height: 138px !important;
             display: block;
         }
-
-        @media (max-width: 767px) {
-            .image-modal {
-                background: #fff;
-                backdrop-filter: none;
-                -webkit-backdrop-filter: none;
-            }
-
-                .image-modal .modal-img {
-                    width: 100vw;
-                    height: 100dvh;
-                    max-height: 100dvh;
-                    object-fit: cover;
-                    box-shadow: none;
-                }
-        }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col justify-between selection:bg-brandLime">
 
     <!-- Toast Notification -->
@@ -127,18 +113,6 @@
         <div>
             <p class="text-xs font-bold text-white" id="toast-title">Copied to Clipboard</p>
             <p class="text-[11px] text-gray-400" id="toast-desc">Prompt code ready</p>
-        </div>
-    </div>
-
-    <!-- Lightbox Modal -->
-    <div id="image-modal" class="image-modal fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm flex items-center justify-center">
-        <button onclick="closeImageModal()" class="fixed top-4 right-4 z-10 text-white hover:text-brandLime transition-colors p-2 flex items-center space-x-1 text-sm font-bold bg-black/50 hover:bg-black/70 rounded-full px-4 border border-white/20">
-            <i data-lucide="x" class="w-5 h-5"></i>
-            <span>Close</span>
-        </button>
-
-        <div class="relative w-full h-full flex items-center justify-center">
-            <img id="modal-img" src="" alt="Image Preview" class="modal-img w-full max-h-full object-contain shadow-2xl" />
         </div>
     </div>
 
@@ -237,6 +211,7 @@
         // index.html 与 websites.json 放在同一目录时，使用此路径
         const DATA_URLS = ['./data/websites.json'];
         const ITEMS_PER_PAGE = 10;
+
         let cardsData = [];
         let currentPage = 1;
         let searchFilter = '';
@@ -277,33 +252,18 @@
 
         function esc(value) {
             return String(value ?? '').replace(/[&<>"']/g, ch => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
             }[ch]));
         }
-
-        function openImageModal(imgSrc) {
-            const modal = document.getElementById('image-modal');
-            const modalImg = document.getElementById('modal-img');
-            modalImg.src = imgSrc;
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeImageModal() {
-            const modal = document.getElementById('image-modal');
-            modal.classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-
-        document.getElementById('image-modal').addEventListener('click', (e) => {
-            if (e.target.id === 'image-modal') {
-                closeImageModal();
-            }
-        });
 
         async function loadWebsiteData() {
             const container = document.getElementById('cards-container');
             const indicator = document.getElementById('page-indicator');
+
             container.innerHTML = '<div class="text-center py-12 text-textMuted"><p class="text-sm font-bold">Loading website list...</p></div>';
             indicator.textContent = 'Loading...';
 
@@ -311,6 +271,7 @@
                 const results = await Promise.all(
                     DATA_URLS.map(async (url) => {
                         const response = await fetch(url, { cache: 'no-cache' });
+
                         if (!response.ok) {
                             throw new Error(`Failed to load ${url}: HTTP ${response.status}`);
                         }
@@ -339,32 +300,44 @@
 
                 console.log(`Successfully loaded ${cardsData.length} websites from JSON files.`);
                 renderFeedCards();
+
             } catch (error) {
                 console.error('Failed to load website data:', error);
+
                 container.innerHTML = `
-                                                    <div class="text-center py-10 px-5 bg-white border-y border-borderSubtle">
-                                                      <p class="text-sm font-extrabold text-textPrimary">Failed to load website data</p>
-                                                      <p class="text-xs text-textMuted mt-2">Note: Due to browser CORS security restrictions, opening local HTML files directly cannot fetch JSON files. Please use VS Code Live Server or a local HTTP server.</p>
-                                                    </div>`;
+                    <div class="text-center py-10 px-5 bg-white border-y border-borderSubtle">
+                        <p class="text-sm font-extrabold text-textPrimary">Failed to load website data</p>
+                        <p class="text-xs text-textMuted mt-2">Note: Due to browser CORS security restrictions, opening local HTML files directly cannot fetch JSON files. Please use VS Code Live Server or a local HTTP server.</p>
+                    </div>`;
+
                 indicator.textContent = 'Failed to load data';
             }
         }
 
         function getFilteredData() {
             const q = searchFilter.toLowerCase().trim();
+
             return cardsData.filter(item => {
-                return !q || [item.title, item.description, item.input, item.url].join(' ').toLowerCase().includes(q);
+                return !q || [item.title, item.description, item.input, item.url]
+                    .join(' ')
+                    .toLowerCase()
+                    .includes(q);
             });
         }
 
         function renderFeedCards() {
             const container = document.getElementById('cards-container');
             container.innerHTML = '';
+
             const filtered = getFilteredData();
             const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+
             currentPage = Math.min(Math.max(1, currentPage), totalPages);
 
-            const pageItems = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+            const pageItems = filtered.slice(
+                (currentPage - 1) * ITEMS_PER_PAGE,
+                currentPage * ITEMS_PER_PAGE
+            );
 
             if (!pageItems.length) {
                 container.innerHTML = '<div class="text-center py-12 text-textMuted bg-white border-y border-borderSubtle"><p class="text-sm font-bold">No matching websites found</p></div>';
@@ -374,10 +347,12 @@
 
             pageItems.forEach((item, index) => {
                 const card = document.createElement('article');
+
                 card.className = 'bg-white border border-borderSubtle rounded-2xl w-full max-w-[760px] h-[190px] sm:h-[220px] mx-auto overflow-hidden shadow-sm transition-all hover:shadow-md';
 
+                // 图片：只显示，不再支持点击放大
                 const imageHtml = item.image ? `
-                    <div class="w-[38%] sm:w-[220px] h-full shrink-0 self-stretch bg-gray-100 overflow-hidden relative cursor-zoom-in" onclick="openImageModal('${esc(item.image)}')">
+                    <div class="w-[38%] sm:w-[220px] h-full shrink-0 self-stretch bg-gray-100 overflow-hidden relative">
                         ${index === 0
                             ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
                             : `<img data-src="${esc(item.image)}" alt="${esc(item.title)}" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
@@ -385,49 +360,76 @@
                     </div>
                 ` : '';
 
+                // 内容：删除首字母色块和访问链接
                 const contentHtml = `
                     <div class="flex-1 min-w-0 p-3 sm:p-5 flex flex-col justify-start gap-2">
-                        <div class="flex items-center justify-between gap-2 min-w-0">
-                            <div class="flex items-center gap-2 min-w-0">
-                                <div class="w-6 h-6 shrink-0 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] font-medium">
-                                    ${esc((item.input || 'W').charAt(0).toUpperCase())}
-                                </div>
-                                <span class="text-xs font-semibold text-textMuted truncate">${esc(item.input || item.url)}</span>
-                            </div>
-                            <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="shrink-0 text-xs text-blue-600 hover:underline font-semibold">访问 ↗</a>
+
+                        <div class="flex items-center min-w-0">
+                            <span class="text-xs font-semibold text-textMuted truncate">
+                                ${esc(item.input || item.url)}
+                            </span>
                         </div>
+
                         <h3 class="text-base sm:text-xl font-normal text-blue-600 leading-snug line-clamp-2">
                             <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-normal hover:underline">
                                 ${esc(item.title)}
                             </a>
                         </h3>
-                        <p class="text-xs sm:text-sm text-textMuted line-clamp-4 leading-relaxed">${esc(item.description)}</p>
+
+                        <p class="text-xs sm:text-sm text-textMuted line-clamp-4 leading-relaxed">
+                            ${esc(item.description)}
+                        </p>
+
                     </div>
                 `;
 
-                card.innerHTML = `<div class="flex items-stretch w-full h-full overflow-hidden">${imageHtml}${contentHtml}</div>`;
+                card.innerHTML = `
+                    <div class="flex items-stretch w-full h-full overflow-hidden">
+                        ${imageHtml}
+                        ${contentHtml}
+                    </div>
+                `;
+
                 container.appendChild(card);
                 observeLazyImages(card);
             });
+
             renderPagination(filtered.length, totalPages);
-            if (window.lucide) lucide.createIcons();
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
         }
 
         function renderPagination(totalCount, totalPages) {
             const nums = document.getElementById('page-numbers');
             const prev = document.getElementById('prev-page');
             const next = document.getElementById('next-page');
+
             prev.disabled = currentPage <= 1;
             next.disabled = !totalPages || currentPage >= totalPages;
-            document.getElementById('page-indicator').innerText = `Showing page ${currentPage} of ${totalPages} (${totalCount} total websites)`;
+
+            document.getElementById('page-indicator').innerText =
+                `Showing page ${currentPage} of ${totalPages} (${totalCount} total websites)`;
 
             nums.innerHTML = '';
+
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 2) {
                     const b = document.createElement('button');
-                    b.className = i === currentPage ? 'w-8 h-8 rounded-full bg-cardDark text-white text-xs font-bold shadow-sm' : 'w-8 h-8 rounded-full bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 text-xs font-bold';
+
+                    b.className = i === currentPage
+                        ? 'w-8 h-8 rounded-full bg-cardDark text-white text-xs font-bold shadow-sm'
+                        : 'w-8 h-8 rounded-full bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 text-xs font-bold';
+
                     b.textContent = i;
-                    b.onclick = () => { currentPage = i; renderFeedCards(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+                    b.onclick = () => {
+                        currentPage = i;
+                        renderFeedCards();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    };
+
                     nums.appendChild(b);
                 }
             }
@@ -435,29 +437,46 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadWebsiteData();
+
             document.getElementById('main-search').addEventListener('input', e => {
                 searchFilter = e.target.value;
                 currentPage = 1;
                 renderFeedCards();
             });
+
             document.getElementById('prev-page').addEventListener('click', () => {
-                if (currentPage > 1) { currentPage--; renderFeedCards(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderFeedCards();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             });
+
             document.getElementById('next-page').addEventListener('click', () => {
                 const pages = Math.ceil(getFilteredData().length / ITEMS_PER_PAGE);
-                if (currentPage < pages) { currentPage++; renderFeedCards(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+                if (currentPage < pages) {
+                    currentPage++;
+                    renderFeedCards();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             });
         });
     </script>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-384RKFQQZQ"></script>
+
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
 
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
         gtag('config', 'G-384RKFQQZQ');
     </script>
+
 </body>
 </html>
