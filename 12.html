@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deople Motion Lab — 品牌超级动效实验室 (200+ 架构)</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        deople: {
+                            primary: '#6366F1',   // Deople 原版电光靛蓝
+                            secondary: '#06B6D4', // Deople 原版量子青
+                            accent: '#F43F5E',    // 脉冲珊瑚红
+                            dark: '#090D16',
+                            panel: '#111827'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 自定义滚动条与实验室质感 */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.4);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.8);
+        }
+
+        /* 精密工程网格背景 */
+        .lab-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        /* 滑块自定义样式 */
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(148, 163, 184, 0.25);
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            background: #6366F1;
+            cursor: pointer;
+            margin-top: -5px;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
+            transition: transform 0.15s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+    </style>
+</head>
+<body class="bg-[#070A12] text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white overflow-x-hidden min-h-screen flex flex-col">
+
+    <!-- 顶部实验室导航栏 -->
+    <header class="border-b border-slate-800/80 bg-[#0B0F1A]/90 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+            <!-- 左侧品牌标识 -->
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-cyan-400 to-rose-500 p-[2px] shadow-lg shadow-indigo-500/20">
+                    <div class="w-full h-full bg-[#090D16] rounded-[10px] flex items-center justify-center font-black text-base tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-300">
+                        Dp
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">DEOPLE <span class="text-indigo-400 font-semibold">MOTION LAB</span></h1>
+                        <span id="total-badge" class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                            42 预设就绪
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 hidden sm:block">六维独立字母编排 · 四幕叙事时间轴 · 可扩展 200+ 算法内核</p>
+                </div>
+            </div>
+
+            <!-- 右侧实验室全局快捷操作 -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- 扩展至 200 种动效引擎按钮 -->
+                <button id="btn-expand-200" onclick="expandTo200()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-indigo-600/30 to-cyan-600/30 hover:from-indigo-600/50 hover:to-cyan-600/50 text-cyan-300 border border-cyan-500/30 transition flex items-center gap-1.5 shadow-sm">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    <span>生成 200+ 变体矩阵</span>
+                </button>
+
+                <!-- 导出当前参数配置 -->
+                <button onclick="exportCurrentPreset()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700/80 transition flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    <span class="hidden md:inline">复制动效基因</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主工作台区域 -->
+    <main class="flex-1 max-w-[1600px] w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 左侧：主视觉渲染舞台与四幕控制终端 (8列) -->
+        <div class="lg:col-span-8 flex flex-col gap-4">
+            
+            <!-- 舞台容器 -->
+            <div class="relative rounded-2xl border border-slate-800 bg-[#0A0E17] lab-grid overflow-hidden shadow-2xl flex flex-col justify-between min-h-[380px] sm:min-h-[480px] lg:min-h-[540px]">
+                
+                <!-- 舞台顶部 HUD 状态浮层 -->
+                <div class="p-4 sm:p-5 flex flex-wrap items-start justify-between gap-3 z-10 pointer-events-none">
+                    <div class="bg-slate-950/75 backdrop-blur-md border border-slate-800/90 rounded-xl px-3.5 py-2.5 pointer-events-auto">
+                        <div class="flex items-center gap-2">
+                            <span id="hud-id" class="font-mono text-xs font-bold text-indigo-400">#01</span>
+                            <span id="hud-category" class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-medium">机械重构</span>
+                            <span id="hud-duration" class="text-[11px] font-mono text-slate-400">8.0s 完整叙事</span>
+                        </div>
+                        <h2 id="hud-title" class="text-base sm:text-lg font-bold text-white mt-1 tracking-tight">精密齿轮矩阵啮合</h2>
+                        <p id="hud-desc" class="text-xs text-slate-400 mt-0.5 max-w-md">六枚独立字母如高精度工业组件般旋入轴心，经历咬合、过载震荡后锁定原版几何形态。</p>
+                    </div>
+
+                    <!-- 四幕剧状态指示器 (起 / 承 / 转 / 合) -->
+                    <div class="bg-slate-950/75 backdrop-blur-md border border-slate-800/90 rounded-xl p-2 flex items-center gap-1.5 pointer-events-auto">
+                        <div id="act-1" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">
+                            一·起势 (0-25%)
+                        </div>
+                        <div id="act-2" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all text-slate-500">
+                            二·交错 (25-55%)
+                        </div>
+                        <div id="act-3" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all text-slate-500">
+                            三·裂变 (55-80%)
+                        </div>
+                        <div id="act-4" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all text-slate-500">
+                            四·归位 (80-100%)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 核心 Canvas 画布 (自适应高清视网膜屏) -->
+                <div id="canvas-wrapper" class="absolute inset-0 w-full h-full flex items-center justify-center">
+                    <canvas id="deople-canvas" class="w-full h-full block cursor-pointer" title="点击画布触发能量脉冲波"></canvas>
+                </div>
+
+                <!-- 舞台底部实时时间轴与字母状态监视 -->
+                <div class="p-4 sm:p-5 z-10 bg-gradient-to-t from-[#070A12] via-[#070A12]/80 to-transparent">
+                    <!-- 交互式进度条 -->
+                    <div class="flex items-center gap-3 mb-2">
+                        <span id="time-current" class="font-mono text-xs text-indigo-300 w-11">00.0s</span>
+                        <div id="timeline-bar" class="flex-1 h-2 bg-slate-800/90 rounded-full overflow-hidden cursor-pointer relative group">
+                            <!-- 四幕分区标记线 -->
+                            <div class="absolute inset-y-0 left-1/4 w-[1px] bg-slate-600/40 z-10"></div>
+                            <div class="absolute inset-y-0 left-[55%] w-[1px] bg-slate-600/40 z-10"></div>
+                            <div class="absolute inset-y-0 left-[80%] w-[1px] bg-slate-600/40 z-10"></div>
+                            <!-- 实际进度填充 -->
+                            <div id="timeline-progress" class="h-full bg-gradient-to-r from-indigo-500 via-cyan-400 to-rose-500 rounded-full w-0 transition-none"></div>
+                        </div>
+                        <span id="time-total" class="font-mono text-xs text-slate-400 w-11 text-right">08.0s</span>
+                    </div>
+
+                    <!-- 六字母独立轨道状态微标 -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400">
+                        <div class="flex items-center gap-1.5 font-mono">
+                            <span class="text-slate-500">字母独立通道:</span>
+                            <span class="px-1.5 py-0.5 rounded bg-slate-800/80 text-indigo-300">D</span>
+                            <span class="px-1.5 py-0.5 rounded bg-slate-800/80 text-cyan-300">E</span>
+                            <span class="px-1.5 py-0.5 rounded bg-slate-800/80 text-indigo-300">O</span>
+                            <span class="px-1.5 py-0.5 rounded bg-slate-800/80 text-cyan-300">P</span>
+                            <span class="px-1.5 py-0.5 rounded bg-slate-800/80 text-indigo-300">L</span>
+                            <span class="px-1.5 py-0.5 rounded bg-slate-800/80 text-rose-300">E</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span>点击画布可注入物理扰动</span>
+                            <span id="fps-counter" class="font-mono text-emerald-400">60 FPS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 播控台与参数实验室面板 -->
+            <div class="rounded-2xl border border-slate-800 bg-[#0D121F] p-4 sm:p-5 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                
+                <!-- 播放控制组 (5列) -->
+                <div class="md:col-span-5 flex flex-wrap items-center gap-2">
+                    <button onclick="prevPreset()" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 transition" title="上一个动效">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+
+                    <button id="btn-play-pause" onclick="togglePlay()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center gap-1.5 shadow-lg shadow-indigo-600/25 transition">
+                        <svg id="icon-pause" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                        <svg id="icon-play" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                        <span id="text-play-pause">暂停</span>
+                    </button>
+
+                    <button onclick="replayCurrent()" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 transition" title="从零重播本段">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </button>
+
+                    <button onclick="nextPreset()" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 transition" title="下一个动效">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+
+                    <!-- 模式切换：单曲循环 / 连续浏览 / 随机漫游 -->
+                    <button id="btn-play-mode" onclick="cyclePlayMode()" class="px-3 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-medium flex items-center gap-1.5 transition" title="切换播放模式">
+                        <span id="play-mode-icon">🔁</span>
+                        <span id="play-mode-text">连续浏览</span>
+                    </button>
+                </div>
+
+                <!-- 速度调节与配色实验组 (7列) -->
+                <div class="md:col-span-7 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-4">
+                    
+                    <!-- 速度滑块 -->
+                    <div class="flex items-center gap-2.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 whitespace-nowrap">速率</span>
+                        <input id="speed-slider" type="range" min="0.25" max="2.5" step="0.05" value="1.0" class="w-24 sm:w-28" oninput="updateSpeed(this.value)">
+                        <span id="speed-value" class="font-mono text-xs font-bold text-indigo-400 w-10 text-right">1.0x</span>
+                    </div>
+
+                    <!-- 品牌配色实验室切换 -->
+                    <div class="flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 overflow-x-auto">
+                        <button onclick="setPalette('original')" data-palette="original" class="palette-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition whitespace-nowrap flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-cyan-300"></span>原版配色
+                        </button>
+                        <button onclick="setPalette('cyber')" data-palette="cyber" class="palette-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition whitespace-nowrap">
+                            赛博霓虹
+                        </button>
+                        <button onclick="setPalette('molten')" data-palette="molten" class="palette-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition whitespace-nowrap">
+                            熔金黑曜
+                        </button>
+                        <button onclick="setPalette('quantum')" data-palette="quantum" class="palette-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition whitespace-nowrap">
+                            极光矩阵
+                        </button>
+                        <button onclick="setPalette('mono')" data-palette="mono" class="palette-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition whitespace-nowrap">
+                            纯净银白
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：动效基因库与分类浏览器 (4列) -->
+        <div class="lg:col-span-4 rounded-2xl border border-slate-800 bg-[#0D121F] flex flex-col h-[560px] lg:h-[650px] overflow-hidden">
+            
+            <!-- 搜索与分类过滤 -->
+            <div class="p-4 border-b border-slate-800/80 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                        <span>动效风格矩阵库</span>
+                        <span id="filtered-count" class="text-xs font-mono text-slate-400">(42)</span>
+                    </h3>
+                    <button onclick="triggerRandomPreset()" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1">
+                        <span>🎲 随机抽取</span>
+                    </button>
+                </div>
+
+                <!-- 搜索框 -->
+                <div class="relative">
+                    <input id="search-input" type="text" placeholder="搜索风格关键词（如：齿轮、爆炸、液态、3D...）" oninput="filterPresets()" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                    <svg class="w-4 h-4 text-slate-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+
+                <!-- 风格维度标签栏 -->
+                <div id="category-tabs" class="flex items-center gap-1.5 overflow-x-auto pb-1">
+                    <!-- 动态生成分类按钮 -->
+                </div>
+            </div>
+
+            <!-- 动效卡片列表 -->
+            <div id="preset-list" class="flex-1 overflow-y-auto p-3 space-y-2">
+                <!-- 动态渲染卡片 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 自定义轻提示 Toast (替代 alert) -->
+    <div id="toast-box" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-900/95 backdrop-blur-md border border-indigo-500/40 text-slate-100 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs font-medium">
+            <span class="w-2 h-2 rounded-full bg-indigo-400 animate-ping"></span>
+            <span id="toast-msg">提示信息</span>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * ============================================================================
+         * DEOPLE MOTION LAB — 核心动效引擎与 42~200+ 种独立字母编排系统
+         * ============================================================================
+         */
+
+        // 1. Deople 品牌色彩系统（保留原始品牌配色 + 实验室扩展色盘）
+        const PALETTES = {
+            original: {
+                name: 'Deople 原版品牌配色',
+                bg: '#080C16',
+                letters: ['#6366F1', '#38BDF8', '#818CF8', '#06B6D4', '#4F46E5', '#22D3EE'],
+                accent: '#F43F5E',
+                glow: 'rgba(99, 102, 241, 0.55)',
+                particle: '#38BDF8'
+            },
+            cyber: {
+                name: '赛博霓虹脉冲',
+                bg: '#090514',
+                letters: ['#FF007F', '#00F0FF', '#B829EA', '#00FF9D', '#FF2A85', '#00D9FF'],
+                accent: '#FFE600',
+                glow: 'rgba(255, 0, 127, 0.65)',
+                particle: '#00F0FF'
+            },
+            molten: {
+                name: '熔金黑曜石',
+                bg: '#0C0908',
+                letters: ['#F59E0B', '#FBBF24', '#EA580C', '#FCD34D', '#D97706', '#FB923C'],
+                accent: '#EF4444',
+                glow: 'rgba(245, 158, 11, 0.55)',
+                particle: '#FDE68A'
+            },
+            quantum: {
+                name: '量子极光绿',
+                bg: '#040F0E',
+                letters: ['#10B981', '#34D399', '#059669', '#2DD4BF', '#6EE7B7', '#14B8A6'],
+                accent: '#A7F3D0',
+                glow: 'rgba(16, 185, 129, 0.55)',
+                particle: '#6EE7B7'
+            },
+            mono: {
+                name: '纯净建筑银白',
+                bg: '#0A0A0C',
+                letters: ['#F8FAFC', '#E2E8F0', '#CBD5E1', '#F1F5F9', '#94A3B8', '#FFFFFF'],
+                accent: '#6366F1',
+                glow: 'rgba(255, 255, 255, 0.35)',
+                particle: '#CBD5E1'
+            }
+        };
+
+        // 2. 分类定义
+        const CATEGORIES = [
+            { id: 'all', name: '全部风格' },
+            { id: 'mechanical', name: '⚙️ 机械重工' },
+            { id: 'scifi', name: '🛸 未来科技' },
+            { id: 'liquid', name: '💧 液态流体' },
+            { id: 'particle', name: '✨ 粒子裂变' },
+            { id: 'warp', name: '🌌 空间穿梭' },
+            { id: 'elastic', name: '🏀 弹性物理' },
+            { id: '3d', name: '🧊 3D 空间' }
+        ];
+
+        // 3. 基础 42 种精选高水准动效基因库 (覆盖 7 大领域，每段 8~10 秒完整起承转合)
+        // 每个预设包含独立的运动动力学算法参数与字母编排策略
+        const BASE_PRESETS = [
+            // --- 一、机械感 (Mechanical) ---
+            { id: 1, title: '精密齿轮矩阵啮合', category: 'mechanical', duration: 8.5, engine: 'gear_mesh', desc: '六枚独立字母如高精度工业组件般旋入轴心，经历咬合、过载震荡后锁定原版几何形态。', params: { teeth: 12, torque: 1.4, stagger: 0.12 } },
+            { id: 2, title: '重型液压冲压锻造', category: 'mechanical', duration: 8.0, engine: 'hydraulic_press', desc: '字母从上下冲压砧板高速撞击合拢，迸发金属火花并产生高频微幅回弹。', params: { impact: 2.2, sparkCount: 45, bounce: 0.35 } },
+            { id: 3, title: '瑞士陀飞轮擒纵律动', category: 'mechanical', duration: 9.5, engine: 'tourbillon', desc: '每个字母围绕各自微型擒纵机构做周期性步进旋转，中段同步加速后优雅停摆。', params: { stepAngle: Math.PI / 3, ticks: 16 } },
+            { id: 4, title: '电磁轨道炮逐发装填', category: 'mechanical', duration: 8.0, engine: 'railgun_load', desc: 'D-E-O-P-L-E 沿导轨依次高速滑入并触发磁力锁止，产生强烈电磁后坐力波纹。', params: { recoil: 45, chargeGlow: true } },
+            { id: 5, title: '机械翻页时钟矩阵', category: 'mechanical', duration: 9.0, engine: 'split_flap', desc: '模拟经典机场翻牌显示屏，字母在高速翻动与错位碰撞中逐个锁定最终字形。', params: { flips: 8, tilt: 0.45 } },
+            { id: 6, title: '工业机械臂空间焊接', category: 'mechanical', duration: 10.0, engine: 'laser_weld', desc: '高能激光焊点沿字母矢量轮廓游走雕刻，伴随金属冷却收缩与整体阵列对齐。', params: { weldSpeed: 1.5, sparks: 60 } },
+
+            // --- 二、科技感与未来感 (Sci-Fi & Futuristic) ---
+            { id: 7, title: '量子纠缠双态坍缩', category: 'scifi', duration: 8.5, engine: 'quantum_collapse', desc: '每个字母分裂为正反虚实两个量子幽灵态，交错穿透后在观测瞬间坍缩为实体。', params: { splitDist: 90, phaseShift: 1.5 } },
+            { id: 8, title: '全息投影扫描重构', category: 'scifi', duration: 8.0, engine: 'holo_scan', desc: '激光扫描线自下而上构建线框网格，经历信号干扰闪烁后注入实体材质。', params: { scanLines: 24, glitchFreq: 0.8 } },
+            { id: 9, title: '赛博故障艺术撕裂', category: 'scifi', duration: 7.5, engine: 'cyber_glitch', desc: 'RGB 色彩通道分离、水平切片错位与高频噪点爆发，随后瞬间校准为纯净标志。', params: { sliceCount: 8, rgbOffset: 18 } },
+            { id: 10, title: '神经网络突触脉冲', category: 'scifi', duration: 9.0, engine: 'neural_pulse', desc: '字母节点间建立能量突触连线，电流脉冲依次点亮六枚字母并引发集体共振。', params: { nodeLinks: true, pulseSpeed: 2.0 } },
+            { id: 11, title: '反重力磁悬浮阵列', category: 'scifi', duration: 9.5, engine: 'mag_lev', desc: '超导磁场激活使字母悬浮离地，产生排斥碰撞与轨道交换，最终磁力锁定。', params: { floatAmp: 38, repulse: 1.3 } },
+            { id: 12, title: '星际曲率引擎充能', category: 'scifi', duration: 8.5, engine: 'warp_charge', desc: '字母向中心奇点坍缩积蓄能量，爆发超新星级光环后以完美比例展开。', params: { singularity: 0.15, burstRing: true } },
+
+            // --- 三、液态变形 (Liquid & Morphing) ---
+            { id: 13, title: '水银珠滴融合分裂', category: 'liquid', duration: 9.0, engine: 'mercury_blob', desc: '六滴高表面张力液态金属在空中融合为一团巨大水银球，再精准分裂为六个字母。', params: { viscosity: 0.85, dripCount: 18 } },
+            { id: 14, title: '深海声呐波纹荡漾', category: 'liquid', duration: 8.5, engine: 'sonar_wave', desc: '字母宛如悬浮于深海流体中，随声呐冲击波产生正弦波浪形变与浮力律动。', params: { waveAmp: 28, waveFreq: 3.2 } },
+            { id: 15, title: '粘性流体拉丝重组', category: 'liquid', duration: 9.5, engine: 'viscous_stretch', desc: '字母在水平与垂直方向产生极富张力的粘稠拉伸，交错拉丝后弹性回弹归位。', params: { stretchMax: 2.1, tension: 0.7 } },
+            { id: 16, title: '零重力水滴凝结态', category: 'liquid', duration: 8.0, engine: 'zero_g_drop', desc: '失重水珠环绕轨道漂浮碰撞，表面张力驱动其逐步塑形为饱满的 Deople 几何体。', params: { orbitRadius: 110, wobble: 0.4 } },
+            { id: 17, title: '熔岩流体对流涌动', category: 'liquid', duration: 9.0, engine: 'magma_flow', desc: '炽热岩浆般的低频涌动将字母推向高空，冷却凝固过程中完成字符重组。', params: { heatGlow: true, convection: 1.6 } },
+            { id: 18, title: '声波共振液膜震颤', category: 'liquid', duration: 8.0, engine: 'cymatics', desc: '克拉尼图形声学共振频率作用于字母边缘，产生高频驻波纹理并归于平静。', params: { harmonic: 5, decay: 0.92 } },
+
+            // --- 四、粒子爆炸与重组 (Particle Explosion) ---
+            { id: 19, title: '超新星粒子星云聚变', category: 'particle', duration: 9.5, engine: 'supernova_gather', desc: '数千枚微光粒子从宇宙深空螺旋汇聚成字，中段二次微爆后精准落位。', params: { particleDensity: 180, swirl: 2.4 } },
+            { id: 20, title: '像素体素解体与重构', category: 'particle', duration: 8.5, engine: 'voxel_shatter', desc: '字母瞬间炸裂为数百个几何方块在风场中翻飞，随后磁力逆转严丝合缝拼合。', params: { blockSize: 7, windForce: 1.8 } },
+            { id: 21, title: '萤火虫群智能编队', category: 'particle', duration: 10.0, engine: 'swarm_boid', desc: '具备群集智能的光点如夏夜萤火虫般盘旋飞舞，最终自发排列成品牌图腾。', params: { flockSize: 160, cohesion: 1.5 } },
+            { id: 22, title: '晶体碎裂逆向时光', category: 'particle', duration: 8.5, engine: 'time_reversal', desc: '完整 Logo 遭遇冲击波粉碎成多边形晶片，时间倒流使所有碎片精准归位。', params: { shardCount: 90, reversePoint: 0.52 } },
+            { id: 23, title: '电磁极光尘埃风暴', category: 'particle', duration: 9.0, engine: 'aurora_dust', desc: '带电粒子流如极光般横扫画布，在经过之处留下凝结的字母能量实体。', params: { trailLen: 14, curlNoise: 1.7 } },
+            { id: 24, title: '烟花绽放余烬成字', category: 'particle', duration: 9.0, engine: 'firework_ember', desc: '六发礼花弹依次升空炸裂，下落的金色余烬在重力场中悬停勾勒出 Deople。', params: { bursts: 6, gravity: 0.45 } },
+
+            // --- 五、空间穿梭 (Space Warp & Dimensional) ---
+            { id: 25, title: '超空间光速跃迁拉伸', category: 'warp', duration: 8.0, engine: 'hyperspace_jump', desc: '字母化作光速流线从无限远处疾驰而来，急刹减速时产生剧烈相对论红移拖尾。', params: { streakLen: 220, zDepth: 800 } },
+            { id: 26, title: '虫洞折叠空间传送', category: 'warp', duration: 8.5, engine: 'wormhole_portal', desc: '六个微型空间虫洞依次开启，字母从中扭曲钻出并发生空间位置互换。', params: { portalSpin: 3.0, swapPairs: true } },
+            { id: 27, title: '四维超立方体投影展开', category: 'warp', duration: 9.5, engine: 'tesseract_fold', desc: '字母在四维空间进行内外翻转投影，呈现不可思议的拓扑穿透后稳定在三维平面。', params: { wAngle: Math.PI * 2, perspective: 450 } },
+            { id: 28, title: '黑洞引力透镜扭曲', category: 'warp', duration: 9.0, engine: 'blackhole_lens', desc: '隐形奇点掠过字母阵列，引发剧烈的爱因斯坦环引力弯曲与轨道弹射。', params: { eventHorizon: 75, lensStrength: 2.1 } },
+            { id: 29, title: '星际折纸维度折叠', category: 'warp', duration: 8.0, engine: 'origami_fold', desc: '二维平面如精密折纸般沿对角线反复折叠展开，每次展开都演化出更完整的字形。', params: { foldAxes: 4, crispShadow: true } },
+            { id: 30, title: '平行宇宙镜像交错', category: 'warp', duration: 8.5, engine: 'multiverse_mirror', desc: '上下两个镜像宇宙的字母阵列迎面穿梭交错，碰撞瞬间合并为唯一主宇宙版本。', params: { mirrorGap: 140, flashMerge: true } },
+
+            // --- 六、弹性运动与物理碰撞 (Elastic & Physics) ---
+            { id: 31, title: '牛顿摆动量守恒碰撞', category: 'elastic', duration: 8.5, engine: 'newtons_cradle', desc: '首字母 D 如摆锤般高高扬起落下，将动量依次传递给 E-O-P-L-E 引发末端弹射。', params: { swingAngle: 1.1, restitution: 0.92 } },
+            { id: 32, title: '果冻Q弹果胶大乱斗', category: 'elastic', duration: 8.0, engine: 'jelly_squash', desc: '高弹性果冻材质的字母从高空坠落，发生夸张的挤压变形与相互弹跳碰撞。', params: { squashFactor: 0.45, stiffness: 0.18 } },
+            { id: 33, title: '弹球机狂热碰撞计分', category: 'elastic', duration: 9.0, engine: 'pinball_chaos', desc: '六个字母化作高速弹球在隐形边界内疯狂碰撞反弹，倒计时结束瞬间磁吸归队。', params: { initialVel: 14, bumperGlow: true } },
+            { id: 34, title: '弹簧谐振子链式波浪', category: 'elastic', duration: 8.5, engine: 'spring_chain', desc: '字母间由隐形胡克弹簧相连，牵引首字母引发整条字母链的优美简谐波浪传递。', params: { springK: 0.14, damping: 0.88 } },
+            { id: 35, title: '气球充气膨胀升空', category: 'elastic', duration: 8.0, engine: 'balloon_inflate', desc: '字母如氦气球般充气膨胀至 1.6 倍体积相互挤占空间，泄气回弹至标准尺寸。', params: { maxScale: 1.65, floatDrift: 25 } },
+            { id: 36, title: '陀螺仪碰撞倾倒扶正', category: 'elastic', duration: 8.5, engine: 'gyro_wobble', desc: '高速旋转的字母陀螺相互擦碰产生进动摇摆，依靠角动量自动恢复垂直平衡。', params: { precession: 0.6, spinDecay: 0.95 } },
+
+            // --- 七、3D 翻转与立体空间 (3D Flip & Volumetric) ---
+            { id: 37, title: '3D 立体柱状百叶窗翻转', category: '3d', duration: 8.5, engine: '3d_louvers', desc: '每个字母具备真实 3D 挤出厚度，绕 Y 轴进行 720 度多面体翻转与高光扫掠。', params: { depth: 24, rotations: 2 } },
+            { id: 38, title: '太空环绕行星公转阵', category: '3d', duration: 9.5, engine: '3d_orbit_ring', desc: '六枚立体字母沿倾斜的土星环轨道进行带景深缩放的 3D 公转，最终正面列阵。', params: { tiltX: 0.45, radiusX: 240 } },
+            { id: 39, title: '莫比乌斯环空间扭转', category: '3d', duration: 9.0, engine: 'mobius_twist', desc: '字母阵列沿三维莫比乌斯带路径连续翻滚，展现正反面无缝过渡的几何美学。', params: { twistRate: 1.5, depthScale: 0.4 } },
+            { id: 40, title: '多米诺骨牌 3D 连锁倾倒', category: '3d', duration: 8.0, engine: '3d_domino', desc: '字母沿 X 轴如多米诺骨牌般依次前倾倒下，触底反弹后全员整齐立正。', params: { tiltMax: 1.25, cascadeDelay: 0.08 } },
+            { id: 41, title: '魔方三阶空间旋转归位', category: '3d', duration: 9.0, engine: 'rubik_slice', desc: '将字母阵视为空间魔方切片，经历 X/Y/Z 三轴错位拧转后一键还原纯净品牌标识。', params: { sliceMoves: 4, snapSpeed: 0.2 } },
+            { id: 42, title: '全息玻璃棱镜折射阵', category: '3d', duration: 8.5, engine: 'prism_refract', desc: '立体棱镜字母在 3D 翻转过程中产生光谱色散与玻璃边缘高光折射，极具奢华质感。', params: { dispersion: 10, specular: 0.9 } }
+        ];
+
+        // 动效库状态容器
+        let PRESETS = [...BASE_PRESETS];
+        let currentIndex = 0;
+        let currentCategory = 'all';
+        let currentPaletteKey = 'original';
+        let isPlaying = true;
+        let playbackSpeed = 1.0;
+        let playMode = 'continuous'; // 'continuous' (连续浏览) | 'random' (随机漫游) | 'loop' (单曲循环)
+        let elapsedTime = 0;
+        let lastFrameTime = performance.now();
+        let isExpanded200 = false;
+
+        // 交互扰动波纹（点击画布触发）
+        let shockwaves = [];
+
+        // 粒子池（用于粒子爆炸/液压火花/液态飞沫等）
+        let particles = [];
+
+        // Deople 六个核心字母定义
+        const LETTERS = ['D', 'E', 'O', 'P', 'L', 'E'];
+
+        // DOM 引用
+        const canvas = document.getElementById('deople-canvas');
+        const ctx = canvas.getContext('2d');
+
+        /**
+         * ============================================================================
+         * 4. 200+ 种动效变体矩阵生成器
+         *    通过组合 42 种物理/几何内核 × 节奏相位 × 空间编排模式，程序化生成 210 种独特预设
+         * ============================================================================
+         */
+        function expandTo200() {
+            if (isExpanded200) {
+                showToast('当前已激活 210 种完整动效矩阵库！');
+                return;
+            }
+
+            const modifiers = [
+                { suffix: ' · 逆向相位版', speedMod: 1.1, phaseMode: 'reverse', durAdd: 0.5, extraDesc: '采用从末位 E 到首位 D 的逆向时间波传递。' },
+                { suffix: ' · 中心对称爆发版', speedMod: 0.95, phaseMode: 'center_out', durAdd: 1.0, extraDesc: '由中心 O-P 双核向外辐射驱动两侧字母联动。' },
+                { suffix: ' · 交错碰撞狂想版', speedMod: 1.2, phaseMode: 'collide', durAdd: 0.8, extraDesc: '强化相邻字母间的空间位置互换与动量碰撞。' },
+                { suffix: ' · 慢镜头电影叙事版', speedMod: 0.85, phaseMode: 'cinematic', durAdd: 2.0, extraDesc: '延长第三幕悬停与形变张力，呈现电影级大片感。' }
+            ];
+
+            let nextId = PRESETS.length + 1;
+            const generated = [];
+
+            modifiers.forEach((mod) => {
+                BASE_PRESETS.forEach((base) => {
+                    generated.push({
+                        ...base,
+                        id: nextId++,
+                        title: `${base.title}${mod.suffix}`,
+                        duration: Number((base.duration + mod.durAdd).toFixed(1)),
+                        desc: `${base.desc} ${mod.extraDesc}`,
+                        phaseMode: mod.phaseMode,
+                        params: {
+                            ...base.params,
+                            variantScale: mod.speedMod
+                        }
+                    });
+                });
+            });
+
+            PRESETS = [...PRESETS, ...generated];
+            isExpanded200 = true;
+
+            document.getElementById('total-badge').textContent = `${PRESETS.length} 预设矩阵`;
+            const btn = document.getElementById('btn-expand-200');
+            btn.innerHTML = `<span>✨ 已解锁 ${PRESETS.length} 种风格</span>`;
+            btn.classList.add('border-emerald-500/50', 'text-emerald-300');
+
+            filterPresets();
+            showToast(`已成功扩展至 ${PRESETS.length} 种独立字母编排动效！`);
+        }
+
+        /**
+         * ============================================================================
+         * 5. 画布自适应与高清 DPR 渲染初始化
+         * ============================================================================
+         */
+        let canvasWidth = 800;
+        let canvasHeight = 500;
+
+        function resizeCanvas() {
+            const wrapper = document.getElementById('canvas-wrapper');
+            if (!wrapper) return;
+            const rect = wrapper.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvasWidth = rect.width;
+            canvasHeight = rect.height;
+            canvas.width = canvasWidth * dpr;
+            canvas.height = canvasHeight * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        /**
+         * ============================================================================
+         * 6. 数学缓动函数与四幕剧（起-承-转-合）时间轴映射
+         * ============================================================================
+         */
+        const Ease = {
+            linear: t => t,
+            inOutCubic: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+            outElastic: t => {
+                const c4 = (2 * Math.PI) / 3;
+                return t === 0 ? 0 : t === 1 ? 1 : Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
+            },
+            outBack: t => {
+                const c1 = 1.70158;
+                const c3 = c1 + 1;
+                return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+            },
+            outBounce: t => {
+                const n1 = 7.5625, d1 = 2.75;
+                if (t < 1 / d1) return n1 * t * t;
+                else if (t < 2 / d1) return n1 * (t -= 1.5 / d1) * t + 0.75;
+                else if (t < 2.5 / d1) return n1 * (t -= 2.25 / d1) * t + 0.9375;
+                else return n1 * (t -= 2.625 / d1) * t + 0.984375;
+            },
+            bell: t => Math.sin(Math.PI * Math.max(0, Math.min(1, t))) // 0 -> 1 -> 0 平滑钟形曲线
+        };
+
+        /**
+         * 初始化指定预设的专属粒子群
+         */
+        function initParticlesForPreset(preset) {
+            particles = [];
+            const count = preset.params?.particleDensity || preset.params?.shardCount || 90;
+            const palette = PALETTES[currentPaletteKey];
+            for (let i = 0; i < count; i++) {
+                const letterIdx = i % 6;
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 80 + Math.random() * 280;
+                particles.push({
+                    letterIdx,
+                    ox: Math.cos(angle) * dist,
+                    oy: Math.sin(angle) * dist,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    size: 1.5 + Math.random() * 3.5,
+                    color: palette.letters[letterIdx],
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        /**
+         * ============================================================================
+         * 7. 核心渲染管线：计算每个字母的独立变换状态并绘制
+         * ============================================================================
+         */
+        function renderFrame(progress, preset) {
+            const palette = PALETTES[currentPaletteKey];
+            
+            // 1. 清空画布并绘制微妙径向光晕背景
+            ctx.fillStyle = palette.bg;
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            const centerX = canvasWidth / 2;
+            const centerY = canvasHeight / 2;
+
+            const bgGrad = ctx.createRadialGradient(centerX, centerY, 10, centerX, centerY, Math.max(canvasWidth, canvasHeight) * 0.6);
+            bgGrad.addColorStop(0, palette.glow.replace('0.55', '0.16').replace('0.65', '0.18'));
+            bgGrad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            // 更新四幕剧 UI 指示器
+            updateActIndicators(progress);
+
+            // 响应式字号与字母间距计算
+            const baseFontSize = Math.min(canvasWidth * 0.125, canvasHeight * 0.26, 118);
+            const letterSpacing = baseFontSize * 0.88;
+            const startX = centerX - (letterSpacing * 2.5);
+
+            // 四幕时间归一化子进度:
+            // Act 1 (0.00 - 0.25): 起势入场
+            // Act 2 (0.25 - 0.55): 交错碰撞/形态演变
+            // Act 3 (0.55 - 0.80): 裂变高潮/张力释放
+            // Act 4 (0.80 - 1.00): 精准归位/品牌定格
+            const p1 = Math.min(1, progress / 0.25);
+            const p2 = Math.max(0, Math.min(1, (progress - 0.25) / 0.30));
+            const p3 = Math.max(0, Math.min(1, (progress - 0.55) / 0.25));
+            const p4 = Math.max(0, Math.min(1, (progress - 0.80) / 0.20));
+
+            // 预设特有背景特效（如虫洞、激光扫描线、神经网络连线、声呐环）
+            drawStageBackdropEffects(preset, progress, p1, p2, p3, p4, centerX, centerY, baseFontSize, letterSpacing, startX, palette);
+
+            // 2. 计算 6 个字母各自的独立动力学状态
+            const letterStates = LETTERS.map((char, i) => {
+                // 根据变体相位模式调整字母延迟索引
+                let effectiveIdx = i;
+                if (preset.phaseMode === 'reverse') effectiveIdx = 5 - i;
+                else if (preset.phaseMode === 'center_out') effectiveIdx = Math.abs(i - 2.5);
+
+                const stagger = effectiveIdx * 0.04;
+                const localP1 = Math.max(0, Math.min(1, (progress - stagger) / 0.22));
+                const localP4 = Math.max(0, Math.min(1, (progress - 0.78 - stagger * 0.4) / 0.16));
+
+                // 默认目标位置与姿态
+                let state = {
+                    char,
+                    index: i,
+                    x: startX + i * letterSpacing,
+                    y: centerY,
+                    scaleX: 1,
+                    scaleY: 1,
+                    rotation: 0,
+                    skewX: 0,
+                    alpha: 1,
+                    color: palette.letters[i],
+                    glowBlur: 18,
+                    extrude3D: 0,
+                    glitchSlice: 0,
+                    outlineOnly: false,
+                    ghostOffset: 0
+                };
+
+                // 注入用户点击画布产生的物理扰动波
+                shockwaves.forEach(sw => {
+                    const dx = state.x - sw.x;
+                    const dy = state.y - sw.y;
+                    const dist = Math.hypot(dx, dy) || 1;
+                    const waveFront = sw.radius;
+                    const diff = Math.abs(dist - waveFront);
+                    if (diff < 65) {
+                        const force = (1 - diff / 65) * sw.strength * 28;
+                        state.x += (dx / dist) * force;
+                        state.y += (dy / dist) * force;
+                        state.scaleX += (1 - diff / 65) * sw.strength * 0.25;
+                        state.scaleY += (1 - diff / 65) * sw.strength * 0.25;
+                    }
+                });
+
+                // 应用具体动效引擎逻辑
+                applyEngineTransform(state, preset, progress, localP1, p2, p3, localP4, centerX, centerY, baseFontSize, letterSpacing);
+
+                return state;
+            });
+
+            // 3. 渲染粒子层（如果在粒子/火花模式下）
+            drawParticlesLayer(preset, progress, p1, p2, p3, p4, letterStates, palette);
+
+            // 4. 逐个绘制具备独立矩阵变换与立体质感的字母
+            letterStates.forEach(st => {
+                if (st.alpha <= 0.01) return;
+                drawSingleDeopleLetter(st, baseFontSize, palette);
+            });
+
+            // 5. 绘制点击冲击波光环
+            updateAndDrawShockwaves(palette);
+        }
+
+        /**
+         * ============================================================================
+         * 8. 42 种动效引擎核心数学编排实现
+         * ============================================================================
+         */
+        function applyEngineTransform(st, preset, progress, p1, p2, p3, p4, cx, cy, fontSize, spacing) {
+            const i = st.index;
+            const sign = i % 2 === 0 ? 1 : -1;
+            const centerOffset = i - 2.5; // -2.5 到 +2.5
+            const e1 = Ease.outBack(p1);
+            const bell2 = Ease.bell(p2);
+            const bell3 = Ease.bell(p3);
+            const settle4 = Ease.inOutCubic(p4);
+
+            switch (preset.engine) {
+                // --- 机械重工系列 ---
+                case 'gear_mesh': {
+                    // 起势：从上下啮合旋入；交错：齿轮咬合正反旋转；裂变：高速空转；归位：卡榫锁定
+                    st.y += (1 - e1) * sign * 160;
+                    st.rotation = (1 - e1) * sign * Math.PI + bell2 * sign * (Math.PI * 0.75) + bell3 * -sign * Math.PI * 1.5;
+                    st.x += bell2 * -centerOffset * 14; // 齿轮咬合靠近
+                    st.scaleX = st.scaleY = 0.4 + 0.6 * e1 + bell3 * 0.12;
+                    st.extrude3D = 6;
+                    break;
+                }
+                case 'hydraulic_press': {
+                    // 上下冲压撞击 + 挤压扁平回弹
+                    const slam = Ease.outBounce(p1);
+                    st.y += (1 - slam) * sign * 220;
+                    const squash = bell2 * 0.35 + bell3 * 0.25;
+                    st.scaleY = 1 - squash;
+                    st.scaleX = 1 + squash * 0.6;
+                    st.x += bell3 * centerOffset * 18;
+                    break;
+                }
+                case 'tourbillon': {
+                    // 瑞士陀飞轮步进脉冲
+                    const steps = Math.floor(progress * 18);
+                    const stepFract = (progress * 18) % 1;
+                    const stepEase = Ease.outElastic(Math.min(1, stepFract * 2));
+                    const active = 1 - settle4;
+                    st.rotation = active * ((steps + stepEase) * (Math.PI / 6) * sign);
+                    st.y += active * Math.sin((steps + stepEase) * 0.8 + i) * 26;
+                    st.scaleX = st.scaleY = 0.2 + 0.8 * e1;
+                    break;
+                }
+                case 'railgun_load': {
+                    // 电磁轨道炮从右侧高速滑入并触发后坐力
+                    st.x += (1 - e1) * 450 - bell2 * 35 * Math.exp(-i * 0.3);
+                    st.skewX = (1 - e1) * -0.45 + bell3 * 0.25 * sign;
+                    st.glowBlur = 15 + bell3 * 35;
+                    break;
+                }
+                case 'split_flap': {
+                    // 翻牌时钟：Y 轴高频翻转缩放
+                    const flipWave = Math.cos(progress * Math.PI * 12 + i * 0.9) * (1 - settle4);
+                    st.scaleY = Math.max(0.08, Math.abs(flipWave)) * e1 + (1 - e1) * 0.1;
+                    st.y += flipWave * 12;
+                    st.extrude3D = 5;
+                    break;
+                }
+                case 'laser_weld': {
+                    // 线框雕刻逐渐填充实体
+                    st.outlineOnly = progress < (0.45 + i * 0.06);
+                    st.alpha = Math.min(1, p1 * 1.5);
+                    st.scaleX = st.scaleY = 0.85 + 0.15 * e1 + bell3 * 0.1;
+                    break;
+                }
+
+                // --- 未来科技系列 ---
+                case 'quantum_collapse': {
+                    // 量子双态虚影分离与坍缩
+                    st.ghostOffset = (bell2 * 55 + bell3 * 85) * sign * (1 - settle4);
+                    st.y += bell2 * sign * 35 * (1 - settle4);
+                    st.alpha = 0.3 + 0.7 * e1;
+                    break;
+                }
+                case 'holo_scan': {
+                    st.outlineOnly = bell2 > 0.35;
+                    st.glitchSlice = (bell2 * 14 + bell3 * 22) * (1 - settle4);
+                    st.y += (1 - e1) * 50;
+                    st.alpha = e1;
+                    break;
+                }
+                case 'cyber_glitch': {
+                    const jitter = (Math.sin(progress * 90 + i * 7) > 0.4 ? 1 : 0) * (1 - settle4);
+                    st.glitchSlice = (bell2 * 24 + bell3 * 32) * (1 - settle4);
+                    st.x += jitter * sign * 18;
+                    st.y += jitter * -sign * 12;
+                    st.skewX = jitter * 0.35 * sign;
+                    break;
+                }
+                case 'neural_pulse': {
+                    const pulse = Math.exp(-Math.pow((progress * 8 - i * 0.6) % 4 - 1.5, 2) * 3) * (1 - settle4);
+                    st.scaleX = st.scaleY = (0.3 + 0.7 * e1) + pulse * 0.32;
+                    st.y += Math.sin(progress * 6 + i) * 22 * (1 - settle4);
+                    st.glowBlur = 14 + pulse * 40;
+                    break;
+                }
+                case 'mag_lev': {
+                    // 反重力悬浮与位置交错互换
+                    const swap = bell2 * (i % 2 === 0 ? spacing : -spacing) * (1 - settle4);
+                    st.x += swap;
+                    st.y += (1 - e1) * 140 - (bell2 * 45 + Math.sin(progress * 10 + i) * 16) * (1 - settle4);
+                    st.rotation = bell3 * sign * 0.25 * (1 - settle4);
+                    break;
+                }
+                case 'warp_charge': {
+                    // 向中心奇点坍缩再超新星爆发展开
+                    const collapse = bell2 * 0.75;
+                    st.x = st.x * (1 - collapse) + cx * collapse;
+                    st.y = st.y * (1 - collapse) + cy * collapse;
+                    st.scaleX = st.scaleY = (1 - collapse * 0.6) + bell3 * 0.45;
+                    st.rotation = collapse * centerOffset * 0.8;
+                    break;
+                }
+
+                // --- 液态变形系列 ---
+                case 'mercury_blob': {
+                    // 水银融合为一团再分裂归位
+                    const merge = bell2 * 0.88;
+                    st.x = st.x * (1 - merge) + cx * merge;
+                    st.y += Math.sin(progress * 9 + i * 1.2) * 32 * (1 - settle4);
+                    st.scaleX = 1 + merge * 0.55 - bell3 * 0.25;
+                    st.scaleY = 1 - merge * 0.25 + bell3 * 0.35;
+                    break;
+                }
+                case 'sonar_wave': {
+                    const wave = Math.sin(progress * 14 - i * 0.85) * (1 - settle4);
+                    st.y += wave * 42;
+                    st.skewX = wave * 0.25;
+                    st.scaleY = 1 + Math.abs(wave) * 0.22;
+                    break;
+                }
+                case 'viscous_stretch': {
+                    const stretch = (bell2 * 0.85 + bell3 * 0.65) * (1 - settle4);
+                    st.scaleY = 1 + stretch * (i % 2 === 0 ? 1 : -0.45);
+                    st.scaleX = 1 / Math.sqrt(Math.max(0.4, st.scaleY));
+                    st.x += bell2 * centerOffset * 24;
+                    break;
+                }
+                case 'zero_g_drop': {
+                    const orbit = (1 - e1) * Math.PI * 1.5 + bell2 * Math.PI * 2;
+                    const rad = ((1 - e1) * 160 + bell2 * 65) * (1 - settle4);
+                    st.x += Math.cos(orbit + i * 1.05) * rad;
+                    st.y += Math.sin(orbit + i * 1.05) * rad * 0.65;
+                    st.scaleX = st.scaleY = 0.3 + 0.7 * e1 + Math.sin(progress * 15 + i) * 0.12 * (1 - settle4);
+                    break;
+                }
+                case 'magma_flow': {
+                    const surge = Math.sin(progress * 7 + i * 0.7) * (1 - settle4);
+                    st.y += surge * 48 - (1 - e1) * 120;
+                    st.scaleX = 1 + surge * 0.18;
+                    st.scaleY = 1 - surge * 0.18;
+                    break;
+                }
+                case 'cymatics': {
+                    const vib = Math.sin(progress * 45 + i * 2) * (bell2 + bell3) * (1 - settle4);
+                    st.x += vib * 8;
+                    st.y += Math.cos(progress * 38 + i) * (bell2 + bell3) * 10 * (1 - settle4);
+                    st.scaleX = st.scaleY = 1 + vib * 0.12;
+                    break;
+                }
+
+                // --- 粒子裂变系列 ---
+                case 'supernova_gather':
+                case 'swarm_boid':
+                case 'aurora_dust':
+                case 'firework_ember': {
+                    // 粒子凝聚期字母渐显，中段微爆粒子飞散
+                    const solid = Math.max(0, Math.min(1, (progress - 0.14) / 0.18)) * (1 - bell3 * 0.65) + settle4;
+                    st.alpha = Math.min(1, solid);
+                    st.scaleX = st.scaleY = 0.65 + 0.35 * Math.min(1, solid) + bell3 * 0.15;
+                    st.y += (1 - e1) * 40 + bell3 * sign * 18;
+                    break;
+                }
+                case 'voxel_shatter':
+                case 'time_reversal': {
+                    const shatter = bell2 * 0.85 + bell3 * 0.4;
+                    st.alpha = Math.max(0.15, 1 - shatter * 0.85);
+                    st.rotation = shatter * centerOffset * 0.6 * (1 - settle4);
+                    st.x += shatter * centerOffset * 28 * (1 - settle4);
+                    break;
+                }
+
+                // --- 空间穿梭系列 ---
+                case 'hyperspace_jump': {
+                    // 从深空光速冲刺拉伸至眼前
+                    const zoom = 1 - e1;
+                    st.x = cx + (st.x - cx) * (1 + zoom * 3.5);
+                    st.scaleX = 1 + zoom * 2.8 + bell3 * 0.9 * (1 - settle4);
+                    st.scaleY = Math.max(0.2, 1 - zoom * 0.6);
+                    st.alpha = Math.min(1, p1 * 2);
+                    break;
+                }
+                case 'wormhole_portal': {
+                    const warp = (1 - e1) + bell2 * 0.8 * (1 - settle4);
+                    st.scaleX = st.scaleY = Math.max(0.01, 1 - warp * 0.85);
+                    st.rotation = warp * Math.PI * 2 * sign;
+                    st.x += bell2 * -centerOffset * 35 * (1 - settle4);
+                    break;
+                }
+                case 'tesseract_fold': {
+                    const fold = (bell2 * Math.PI + bell3 * Math.PI * 0.5) * (1 - settle4);
+                    st.scaleX = Math.cos(fold + i * 0.3);
+                    st.skewX = Math.sin(fold) * 0.45;
+                    st.extrude3D = Math.abs(Math.sin(fold)) * 14;
+                    break;
+                }
+                case 'blackhole_lens': {
+                    // 隐形奇点从左向右掠过字母
+                    const bhX = cx - 320 + progress * 640;
+                    const dist = st.x - bhX;
+                    const pull = Math.exp(-(dist * dist) / 14000) * (1 - settle4);
+                    st.y += Math.sin(dist * 0.03) * pull * 85;
+                    st.x -= dist * pull * 0.35;
+                    st.scaleX = st.scaleY = 1 + pull * 0.45;
+                    st.rotation = pull * 0.8;
+                    break;
+                }
+                case 'origami_fold': {
+                    const foldY = Math.cos((1 - e1) * Math.PI * 1.5 + bell2 * Math.PI * 2 * (1 - settle4));
+                    st.scaleY = Math.max(0.05, Math.abs(foldY));
+                    st.skewX = (1 - Math.abs(foldY)) * 0.4 * sign;
+                    break;
+                }
+                case 'multiverse_mirror': {
+                    st.ghostOffset = ((1 - e1) * 140 + bell2 * 90) * sign * (1 - settle4);
+                    st.y += ((1 - e1) * -70 + bell2 * 45) * sign * (1 - settle4);
+                    break;
+                }
+
+                // --- 弹性物理系列 ---
+                case 'newtons_cradle': {
+                    // 首尾牛顿摆球碰撞
+                    const swing = Math.sin(progress * Math.PI * 5) * (1 - settle4);
+                    if (i === 0 && swing < 0) {
+                        st.x += swing * 95;
+                        st.y -= Math.abs(swing) * 45;
+                        st.rotation = swing * 0.45;
+                    } else if (i === 5 && swing > 0) {
+                        st.x += swing * 95;
+                        st.y -= Math.abs(swing) * 45;
+                        st.rotation = swing * 0.45;
+                    } else {
+                        st.x += swing * 6;
+                    }
+                    break;
+                }
+                case 'jelly_squash': {
+                    const bounce = Ease.outElastic(p1);
+                    const jelly = Math.sin(progress * 18 - i * 0.7) * (bell2 + bell3) * (1 - settle4);
+                    st.y += (1 - bounce) * -180 + Math.abs(jelly) * -28;
+                    st.scaleY = 1 + jelly * 0.38;
+                    st.scaleX = 1 - jelly * 0.28;
+                    break;
+                }
+                case 'pinball_chaos': {
+                    const chaos = (bell2 + bell3 * 0.8) * (1 - settle4);
+                    st.x += Math.sin(progress * 17 + i * 2.1) * 110 * chaos;
+                    st.y += Math.cos(progress * 13 + i * 1.7) * 85 * chaos;
+                    st.rotation = chaos * Math.PI * 2 * sign;
+                    break;
+                }
+                case 'spring_chain': {
+                    const wave = Math.sin(progress * 14 - i * 0.9) * (1 - settle4);
+                    st.y += wave * 52 + (1 - e1) * 100;
+                    st.x += Math.cos(progress * 14 - i * 0.9) * 14 * (1 - settle4);
+                    st.rotation = wave * 0.22;
+                    break;
+                }
+                case 'balloon_inflate': {
+                    const inflate = (bell2 * 0.55 + bell3 * 0.35) * (1 - settle4);
+                    st.scaleX = st.scaleY = (0.2 + 0.8 * e1) + inflate;
+                    st.x += centerOffset * inflate * 42;
+                    st.y -= inflate * 30;
+                    break;
+                }
+                case 'gyro_wobble': {
+                    const wobble = Math.sin(progress * 24 + i) * (bell2 + bell3) * 0.45 * (1 - settle4);
+                    st.rotation = wobble;
+                    st.skewX = wobble * 0.5;
+                    st.y += Math.abs(wobble) * -25;
+                    break;
+                }
+
+                // --- 3D 空间系列 ---
+                case '3d_louvers': {
+                    const spin = (1 - e1) * Math.PI * 2 + (bell2 * Math.PI * 2 + bell3 * Math.PI) * (1 - settle4);
+                    st.scaleX = Math.cos(spin);
+                    st.extrude3D = Math.abs(Math.sin(spin)) * 18 + 6;
+                    break;
+                }
+                case '3d_orbit_ring': {
+                    const orbit = ((1 - e1) * Math.PI + bell2 * Math.PI * 2) * (1 - settle4);
+                    const angle = orbit + centerOffset * 0.48;
+                    const depth = Math.cos(angle); // -1 到 1
+                    st.x = cx + Math.sin(angle) * (spacing * 2.8) * (1 - settle4) + (st.x - cx) * settle4;
+                    st.y = cy + depth * 55 * (1 - settle4);
+                    const scale3d = 1 + depth * 0.32 * (1 - settle4);
+                    st.scaleX = st.scaleY = scale3d;
+                    st.alpha = 0.45 + (depth + 1) * 0.275 + settle4 * 0.5;
+                    st.extrude3D = 10;
+                    break;
+                }
+                case 'mobius_twist': {
+                    const twist = (progress * Math.PI * 4 + i * 0.55) * (1 - settle4);
+                    st.y += Math.sin(twist) * 48 * (1 - settle4);
+                    st.scaleY = Math.cos(twist * 0.5) * (1 - settle4) + settle4;
+                    st.extrude3D = 8;
+                    break;
+                }
+                case '3d_domino': {
+                    const fall = Math.sin(Math.max(0, Math.min(Math.PI, (progress * 4.5 - i * 0.22) * Math.PI))) * (1 - settle4);
+                    st.scaleY = Math.max(0.25, Math.cos(fall * 1.15));
+                    st.skewX = fall * 0.55;
+                    st.x += fall * 24;
+                    st.extrude3D = 8 + fall * 10;
+                    break;
+                }
+                case 'rubik_slice': {
+                    const move = (bell2 + bell3) * (1 - settle4);
+                    if (i < 3) {
+                        st.y -= move * 55;
+                        st.x += move * 25;
+                    } else {
+                        st.y += move * 55;
+                        st.x -= move * 25;
+                    }
+                    st.scaleX = Math.cos(move * Math.PI);
+                    st.extrude3D = 12;
+                    break;
+                }
+                case 'prism_refract': {
+                    const angle = (bell2 * Math.PI * 2 + bell3 * Math.PI) * (1 - settle4);
+                    st.scaleX = Math.cos(angle * 0.5);
+                    st.ghostOffset = Math.sin(angle) * 24 * (1 - settle4);
+                    st.extrude3D = 14;
+                    break;
+                }
+            }
+        }
+
+        /**
+         * 绘制舞台辅助背景科技/空间图形（突触连线、激光扫描线、wormhole 等）
+         */
+        function drawStageBackdropEffects(preset, progress, p1, p2, p3, p4, cx, cy, fontSize, spacing, startX, palette) {
+            ctx.save();
+            const settle4 = Ease.inOutCubic(p4);
+            const active = 1 - settle4;
+
+            if (preset.engine === 'holo_scan' && active > 0.05) {
+                const scanY = cy - fontSize + ((progress * 3) % 1) * (fontSize * 2);
+                ctx.strokeStyle = palette.accent;
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = 0.65 * active;
+                ctx.beginPath();
+                ctx.moveTo(startX - 60, scanY);
+                ctx.lineTo(startX + spacing * 5 + 60, scanY);
+                ctx.stroke();
+            } else if (preset.engine === 'neural_pulse' && active > 0.05) {
+                ctx.strokeStyle = palette.letters[1];
+                ctx.lineWidth = 1.5;
+                ctx.globalAlpha = 0.35 * active;
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    const x1 = startX + i * spacing;
+                    const x2 = startX + (i + 1) * spacing;
+                    const y1 = cy + Math.sin(progress * 6 + i) * 22 * active;
+                    const y2 = cy + Math.sin(progress * 6 + i + 1) * 22 * active;
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                }
+                ctx.stroke();
+            } else if (preset.engine === 'wormhole_portal' && active > 0.05) {
+                for (let i = 0; i < 6; i++) {
+                    const px = startX + i * spacing;
+                    const rad = (fontSize * 0.65) * Ease.bell(p2) * active;
+                    if (rad > 2) {
+                        ctx.strokeStyle = palette.letters[i];
+                        ctx.lineWidth = 2;
+                        ctx.globalAlpha = 0.45;
+                        ctx.beginPath();
+                        ctx.ellipse(px, cy, rad * 0.4, rad, progress * 5 + i, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+                }
+            }
+            ctx.restore();
+        }
+
+        /**
+         * 渲染粒子系统层（星云汇聚、体素碎裂、萤火虫群、液压火花）
+         */
+        function drawParticlesLayer(preset, progress, p1, p2, p3, p4, letterStates, palette) {
+            const particleEngines = ['supernova_gather', 'voxel_shatter', 'swarm_boid', 'time_reversal', 'aurora_dust', 'firework_ember', 'hydraulic_press', 'laser_weld'];
+            if (!particleEngines.includes(preset.engine)) return;
+
+            const settle4 = Ease.inOutCubic(p4);
+            const bell2 = Ease.bell(p2);
+            const bell3 = Ease.bell(p3);
+
+            ctx.save();
+            particles.forEach((pt, idx) => {
+                const target = letterStates[pt.letterIdx];
+                let px = target.x;
+                let py = target.y;
+                let alpha = 0;
+
+                if (['supernova_gather', 'swarm_boid', 'aurora_dust', 'firework_ember'].includes(preset.engine)) {
+                    const scatter = (1 - Ease.inOutCubic(Math.min(1, progress * 3.5))) + bell3 * 0.85 * (1 - settle4);
+                    const swirlAngle = pt.phase + progress * 6;
+                    px = target.x + (pt.ox * Math.cos(swirlAngle) - pt.oy * Math.sin(swirlAngle)) * scatter;
+                    py = target.y + (pt.ox * Math.sin(swirlAngle) + pt.oy * Math.cos(swirlAngle)) * scatter;
+                    alpha = Math.min(0.95, scatter * 1.4);
+                } else if (['voxel_shatter', 'time_reversal'].includes(preset.engine)) {
+                    const explode = (bell2 + bell3 * 0.6) * (1 - settle4);
+                    px = target.x + pt.ox * explode * 1.1;
+                    py = target.y + pt.oy * explode * 1.1;
+                    alpha = explode;
+                } else {
+                    // 火花飞溅
+                    const spark = (bell2 + bell3) * (1 - settle4);
+                    px = target.x + pt.vx * spark * 28;
+                    py = target.y + pt.vy * spark * 28 + spark * spark * 35;
+                    alpha = spark * 0.9;
+                }
+
+                if (alpha > 0.02) {
+                    ctx.fillStyle = pt.color;
+                    ctx.globalAlpha = Math.min(1, alpha);
+                    if (preset.engine === 'voxel_shatter') {
+                        ctx.fillRect(px - pt.size, py - pt.size, pt.size * 2.2, pt.size * 2.2);
+                    } else {
+                        ctx.beginPath();
+                        ctx.arc(px, py, pt.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            });
+            ctx.restore();
+        }
+
+        /**
+         * ============================================================================
+         * 9. 绘制单个 Deople 品牌字母（含 3D 挤出厚度、双生量子重影、故障切片、镜面高光）
+         * ============================================================================
+         */
+        function drawSingleDeopleLetter(st, fontSize, palette) {
+            ctx.save();
+            ctx.translate(st.x, st.y);
+            ctx.rotate(st.rotation);
+            if (st.skewX !== 0) {
+                ctx.transform(1, 0, Math.tan(st.skewX), 1, 0, 0);
+            }
+            ctx.scale(st.scaleX, st.scaleY);
+            ctx.globalAlpha = Math.max(0, Math.min(1, st.alpha));
+
+            ctx.font = `900 ${fontSize}px 'Inter', sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // A. 绘制量子双生重影 / 棱镜色散重影
+            if (Math.abs(st.ghostOffset) > 0.5) {
+                ctx.save();
+                ctx.globalAlpha *= 0.45;
+                ctx.fillStyle = palette.accent;
+                ctx.fillText(st.char, -st.ghostOffset, -st.ghostOffset * 0.25);
+                ctx.fillStyle = palette.letters[(st.index + 2) % 6];
+                ctx.fillText(st.char, st.ghostOffset, st.ghostOffset * 0.25);
+                ctx.restore();
+            }
+
+            // B. 绘制 3D 立体挤出厚度层
+            if (st.extrude3D > 0.5) {
+                const layers = Math.min(12, Math.ceil(st.extrude3D));
+                for (let d = layers; d >= 1; d--) {
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
+                    ctx.fillText(st.char, d * 1.1, d * 1.1);
+                }
+            }
+
+            // C. 绘制赛博故障水平切片错位
+            if (st.glitchSlice > 0.5) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(-fontSize, -fontSize * 0.15, fontSize * 2, fontSize * 0.3);
+                ctx.clip();
+                ctx.fillStyle = palette.accent;
+                ctx.fillText(st.char, st.glitchSlice, 0);
+                ctx.restore();
+            }
+
+            // D. 主字母本体渲染（发光外晕 + 渐变金属/晶体填充）
+            ctx.shadowColor = st.color;
+            ctx.shadowBlur = st.glowBlur;
+
+            if (st.outlineOnly) {
+                ctx.strokeStyle = st.color;
+                ctx.lineWidth = 2.5;
+                ctx.strokeText(st.char, 0, 0);
+            } else {
+                const grad = ctx.createLinearGradient(0, -fontSize * 0.5, 0, fontSize * 0.5);
+                grad.addColorStop(0, '#FFFFFF');
+                grad.addColorStop(0.28, st.color);
+                grad.addColorStop(1, st.color);
+                ctx.fillStyle = grad;
+                ctx.fillText(st.char, 0, 0);
+            }
+
+            ctx.restore();
+        }
+
+        /**
+         * 更新并绘制点击画布触发的物理能量脉冲波
+         */
+        function updateAndDrawShockwaves(palette) {
+            for (let i = shockwaves.length - 1; i >= 0; i--) {
+                const sw = shockwaves[i];
+                sw.radius += 14;
+                sw.strength *= 0.94;
+                if (sw.strength < 0.02) {
+                    shockwaves.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.strokeStyle = palette.accent;
+                ctx.lineWidth = 2 * sw.strength;
+                ctx.globalAlpha = sw.strength * 0.7;
+                ctx.beginPath();
+                ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        // 画布点击交互：注入物理冲击波
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            shockwaves.push({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top,
+                radius: 10,
+                strength: 1.0
+            });
+        });
+
+        // 时间轴点击跳转交互
+        document.getElementById('timeline-bar').addEventListener('click', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            const currentPreset = PRESETS[currentIndex];
+            elapsedTime = ratio * currentPreset.duration;
+        });
+
+        /**
+         * ============================================================================
+         * 10. UI 状态更新、播放控制与列表渲染
+         * ============================================================================
+         */
+        function selectPreset(index) {
+            currentIndex = (index + PRESETS.length) % PRESETS.length;
+            elapsedTime = 0;
+            const preset = PRESETS[currentIndex];
+            initParticlesForPreset(preset);
+
+            // 更新舞台顶部 HUD 信息
+            const catObj = CATEGORIES.find(c => c.id === preset.category);
+            document.getElementById('hud-id').textContent = `#${String(preset.id).padStart(2, '0')}`;
+            document.getElementById('hud-category').textContent = catObj ? catObj.name : preset.category;
+            document.getElementById('hud-duration').textContent = `${preset.duration.toFixed(1)}s 完整叙事`;
+            document.getElementById('hud-title').textContent = preset.title;
+            document.getElementById('hud-desc').textContent = preset.desc;
+            document.getElementById('time-total').textContent = `${preset.duration.toFixed(1)}s`;
+
+            // 高亮右侧列表中对应卡片
+            document.querySelectorAll('.preset-card').forEach(card => {
+                const isSelected = Number(card.dataset.index) === currentIndex;
+                card.className = isSelected
+                    ? 'preset-card p-3 rounded-xl border border-indigo-500/80 bg-indigo-500/15 cursor-pointer transition shadow-md'
+                    : 'preset-card p-3 rounded-xl border border-slate-800/90 bg-slate-900/50 hover:bg-slate-800/80 cursor-pointer transition';
+            });
+
+            // 自动滚动可视区域
+            const activeCard = document.querySelector(`.preset-card[data-index="${currentIndex}"]`);
+            if (activeCard) {
+                activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function updateActIndicators(progress) {
+            const acts = [
+                { id: 'act-1', active: progress < 0.25 },
+                { id: 'act-2', active: progress >= 0.25 && progress < 0.55 },
+                { id: 'act-3', active: progress >= 0.55 && progress < 0.80 },
+                { id: 'act-4', active: progress >= 0.80 }
+            ];
+            acts.forEach(a => {
+                const el = document.getElementById(a.id);
+                if (a.active) {
+                    el.className = 'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all bg-indigo-500/25 text-indigo-200 border border-indigo-400/50 shadow-sm';
+                } else {
+                    el.className = 'px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all text-slate-500 border border-transparent';
+                }
+            });
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            document.getElementById('icon-pause').classList.toggle('hidden', !isPlaying);
+            document.getElementById('icon-play').classList.toggle('hidden', isPlaying);
+            document.getElementById('text-play-pause').textContent = isPlaying ? '暂停' : '播放';
+        }
+
+        function replayCurrent() {
+            elapsedTime = 0;
+            if (!isPlaying) togglePlay();
+        }
+
+        function nextPreset() {
+            if (playMode === 'random') {
+                triggerRandomPreset();
+            } else {
+                selectPreset(currentIndex + 1);
+            }
+        }
+
+        function prevPreset() {
+            selectPreset(currentIndex - 1);
+        }
+
+        function triggerRandomPreset() {
+            let rand = Math.floor(Math.random() * PRESETS.length);
+            if (rand === currentIndex && PRESETS.length > 1) {
+                rand = (rand + 1) % PRESETS.length;
+            }
+            selectPreset(rand);
+        }
+
+        function cyclePlayMode() {
+            const modes = [
+                { id: 'continuous', icon: '🔁', text: '连续浏览' },
+                { id: 'random', icon: '🎲', text: '随机漫游' },
+                { id: 'loop', icon: '🔂', text: '单段循环' }
+            ];
+            const idx = (modes.findIndex(m => m.id === playMode) + 1) % modes.length;
+            playMode = modes[idx].id;
+            document.getElementById('play-mode-icon').textContent = modes[idx].icon;
+            document.getElementById('play-mode-text').textContent = modes[idx].text;
+            showToast(`已切换播放模式：${modes[idx].text}`);
+        }
+
+        function updateSpeed(val) {
+            playbackSpeed = parseFloat(val);
+            document.getElementById('speed-value').textContent = `${playbackSpeed.toFixed(2)}x`;
+        }
+
+        function setPalette(key) {
+            currentPaletteKey = key;
+            initParticlesForPreset(PRESETS[currentIndex]);
+            document.querySelectorAll('.palette-btn').forEach(btn => {
+                const active = btn.dataset.palette === key;
+                btn.className = active
+                    ? 'palette-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition whitespace-nowrap flex items-center gap-1.5'
+                    : 'palette-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition whitespace-nowrap';
+            });
+            showToast(`配色方案已切换为：${PALETTES[key].name}`);
+        }
+
+        function renderCategoryTabs() {
+            const container = document.getElementById('category-tabs');
+            container.innerHTML = CATEGORIES.map(cat => `
+                <button onclick="setCategory('${cat.id}')" data-cat="${cat.id}" 
+                    class="cat-tab px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition ${cat.id === currentCategory ? 'bg-indigo-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'}">
+                    ${cat.name}
+                </button>
+            `).join('');
+        }
+
+        function setCategory(catId) {
+            currentCategory = catId;
+            renderCategoryTabs();
+            filterPresets();
+        }
+
+        function filterPresets() {
+            const query = document.getElementById('search-input').value.trim().toLowerCase();
+            const filtered = PRESETS.map((p, idx) => ({ ...p, originalIndex: idx })).filter(p => {
+                const matchCat = currentCategory === 'all' || p.category === currentCategory;
+                const matchQuery = !query || p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query);
+                return matchCat && matchQuery;
+            });
+
+            document.getElementById('filtered-count').textContent = `(${filtered.length})`;
+            const listEl = document.getElementById('preset-list');
+
+            listEl.innerHTML = filtered.map(p => {
+                const isSelected = p.originalIndex === currentIndex;
+                const catObj = CATEGORIES.find(c => c.id === p.category);
+                return `
+                    <div onclick="selectPreset(${p.originalIndex})" data-index="${p.originalIndex}"
+                        class="preset-card p-3 rounded-xl border ${isSelected ? 'border-indigo-500/80 bg-indigo-500/15 shadow-md' : 'border-slate-800/90 bg-slate-900/50 hover:bg-slate-800/80'} cursor-pointer transition">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="font-mono text-xs font-bold text-indigo-400">#${String(p.id).padStart(2, '0')}</span>
+                                <h4 class="font-semibold text-xs text-slate-100 truncate">${p.title}</h4>
+                            </div>
+                            <span class="font-mono text-[11px] text-slate-400 shrink-0">${p.duration}s</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">${p.desc}</p>
+                        <div class="mt-2 flex items-center justify-between">
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">${catObj ? catObj.name : p.category}</span>
+                            <span class="text-[10px] font-mono text-cyan-400/80">${p.engine}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function exportCurrentPreset() {
+            const preset = PRESETS[currentIndex];
+            const payload = JSON.stringify({
+                brand: 'Deople',
+                presetId: preset.id,
+                title: preset.title,
+                engine: preset.engine,
+                duration: preset.duration,
+                palette: currentPaletteKey,
+                speed: playbackSpeed,
+                params: preset.params
+            }, null, 2);
+
+            const textarea = document.createElement('textarea');
+            textarea.value = payload;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast(`已复制「#${preset.id} ${preset.title}」动效配置 JSON！`);
+        }
+
+        let toastTimer = null;
+        function showToast(msg) {
+            const box = document.getElementById('toast-box');
+            document.getElementById('toast-msg').textContent = msg;
+            box.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                box.classList.add('translate-y-20', 'opacity-0');
+            }, 2600);
+        }
+
+        /**
+         * ============================================================================
+         * 11. 主动画循环与 FPS 监测
+         * ============================================================================
+         */
+        let frameCount = 0;
+        let lastFpsUpdate = performance.now();
+
+        function mainLoop(now) {
+            const dt = (now - lastFrameTime) / 1000;
+            lastFrameTime = now;
+
+            // 更新 FPS 显示
+            frameCount++;
+            if (now - lastFpsUpdate >= 600) {
+                const fps = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
+                document.getElementById('fps-counter').textContent = `${fps} FPS`;
+                frameCount = 0;
+                lastFpsUpdate = now;
+            }
+
+            const preset = PRESETS[currentIndex];
+
+            if (isPlaying) {
+                elapsedTime += dt * playbackSpeed;
+                if (elapsedTime >= preset.duration) {
+                    if (playMode === 'loop') {
+                        elapsedTime = 0;
+                    } else if (playMode === 'random') {
+                        triggerRandomPreset();
+                    } else {
+                        selectPreset(currentIndex + 1);
+                    }
+                }
+            }
+
+            const currentPreset = PRESETS[currentIndex];
+            const progress = Math.max(0, Math.min(1, elapsedTime / currentPreset.duration));
+
+            // 更新进度条与时间显示
+            document.getElementById('timeline-progress').style.width = `${progress * 100}%`;
+            document.getElementById('time-current').textContent = `${elapsedTime.toFixed(1)}s`;
+
+            // 渲染当前帧
+            renderFrame(progress, currentPreset);
+
+            requestAnimationFrame(mainLoop);
+        }
+
+        // 键盘快捷键支持 (空格暂停/播放，左右方向键切换预设)
+        window.addEventListener('keydown', (e) => {
+            if (document.activeElement.tagName === 'INPUT') return;
+            if (e.code === 'Space') {
+                e.preventDefault();
+                togglePlay();
+            } else if (e.code === 'ArrowRight') {
+                nextPreset();
+            } else if (e.code === 'ArrowLeft') {
+                prevPreset();
+            }
+        });
+
+        // 页面加载完毕后启动实验室
+        window.onload = function () {
+            resizeCanvas();
+            renderCategoryTabs();
+            filterPresets();
+            selectPreset(0);
+            lastFrameTime = performance.now();
+            requestAnimationFrame(mainLoop);
+        };
+    </script>
+</body>
+</html>
