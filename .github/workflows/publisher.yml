@@ -1,4 +1,3 @@
-
 name: Deople Publisher
 
 on:
@@ -49,8 +48,8 @@ jobs:
             pip install -r requirements.txt
           fi
 
-      # publisher.py 生成 JSON 到网站仓库
-      - name: Generate websites.json
+      # publisher.py 生成分片 JSON 和 manifest.json
+      - name: Generate sharded website data
         working-directory: crawler
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
@@ -58,27 +57,90 @@ jobs:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           IMAGE_BASE_URL: https://img.deople.ai
           PUBLISH_BATCH_SIZE: "500"
+          PUBLISH_SHARD_SIZE: "500"
           PUBLISH_OUTPUT: ../website/data/websites.json
+          PUBLISH_OUTPUT_DIR: ../website/data
         run: python -u publisher.py
 
-      # 检查 JSON
-      - name: Validate JSON
+      # 检查 manifest 和全部分片 JSON
+      - name: Validate sharded JSON
         working-directory: website
-        run: python -m json.tool data/websites.json > /dev/null
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
 
-      # 提交到 dime1x/dime1x.github.io
-      - name: Commit and push JSON
+          data_dir = Path("data")
+          manifest_path = data_dir / "manifest.json"
+
+          if not manifest_path.exists():
+              raise SystemExit("错误：data/manifest.json 不存在")
+
+          manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+          files = manifest.get("files")
+
+          if not isinstance(files, list):
+              raise SystemExit("错误：manifest.files 必须是数组")
+
+          total = 0
+          seen = set()
+
+          for entry in files:
+              relative_path = entry.get("path", "").lstrip("/")
+              if not relative_path.startswith("data/"):
+                  raise SystemExit(f"错误：分片路径不正确：{relative_path}")
+
+              shard_path = Path(relative_path)
+              if not shard_path.exists():
+                  raise SystemExit(f"错误：分片文件不存在：{shard_path}")
+
+              payload = json.loads(shard_path.read_text(encoding="utf-8"))
+              websites = payload.get("websites")
+
+              if not isinstance(websites, list):
+                  raise SystemExit(f"错误：{shard_path} 的 websites 不是数组")
+
+              if payload.get("count") != len(websites):
+                  raise SystemExit(f"错误：{shard_path} 内部数量不一致")
+
+              if entry.get("count") != len(websites):
+                  raise SystemExit(f"错误：manifest 与 {shard_path} 数量不一致")
+
+              for item in websites:
+                  domain = item.get("domain")
+                  if not domain:
+                      raise SystemExit(f"错误：{shard_path} 存在空 domain")
+                  if domain in seen:
+                      raise SystemExit(f"错误：发现重复域名：{domain}")
+                  seen.add(domain)
+
+              total += len(websites)
+              print(f"通过：{shard_path}（{len(websites)} 条）")
+
+          if total != manifest.get("total"):
+              raise SystemExit(
+                  f"错误：manifest total={manifest.get('total')}，实际={total}"
+              )
+
+          if len(files) != manifest.get("total_shards"):
+              raise SystemExit("错误：manifest 分片总数不一致")
+
+          print(f"分片校验通过：共 {total} 条网站，{len(files)} 个文件")
+          PY
+
+      # 提交 manifest 和所有分片（包括删除的旧分片）
+      - name: Commit and push website data
         working-directory: website
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add data/websites.json
+          git add -A -- data/manifest.json data/websites/
 
           if git diff --cached --quiet; then
-            echo "websites.json 没有变化，无需提交"
+            echo "网站分片数据没有变化，无需提交"
             exit 0
           fi
 
-          git commit -m "Update website directory data"
+          git commit -m "Update sharded website directory data"
           git push origin main
