@@ -208,39 +208,34 @@
 
     <!-- JAVASCRIPT & DATA LOGIC -->
     <script>
-        // index.html 与 websites.json 放在同一目录时，使用此路径
-        const DATA_URLS = ['./data/websites.json'];
+        // Publisher generates /data/manifest.json and /data/websites/001.json etc.
+        const MANIFEST_URL = new URL('/data/manifest.json', window.location.origin).toString();
         const ITEMS_PER_PAGE = 70;
 
-        let cardsData = [];
+        let manifest = null;
         let currentPage = 1;
         let searchFilter = '';
+        let isSearching = false;
+        const shardCache = new Map();
+        let renderSequence = 0;
 
         const imageObserver = ('IntersectionObserver' in window)
             ? new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (!entry.isIntersecting) return;
-
                     const img = entry.target;
                     const imageUrl = img.dataset.src;
-
                     if (imageUrl) {
                         img.src = imageUrl;
                         img.removeAttribute('data-src');
                     }
-
                     observer.unobserve(img);
                 });
-            }, {
-                rootMargin: '600px 0px',
-                threshold: 0
-            })
+            }, { rootMargin: '600px 0px', threshold: 0 })
             : null;
 
         function observeLazyImages(root = document) {
-            const images = root.querySelectorAll('img[data-src]');
-
-            images.forEach(img => {
+            root.querySelectorAll('img[data-src]').forEach(img => {
                 if (imageObserver) {
                     imageObserver.observe(img);
                 } else {
@@ -260,144 +255,161 @@
             }[ch]));
         }
 
-        async function loadWebsiteData() {
-            const container = document.getElementById('cards-container');
-            const indicator = document.getElementById('page-indicator');
+        async function fetchJson(url, cacheMode = 'force-cache') {
+            const response = await fetch(url, { cache: cacheMode });
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${url}`);
+            return response.json();
+        }
 
-            container.innerHTML = '<div class="text-center py-12 text-textMuted"><p class="text-sm font-bold">Loading website list...</p></div>';
-            indicator.textContent = 'Loading...';
+        async function loadShard(index) {
+            if (!manifest || index < 0 || index >= manifest.files.length) return [];
+            if (shardCache.has(index)) return shardCache.get(index);
 
-            try {
-                const results = await Promise.all(
-                    DATA_URLS.map(async (url) => {
-                        const response = await fetch(url, { cache: 'no-cache' });
-
-                        if (!response.ok) {
-                            throw new Error(`Failed to load ${url}: HTTP ${response.status}`);
-                        }
-
-                        const data = await response.json();
-
-                        if (Array.isArray(data)) return data;
-                        if (data && Array.isArray(data.websites)) return data.websites;
-                        if (data && Array.isArray(data.data)) return data.data;
-
-                        throw new Error(`Invalid JSON format in ${url}. Expected an array or an object containing a 'websites' or 'data' array.`);
-                    })
-                );
-
-                const source = results.flat();
-
-                cardsData = source.map((v, i) => ({
-                    id: `site-${i + 1}`,
-                    input: v.input || v.domain || '',
+            const entry = manifest.files[index];
+            const shardUrl = new URL(entry.path, window.location.origin).toString();
+            const promise = fetchJson(shardUrl).then(payload => {
+                if (!payload || !Array.isArray(payload.websites)) {
+                    throw new Error(`Invalid shard JSON: ${entry.path}`);
+                }
+                return payload.websites.map((v, i) => ({
+                    id: v.id || `${index}-${i}`,
+                    input: v.domain || v.url || '',
                     url: v.url || (v.domain ? `https://${v.domain}` : '#'),
                     title: v.title || 'Untitled Website',
                     description: v.description || 'No description available...',
-                    image: v.image || v.image_mobile || '',
-                    status: v.status || 200
+                    image: v.image || '',
+                    status: v.status || 200,
+                    keywords: Array.isArray(v.keywords) ? v.keywords : []
                 }));
-
-                console.log(`Successfully loaded ${cardsData.length} websites from JSON files.`);
-                renderFeedCards();
-
-            } catch (error) {
-                console.error('Failed to load website data:', error);
-
-                container.innerHTML = `
-                    <div class="text-center py-10 px-5 bg-white border-y border-borderSubtle">
-                        <p class="text-sm font-extrabold text-textPrimary">Failed to load website data</p>
-                        <p class="text-xs text-textMuted mt-2">Note: Due to browser CORS security restrictions, opening local HTML files directly cannot fetch JSON files. Please use VS Code Live Server or a local HTTP server.</p>
-                    </div>`;
-
-                indicator.textContent = 'Failed to load data';
-            }
-        }
-
-        function getFilteredData() {
-            const q = searchFilter.toLowerCase().trim();
-
-            return cardsData.filter(item => {
-                return !q || [item.title, item.description, item.input, item.url]
-                    .join(' ')
-                    .toLowerCase()
-                    .includes(q);
+            }).catch(error => {
+                shardCache.delete(index);
+                throw error;
             });
+
+            shardCache.set(index, promise);
+            return promise;
         }
 
-        function renderFeedCards() {
-            const container = document.getElementById('cards-container');
-            container.innerHTML = '';
+        async function loadPageItems(page) {
+            const start = (page - 1) * ITEMS_PER_PAGE;
+            const end = Math.min(start + ITEMS_PER_PAGE, manifest.total);
+            if (start >= end) return [];
 
-            const filtered = getFilteredData();
-            const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
-
-            currentPage = Math.min(Math.max(1, currentPage), totalPages);
-
-            const pageItems = filtered.slice(
-                (currentPage - 1) * ITEMS_PER_PAGE,
-                currentPage * ITEMS_PER_PAGE
+            const firstShard = Math.floor(start / manifest.shard_size);
+            const lastShard = Math.floor((end - 1) / manifest.shard_size);
+            const loaded = await Promise.all(
+                Array.from({ length: lastShard - firstShard + 1 }, (_, n) =>
+                    loadShard(firstShard + n)
+                )
             );
 
-            if (!pageItems.length) {
-                container.innerHTML = '<div class="text-center py-12 text-textMuted bg-white border-y border-borderSubtle"><p class="text-sm font-bold">No matching websites found</p></div>';
-                renderPagination(0, 0);
-                return;
+            const result = [];
+            for (let shardIndex = firstShard; shardIndex <= lastShard; shardIndex++) {
+                const items = loaded[shardIndex - firstShard];
+                const shardStart = shardIndex * manifest.shard_size;
+                const from = Math.max(start, shardStart) - shardStart;
+                const to = Math.min(end, shardStart + items.length) - shardStart;
+                result.push(...items.slice(from, to));
             }
+            return result;
+        }
 
-            pageItems.forEach((item, index) => {
-                const card = document.createElement('article');
+        async function loadAllForSearch() {
+            const all = await Promise.all(
+                manifest.files.map((_, index) => loadShard(index))
+            );
+            return all.flat();
+        }
 
-                card.className = 'bg-white border border-borderSubtle rounded-2xl w-full max-w-[760px] h-[190px] sm:h-[220px] mx-auto overflow-hidden shadow-sm transition-all hover:shadow-md';
+        function getFilteredData(allData) {
+            const q = searchFilter.toLowerCase().trim();
+            if (!q) return allData;
+            return allData.filter(item =>
+                [item.title, item.description, item.input, item.url, ...(item.keywords || [])]
+                    .join(' ')
+                    .toLowerCase()
+                    .includes(q)
+            );
+        }
 
-                // 图片：只显示，不再支持点击放大
-                const imageHtml = item.image ? `
-                    <div class="w-[38%] sm:w-[220px] h-full shrink-0 self-stretch bg-gray-100 overflow-hidden relative">
-                        ${index === 0
-                            ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
-                            : `<img data-src="${esc(item.image)}" alt="${esc(item.title)}" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
-                        }
-                    </div>
-                ` : '';
+        async function renderFeedCards() {
+            const sequence = ++renderSequence;
+            const container = document.getElementById('cards-container');
+            const indicator = document.getElementById('page-indicator');
+            const isSearch = Boolean(searchFilter.trim());
 
-                // 内容：删除首字母色块和访问链接
-                const contentHtml = `
-                    <div class="flex-1 min-w-0 p-3 sm:p-5 flex flex-col justify-start gap-2">
+            container.innerHTML = '<div class="text-center py-12 text-textMuted"><p class="text-sm font-bold">Loading websites...</p></div>';
+            indicator.textContent = 'Loading...';
 
-                        <div class="flex items-center min-w-0">
-                            <span class="text-xs font-semibold text-textMuted truncate">
-                                ${esc(item.input || item.url)}
-                            </span>
+            try {
+                let pageItems;
+                let totalCount;
+                let totalPages;
+
+                if (isSearch) {
+                    isSearching = true;
+                    const all = await loadAllForSearch();
+                    if (sequence !== renderSequence) return;
+                    const filtered = getFilteredData(all);
+                    totalCount = filtered.length;
+                    totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE) || 1;
+                    currentPage = Math.min(Math.max(1, currentPage), totalPages);
+                    pageItems = filtered.slice(
+                        (currentPage - 1) * ITEMS_PER_PAGE,
+                        currentPage * ITEMS_PER_PAGE
+                    );
+                } else {
+                    isSearching = false;
+                    totalCount = manifest.total;
+                    totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE) || 1;
+                    currentPage = Math.min(Math.max(1, currentPage), totalPages);
+                    pageItems = await loadPageItems(currentPage);
+                    if (sequence !== renderSequence) return;
+                }
+
+                container.innerHTML = '';
+                if (!pageItems.length) {
+                    container.innerHTML = '<div class="text-center py-12 text-textMuted bg-white border-y border-borderSubtle"><p class="text-sm font-bold">No matching websites found</p></div>';
+                    renderPagination(totalCount, totalPages);
+                    return;
+                }
+
+                pageItems.forEach((item, index) => {
+                    const card = document.createElement('article');
+                    card.className = 'bg-white border border-borderSubtle rounded-2xl w-full max-w-[760px] h-[190px] sm:h-[220px] mx-auto overflow-hidden shadow-sm transition-all hover:shadow-md';
+
+                    const imageHtml = item.image ? `
+                        <div class="w-[38%] sm:w-[220px] h-full shrink-0 self-stretch bg-gray-100 overflow-hidden relative">
+                            ${index === 0 && currentPage === 1
+                                ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
+                                : `<img data-src="${esc(item.image)}" alt="${esc(item.title)}" decoding="async" class="w-full h-full object-cover object-top hover:opacity-95 transition-opacity" onerror="this.parentElement.style.display='none'" />`
+                            }
                         </div>
+                    ` : '';
 
-                        <h3 class="text-base sm:text-xl font-normal text-blue-600 leading-snug line-clamp-2">
-                            <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-normal hover:underline">
-                                ${esc(item.title)}
-                            </a>
-                        </h3>
+                    const contentHtml = `
+                        <div class="flex-1 min-w-0 p-3 sm:p-5 flex flex-col justify-start gap-2">
+                            <div class="flex items-center min-w-0">
+                                <span class="text-xs font-semibold text-textMuted truncate">${esc(item.input || item.url)}</span>
+                            </div>
+                            <h3 class="text-base sm:text-xl font-normal text-blue-600 leading-snug line-clamp-2">
+                                <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-normal hover:underline">${esc(item.title)}</a>
+                            </h3>
+                            <p class="text-xs sm:text-sm text-textMuted line-clamp-4 leading-relaxed">${esc(item.description)}</p>
+                        </div>
+                    `;
 
-                        <p class="text-xs sm:text-sm text-textMuted line-clamp-4 leading-relaxed">
-                            ${esc(item.description)}
-                        </p>
+                    card.innerHTML = `<div class="flex items-stretch w-full h-full overflow-hidden">${imageHtml}${contentHtml}</div>`;
+                    container.appendChild(card);
+                    observeLazyImages(card);
+                });
 
-                    </div>
-                `;
-
-                card.innerHTML = `
-                    <div class="flex items-stretch w-full h-full overflow-hidden">
-                        ${imageHtml}
-                        ${contentHtml}
-                    </div>
-                `;
-
-                container.appendChild(card);
-                observeLazyImages(card);
-            });
-
-            renderPagination(filtered.length, totalPages);
-
-            if (window.lucide) {
-                lucide.createIcons();
+                renderPagination(totalCount, totalPages);
+                if (window.lucide) lucide.createIcons();
+            } catch (error) {
+                console.error('Failed to render website data:', error);
+                container.innerHTML = `<div class="text-center py-10 px-5 bg-white border-y border-borderSubtle"><p class="text-sm font-extrabold text-textPrimary">Failed to load website data</p><p class="text-xs text-textMuted mt-2">Request failed: ${esc(error.message || error)}</p></div>`;
+                indicator.textContent = 'Failed to load data';
             }
         }
 
@@ -408,38 +420,50 @@
 
             prev.disabled = currentPage <= 1;
             next.disabled = !totalPages || currentPage >= totalPages;
-
             document.getElementById('page-indicator').innerText =
                 `Showing page ${currentPage} of ${totalPages} (${totalCount} total websites)`;
 
             nums.innerHTML = '';
-
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 2) {
-                    const b = document.createElement('button');
-
-                    b.className = i === currentPage
+                    const button = document.createElement('button');
+                    button.className = i === currentPage
                         ? 'w-8 h-8 rounded-full bg-cardDark text-white text-xs font-bold shadow-sm'
                         : 'w-8 h-8 rounded-full bg-white border border-borderSubtle text-textPrimary hover:bg-gray-100 text-xs font-bold';
-
-                    b.textContent = i;
-
-                    b.onclick = () => {
+                    button.textContent = i;
+                    button.onclick = () => {
                         currentPage = i;
                         renderFeedCards();
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     };
-
-                    nums.appendChild(b);
+                    nums.appendChild(button);
                 }
+            }
+        }
+
+        async function loadWebsiteData() {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '<div class="text-center py-12 text-textMuted"><p class="text-sm font-bold">Loading website list...</p></div>';
+
+            try {
+                manifest = await fetchJson(MANIFEST_URL, 'no-cache');
+                if (!manifest || !Array.isArray(manifest.files) || !Number.isFinite(manifest.total) ||
+                    !Number.isFinite(manifest.shard_size) || manifest.shard_size < 1) {
+                    throw new Error('Invalid manifest.json format');
+                }
+                await renderFeedCards();
+            } catch (error) {
+                console.error('Failed to load website manifest:', error);
+                container.innerHTML = `<div class="text-center py-10 px-5 bg-white border-y border-borderSubtle"><p class="text-sm font-extrabold text-textPrimary">Failed to load website data</p><p class="text-xs text-textMuted mt-2">Manifest request failed: ${esc(error.message || error)}</p><p class="text-[11px] text-textMuted mt-2 break-all">${esc(MANIFEST_URL)}</p></div>`;
+                document.getElementById('page-indicator').textContent = 'Failed to load data';
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             loadWebsiteData();
 
-            document.getElementById('main-search').addEventListener('input', e => {
-                searchFilter = e.target.value;
+            document.getElementById('main-search').addEventListener('input', () => {
+                searchFilter = document.getElementById('main-search').value;
                 currentPage = 1;
                 renderFeedCards();
             });
@@ -453,13 +477,20 @@
             });
 
             document.getElementById('next-page').addEventListener('click', () => {
-                const pages = Math.ceil(getFilteredData().length / ITEMS_PER_PAGE);
-
-                if (currentPage < pages) {
+                const total = searchFilter.trim()
+                    ? null
+                    : manifest?.total;
+                const pages = searchFilter.trim()
+                    ? null
+                    : Math.ceil(total / ITEMS_PER_PAGE);
+                if (searchFilter.trim()) {
                     currentPage++;
                     renderFeedCards();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else if (manifest && currentPage < pages) {
+                    currentPage++;
+                    renderFeedCards();
                 }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
     </script>
