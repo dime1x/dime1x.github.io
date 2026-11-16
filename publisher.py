@@ -6,9 +6,16 @@ from pathlib import Path
 
 from database import _query, _rows
 
+
+# D1 read batch size and frontend JSON shard size.
 BATCH_SIZE = int(os.getenv("PUBLISH_BATCH_SIZE", "500"))
+SHARD_SIZE = int(os.getenv("PUBLISH_SHARD_SIZE", "500"))
+
 IMAGE_BASE_URL = os.getenv("IMAGE_BASE_URL", "https://img.deople.ai").rstrip("/")
 OUTPUT_FILE = Path(os.getenv("PUBLISH_OUTPUT", "website/data/websites.json"))
+OUTPUT_DIR = Path(os.getenv("PUBLISH_OUTPUT_DIR", str(OUTPUT_FILE.parent)))
+SHARDS_DIR = OUTPUT_DIR / "websites"
+MANIFEST_FILE = OUTPUT_DIR / "manifest.json"
 
 
 def normalize_keywords(value):
@@ -107,62 +114,155 @@ def get_all_websites():
     return websites
 
 
-def save_json(websites):
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+def write_json_atomic(path, payload):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp_file = path.with_suffix(path.suffix + ".tmp")
 
-    payload = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "total": len(websites),
-        "websites": websites,
-    }
-
-    temp_file = OUTPUT_FILE.with_suffix(OUTPUT_FILE.suffix + ".tmp")
     with temp_file.open("w", encoding="utf-8") as file:
         json.dump(payload, file, ensure_ascii=False, separators=(",", ":"))
         file.write("\n")
 
-    os.replace(temp_file, OUTPUT_FILE)
-    print(f"JSON 已生成：{OUTPUT_FILE}")
-    print(f"网站数量：{len(websites)}")
+    os.replace(temp_file, path)
 
 
-def verify_json():
-    with OUTPUT_FILE.open("r", encoding="utf-8") as file:
-        payload = json.load(file)
+def save_shards(websites):
+    if SHARD_SIZE < 1:
+        raise ValueError("PUBLISH_SHARD_SIZE 必须大于 0")
 
-    websites = payload.get("websites")
-    if not isinstance(websites, list):
-        raise ValueError("JSON 格式错误：websites 必须是数组")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    SHARDS_DIR.mkdir(parents=True, exist_ok=True)
 
-    if payload.get("total") != len(websites):
+    generated_at = datetime.now(timezone.utc).isoformat()
+    files = []
+
+    total = len(websites)
+    total_shards = (total + SHARD_SIZE - 1) // SHARD_SIZE
+
+    for shard_index in range(total_shards):
+        start = shard_index * SHARD_SIZE
+        batch = websites[start:start + SHARD_SIZE]
+        filename = f"{shard_index + 1:03d}.json"
+        shard_path = SHARDS_DIR / filename
+
+        payload = {
+            "generated_at": generated_at,
+            "shard": shard_index + 1,
+            "count": len(batch),
+            "websites": batch,
+        }
+        write_json_atomic(shard_path, payload)
+
+        files.append({
+            "id": shard_index + 1,
+            "path": f"/data/websites/{filename}",
+            "count": len(batch),
+        })
+
+        print(f"已生成分片：{shard_path}（{len(batch)} 条）")
+
+    manifest = {
+        "version": 1,
+        "generated_at": generated_at,
+        "total": total,
+        "shard_size": SHARD_SIZE,
+        "total_shards": total_shards,
+        "files": files,
+    }
+
+    # Publish the manifest last so it never points to shards that have not
+    # finished being written.
+    write_json_atomic(MANIFEST_FILE, manifest)
+
+    # Remove obsolete numbered shard files left by a previous larger publish.
+    active_names = {entry["path"].rsplit("/", 1)[-1] for entry in files}
+    for old_file in SHARDS_DIR.glob("*.json"):
+        if old_file.name not in active_names and old_file.stem.isdigit():
+            old_file.unlink()
+
+    print(f"Manifest 已生成：{MANIFEST_FILE}")
+    print(f"网站总数：{total}")
+    print(f"分片数量：{total_shards}")
+    print(f"每份最多：{SHARD_SIZE} 条")
+
+
+def verify_output(expected_total):
+    with MANIFEST_FILE.open("r", encoding="utf-8") as file:
+        manifest = json.load(file)
+
+    if manifest.get("total") != expected_total:
         raise ValueError(
-            f"JSON 数量不一致：total={payload.get('total')}，"
-            f"实际 websites={len(websites)}"
+            f"Manifest 总数不一致：{manifest.get('total')}，预期 {expected_total}"
         )
 
-    required_fields = {"domain", "url", "title", "description", "keywords", "image"}
-    for index, item in enumerate(websites):
-        missing = required_fields - set(item)
-        if missing:
-            raise ValueError(f"第 {index + 1} 条记录缺少字段：{sorted(missing)}")
+    entries = manifest.get("files")
+    if not isinstance(entries, list):
+        raise ValueError("Manifest 格式错误：files 必须是数组")
 
-    print(f"JSON 校验通过：{len(websites)} 条网站记录")
+    if len(entries) != manifest.get("total_shards"):
+        raise ValueError("Manifest 分片数量不一致")
+
+    required_fields = {"domain", "url", "title", "description", "keywords", "image"}
+    seen_domains = set()
+    verified_count = 0
+
+    for entry in entries:
+        filename = entry.get("path", "").rsplit("/", 1)[-1]
+        shard_path = SHARDS_DIR / filename
+
+        with shard_path.open("r", encoding="utf-8") as file:
+            payload = json.load(file)
+
+        websites = payload.get("websites")
+        if not isinstance(websites, list):
+            raise ValueError(f"{shard_path} 格式错误：websites 必须是数组")
+
+        if payload.get("count") != len(websites):
+            raise ValueError(f"{shard_path} 数量不一致")
+
+        if entry.get("count") != len(websites):
+            raise ValueError(f"Manifest 与分片数量不一致：{filename}")
+
+        if len(websites) > SHARD_SIZE:
+            raise ValueError(f"分片超过 {SHARD_SIZE} 条：{filename}")
+
+        for index, item in enumerate(websites):
+            missing = required_fields - set(item)
+            if missing:
+                raise ValueError(
+                    f"{filename} 第 {index + 1} 条记录缺少字段：{sorted(missing)}"
+                )
+
+            domain = item.get("domain", "")
+            if domain in seen_domains:
+                raise ValueError(f"发现重复域名：{domain}")
+            seen_domains.add(domain)
+
+        verified_count += len(websites)
+
+    if verified_count != expected_total:
+        raise ValueError(
+            f"分片记录总数不一致：{verified_count}，预期 {expected_total}"
+        )
+
+    print(f"JSON 分片校验通过：{verified_count} 条网站记录")
 
 
 def main():
     print("开始从 Cloudflare D1 发布网站数据")
+    print(f"D1 读取批次：{BATCH_SIZE}")
+    print(f"JSON 分片大小：{SHARD_SIZE}")
 
     websites = get_all_websites()
 
-    # Avoid accidentally replacing the live site's JSON with an empty file.
+    # Avoid accidentally replacing the live site's data with an empty publish.
     if not websites:
         raise RuntimeError(
-            "没有找到符合发布条件的网站；为避免覆盖线上 JSON，本次停止发布。"
+            "没有找到符合发布条件的网站；为避免覆盖线上数据，本次停止发布。"
         )
 
-    save_json(websites)
-    verify_json()
-    print("Publisher 完成")
+    save_shards(websites)
+    verify_output(len(websites))
+    print("Publisher 分片发布完成")
 
 
 if __name__ == "__main__":
