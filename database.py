@@ -195,6 +195,8 @@ def claim_pending_screenshots(limit: int = 20) -> List[Dict[str, Any]]:
         SELECT domain, url, final_url
         FROM websites
         WHERE image_status = 'pending'
+          AND quality_status = 'qualified'
+          AND crawl_status = 'success'
         ORDER BY first_seen ASC
         LIMIT ?
         """,
