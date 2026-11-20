@@ -1,0 +1,52 @@
+\
+name: Generate Deople Pages
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 02:30 UTC = 10:30 Beijing time
+    - cron: "30 2 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: generate-deople-pages
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate pages and sitemap from manifest
+        run: |
+          python generate_pages.py \
+            --input data/manifest.json \
+            --output . \
+            --base-url https://deople.ai \
+            --per-page 80 \
+            --seed 42
+
+      - name: Commit generated pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add page/ sitemap.xml
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+          else
+            git commit -m "Generate Deople listing pages and sitemap"
+            git push
+          fi
