@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Deople – Explore the World of Websites</title>
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="keywords" content="discover websites, interesting websites, cool websites, useful websites, new websites, website directory, website discovery, AI websites, AI tools, shopping websites, online shopping, technology websites, finance websites, social media websites, entertainment websites, gaming websites, education websites, design websites, online tools, news websites, travel websites">
     <meta name="description" content="Discover and explore websites from around the world. Find shopping sites, technology platforms, financial services, social networks, news, entertainment, online tools, and more.">
 
@@ -219,6 +219,18 @@
         const shardCache = new Map();
         let renderSequence = 0;
 
+        // 每次打开页面时，仅随机打乱第一个 JSON 分片（通常是 001.json）
+        let firstShardRandomized = null;
+
+        function shuffleArray(array) {
+            const result = [...array];
+            for (let i = result.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [result[i], result[j]] = [result[j], result[i]];
+            }
+            return result;
+        }
+
         const imageObserver = ('IntersectionObserver' in window)
             ? new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
@@ -305,7 +317,10 @@
 
             const result = [];
             for (let shardIndex = firstShard; shardIndex <= lastShard; shardIndex++) {
-                const items = loaded[shardIndex - firstShard];
+                // 只有第一个分片使用随机后的顺序；其他分片保持原始顺序
+                const items = shardIndex === 0 && firstShardRandomized
+                    ? firstShardRandomized
+                    : loaded[shardIndex - firstShard];
                 const shardStart = shardIndex * manifest.shard_size;
                 const from = Math.max(start, shardStart) - shardStart;
                 const to = Math.min(end, shardStart + items.length) - shardStart;
@@ -451,6 +466,13 @@
                     !Number.isFinite(manifest.shard_size) || manifest.shard_size < 1) {
                     throw new Error('Invalid manifest.json format');
                 }
+
+                // 只读取并随机打乱第一个 JSON 分片，不修改服务器上的 JSON 文件
+                if (manifest.files.length > 0) {
+                    const firstShard = await loadShard(0);
+                    firstShardRandomized = shuffleArray(firstShard);
+                }
+
                 await renderFeedCards();
             } catch (error) {
                 console.error('Failed to load website manifest:', error);
