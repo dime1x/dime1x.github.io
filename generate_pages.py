@@ -54,10 +54,37 @@ def find_manifest_shards(manifest, manifest_path):
                 f"manifest 使用了远程分片地址：{raw}。"
                 "当前版本只读取仓库内的本地 JSON 分片。"
             )
-        shard_path = Path(raw)
-        if not shard_path.is_absolute():
-            shard_path = manifest_path.parent / shard_path
-        paths.append(shard_path.resolve())
+        # Manifest entries often start with "/" even though they are
+        # repository-relative paths (for example: /data/websites/001.json).
+        # In GitHub Actions, do NOT interpret those as Linux filesystem paths.
+        raw_path = Path(raw)
+        candidates = []
+
+        if raw_path.is_absolute():
+            repo_relative = Path.cwd() / str(raw_path).lstrip("/")
+            manifest_relative = manifest_path.parent / str(raw_path).lstrip("/")
+            candidates.extend([repo_relative, manifest_relative])
+        else:
+            candidates.extend([
+                manifest_path.parent / raw_path,
+                Path.cwd() / raw_path,
+            ])
+
+        resolved = None
+        for candidate in candidates:
+            candidate = candidate.resolve()
+            if candidate.is_file():
+                resolved = candidate
+                break
+
+        if resolved is None:
+            attempted = ", ".join(str(p.resolve()) for p in candidates)
+            raise FileNotFoundError(
+                f"Manifest 引用了分片 {raw!r}，但在以下位置都找不到：{attempted}。"
+                "请确认分片文件已提交到 GitHub 仓库，且 manifest 路径正确。"
+            )
+
+        paths.append(resolved)
 
     # Preserve manifest order while avoiding duplicate paths.
     return list(dict.fromkeys(paths))
