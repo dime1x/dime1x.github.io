@@ -219,8 +219,18 @@
         const shardCache = new Map();
         let renderSequence = 0;
 
-        // 每次打开页面时，仅随机打乱第一个 JSON 分片（通常是 001.json）
-        let firstShardRandomized = null;
+        // 每次打开页面时，随机打乱前 4 个 JSON 分片（001.json–004.json）。
+        // 只改变前端显示顺序，不会修改 R2 上的原始 JSON 文件。
+        const RANDOMIZED_SHARD_COUNT = 4;
+        const randomizedShardCache = new Map();
+
+        function getDisplayShard(index, items) {
+            if (index >= RANDOMIZED_SHARD_COUNT) return items;
+            if (!randomizedShardCache.has(index)) {
+                randomizedShardCache.set(index, shuffleArray(items));
+            }
+            return randomizedShardCache.get(index);
+        }
 
         function shuffleArray(array) {
             const result = [...array];
@@ -317,10 +327,11 @@
 
             const result = [];
             for (let shardIndex = firstShard; shardIndex <= lastShard; shardIndex++) {
-                // 只有第一个分片使用随机后的顺序；其他分片保持原始顺序
-                const items = shardIndex === 0 && firstShardRandomized
-                    ? firstShardRandomized
-                    : loaded[shardIndex - firstShard];
+                // 前 4 个分片使用随机顺序；第 5 个及之后保持原始顺序
+                const items = getDisplayShard(
+                    shardIndex,
+                    loaded[shardIndex - firstShard]
+                );
                 const shardStart = shardIndex * manifest.shard_size;
                 const from = Math.max(start, shardStart) - shardStart;
                 const to = Math.min(end, shardStart + items.length) - shardStart;
@@ -331,7 +342,10 @@
 
         async function loadAllForSearch() {
             const all = await Promise.all(
-                manifest.files.map((_, index) => loadShard(index))
+                manifest.files.map(async (_, index) => {
+                    const items = await loadShard(index);
+                    return getDisplayShard(index, items);
+                })
             );
             return all.flat();
         }
@@ -467,11 +481,17 @@
                     throw new Error('Invalid manifest.json format');
                 }
 
-                // 只读取并随机打乱第一个 JSON 分片，不修改服务器上的 JSON 文件
-                if (manifest.files.length > 0) {
-                    const firstShard = await loadShard(0);
-                    firstShardRandomized = shuffleArray(firstShard);
-                }
+                // 预先加载并随机打乱前 4 个 JSON 分片；不足 4 个时按实际数量处理
+                const shardsToRandomize = Math.min(
+                    RANDOMIZED_SHARD_COUNT,
+                    manifest.files.length
+                );
+                await Promise.all(
+                    Array.from({ length: shardsToRandomize }, async (_, index) => {
+                        const items = await loadShard(index);
+                        getDisplayShard(index, items);
+                    })
+                );
 
                 await renderFeedCards();
             } catch (error) {
