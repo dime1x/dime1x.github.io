@@ -1,9 +1,6 @@
-import base64
 import json
 import os
-import subprocess
 import sys
-import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -11,14 +8,7 @@ from database import _query, _rows
 
 BATCH_SIZE = int(os.getenv("PUBLISH_BATCH_SIZE", "500"))
 IMAGE_BASE_URL = os.getenv("IMAGE_BASE_URL", "https://img.deople.ai").rstrip("/")
-
-# The destination GitHub repository. publisher.py itself clones, writes and pushes.
-TARGET_REPO = os.getenv("PUBLISH_REPO", "dime1x/dime1x.github.io")
-TARGET_BRANCH = os.getenv("PUBLISH_BRANCH", "main")
-TARGET_FILE = os.getenv("PUBLISH_PATH", "data/websites.json")
-
-# Required GitHub PAT: Contents read/write permission on TARGET_REPO.
-GITHUB_TOKEN = os.getenv("DATA_REPO_TOKEN", "").strip()
+OUTPUT_FILE = Path(os.getenv("PUBLISH_OUTPUT", "data/websites.json"))
 
 
 def normalize_keywords(value):
@@ -45,7 +35,7 @@ def normalize_keywords(value):
 
 
 def normalize_score(value):
-    """Return a safe 0-100 richness score."""
+    """Return a safe integer richness score between 0 and 100."""
     try:
         score = int(float(value or 0))
     except (TypeError, ValueError):
@@ -57,7 +47,6 @@ def normalize_website(row):
     domain = (row.get("domain") or "").strip().lower()
     image = (row.get("image_url") or "").strip()
 
-    # New screenshot format: one {domain}.jpg image per website.
     if not image and domain:
         image = f"{IMAGE_BASE_URL}/{domain}.jpg"
 
@@ -72,8 +61,6 @@ def normalize_website(row):
         "description": (row.get("description") or "").strip(),
         "keywords": normalize_keywords(row.get("keywords")),
         "image": image,
-        # Richness is independent from quality_score; it measures homepage
-        # text, media, navigation, structure and interaction richness.
         "richness_score": normalize_score(row.get("richness_score")),
     }
 
@@ -164,123 +151,31 @@ def validate_payload(payload):
             )
 
 
-def run_git(args, cwd=None, env=None):
-    command = ["git"] + args
-    print("$ " + " ".join(command))
-    result = subprocess.run(
-        command,
-        cwd=cwd,
-        env=env,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    )
-    if result.stdout:
-        print(result.stdout.rstrip())
-    if result.returncode != 0:
-        raise RuntimeError(
-            f"Git 命令执行失败（exit={result.returncode}）：{' '.join(args)}"
-        )
-    return result.stdout.strip()
+def save_json(payload):
+    """Write JSON into the checked-out website repository; Actions does the push."""
+    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+    temp_file = OUTPUT_FILE.with_suffix(OUTPUT_FILE.suffix + ".tmp")
 
+    with temp_file.open("w", encoding="utf-8") as file:
+        json.dump(payload, file, ensure_ascii=False, separators=(",", ":"))
+        file.write("\n")
 
-def build_git_env():
-    # Avoid putting the PAT in the repository URL or command-line arguments.
-    auth = base64.b64encode(
-        f"x-access-token:{GITHUB_TOKEN}".encode("utf-8")
-    ).decode("ascii")
-    env = os.environ.copy()
-    env["GIT_CONFIG_COUNT"] = "1"
-    env["GIT_CONFIG_KEY_0"] = "http.https://github.com/.extraheader"
-    env["GIT_CONFIG_VALUE_0"] = f"AUTHORIZATION: basic {auth}"
-    return env
+    # Validate the exact temporary file before replacing the published file.
+    with temp_file.open("r", encoding="utf-8") as file:
+        saved_payload = json.load(file)
+    validate_payload(saved_payload)
+    os.replace(temp_file, OUTPUT_FILE)
 
-
-def push_json_to_github(payload):
-    if not GITHUB_TOKEN:
-        raise RuntimeError(
-            "缺少 DATA_REPO_TOKEN。请在 GitHub Actions Secrets 中配置，"
-            "并授予目标仓库 Contents: Read and write 权限。"
-        )
-
-    if "/" not in TARGET_REPO:
-        raise ValueError("PUBLISH_REPO 格式错误，应为 owner/repository")
-
-    if TARGET_FILE.startswith("/") or ".." in Path(TARGET_FILE).parts:
-        raise ValueError("PUBLISH_PATH 必须是目标仓库内的相对路径")
-
-    repo_url = f"https://github.com/{TARGET_REPO}.git"
-    git_env = build_git_env()
-
-    with tempfile.TemporaryDirectory(prefix="deople-publisher-") as temp_dir:
-        repo_dir = Path(temp_dir) / "target-repo"
-
-        run_git(
-            ["clone", "--depth", "1", "--branch", TARGET_BRANCH, repo_url, str(repo_dir)],
-            env=git_env,
-        )
-
-        output_path = repo_dir / TARGET_FILE
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-
-        serialized = json.dumps(
-            payload,
-            ensure_ascii=False,
-            separators=(",", ":"),
-        ) + "\n"
-        output_path.write_text(serialized, encoding="utf-8")
-
-        # Validate the exact file written into the destination repository.
-        with output_path.open("r", encoding="utf-8") as file:
-            saved_payload = json.load(file)
-        validate_payload(saved_payload)
-
-        run_git(
-            ["config", "user.name", "github-actions[bot]"],
-            cwd=repo_dir,
-        )
-        run_git(
-            ["config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"],
-            cwd=repo_dir,
-        )
-        run_git(["add", TARGET_FILE], cwd=repo_dir)
-
-        changed = subprocess.run(
-            ["git", "diff", "--cached", "--quiet"],
-            cwd=repo_dir,
-            env=git_env,
-        )
-
-        if changed.returncode == 0:
-            print(f"{TARGET_REPO}/{TARGET_FILE} 内容没有变化，无需提交")
-            return
-
-        if changed.returncode != 1:
-            raise RuntimeError("无法检查目标 JSON 文件是否发生变化")
-
-        run_git(
-            ["commit", "-m", "Update website directory data"],
-            cwd=repo_dir,
-        )
-        run_git(
-            ["push", "origin", TARGET_BRANCH],
-            cwd=repo_dir,
-            env=git_env,
-        )
-
-        print(f"发布成功：{TARGET_REPO}/{TARGET_BRANCH}/{TARGET_FILE}")
-        print(f"网站数量：{payload['total']}")
+    print(f"JSON 文件生成成功：{OUTPUT_FILE}")
+    print(f"网站数量：{payload['total']}")
 
 
 def main():
     print("开始从 Cloudflare D1 读取网站数据")
-    print(f"JSON 目标仓库：{TARGET_REPO}")
-    print(f"目标分支：{TARGET_BRANCH}")
-    print(f"目标文件：{TARGET_FILE}")
+    print(f"D1 批次大小：{BATCH_SIZE}")
+    print(f"JSON 输出位置：{OUTPUT_FILE}")
 
     websites = get_all_websites()
-
-    # Never replace the live JSON with an empty dataset by accident.
     if not websites:
         raise RuntimeError(
             "没有找到符合发布条件的网站；为避免覆盖线上 JSON，本次停止发布。"
@@ -288,11 +183,8 @@ def main():
 
     payload = build_payload(websites)
     validate_payload(payload)
-
-    # No persistent JSON is written into the crawler repository.
-    # publisher.py clones the website repo, writes the JSON there, and pushes it.
-    push_json_to_github(payload)
-    print("Publisher 完成")
+    save_json(payload)
+    print("Publisher 数据生成完成，后续由 GitHub Actions 提交并推送")
 
 
 if __name__ == "__main__":
