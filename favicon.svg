@@ -2,14 +2,10 @@
   <style>
     .bg-red { fill: #FF3B30; }
     .icon-white { fill: #FFFFFF; }
-    .circle-soft { fill: rgba(255, 255, 255, 0.25); }
   </style>
 
-  <!-- 将原先的 <rect> 背景换成正圆形 <circle> -->
-  <circle cx="250" cy="250" r="250" class="bg-red" />
-
-  <!-- 中央背景半透明白色圆形 -->
-  <circle cx="260" cy="232" r="45" class="circle-soft" />
+  <!-- 方形红色背景：不再使用圆形底图 -->
+  <rect x="0" y="0" width="500" height="500" class="bg-red" />
 
   <!-- 中央字母 'Đ' -->
   <g class="icon-white">
