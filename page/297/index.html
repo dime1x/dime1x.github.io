@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1">
+
+<title>Explore Websites – Deople | Page 297</title>
+
+<meta name="description"
+      content="Discover 17 websites on Deople. Explore useful websites, tools and online resources.">
+
+<link rel="canonical"
+      href="https://deople.ai/page/297/">
+
+<meta name="robots"
+      content="index,follow">
+
+<!-- Homepage Favicon -->
+<link rel="icon"
+      type="image/svg+xml"
+      href="/favicon.svg">
+
+<!-- Google AdSense -->
+<script async
+src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7043421450416431"
+crossorigin="anonymous"></script>
+
+<!-- Google Analytics -->
+<script async
+src="https://www.googletagmanager.com/gtag/js?id=G-384RKFQQZQ"></script>
+
+<script>
+window.dataLayer = window.dataLayer || [];
+
+function gtag() {
+    dataLayer.push(arguments);
+}
+
+gtag('js', new Date());
+gtag('config', 'G-384RKFQQZQ');
+</script>
+
+<style>
+
+:root {
+    color-scheme: dark;
+    --bg: #090d16;
+    --panel: #111827;
+    --muted: #9ca3af;
+    --line: #263244;
+    --text: #f3f4f6;
+    --blue: #3685ff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.55 Inter, ui-sans-serif,
+         system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.wrap {
+    width: min(1180px, calc(100% - 32px));
+    margin: auto;
+}
+
+header {
+    border-bottom: 1px solid var(--line);
+    background: #0b1220;
+}
+
+.top {
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+}
+
+.logo b {
+    color: var(--blue);
+}
+
+.top small {
+    color: var(--muted);
+}
+
+main {
+    padding: 34px 0 60px;
+}
+
+.intro {
+    margin-bottom: 24px;
+}
+
+h1 {
+    font-size: clamp(26px, 4vw, 38px);
+    line-height: 1.15;
+    margin: 0 0 8px;
+    letter-spacing: -1px;
+}
+
+.intro p {
+    color: var(--muted);
+    margin: 0;
+}
+
+.tools {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 22px 0;
+}
+
+input {
+    width: 100%;
+    max-width: 440px;
+    background: #111827;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: white;
+    font: inherit;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--blue);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.site-card {
+    min-width: 0;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    overflow: hidden;
+    transition: transform .16s, border-color .16s;
+}
+
+.site-card:hover {
+    transform: translateY(-3px);
+    border-color: #477fc9;
+}
+
+.preview {
+    height: 170px;
+    background: #0b1220;
+    overflow: hidden;
+}
+
+.thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.placeholder {
+    display: grid;
+    place-items: center;
+    color: #64748b;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+.card-body {
+    padding: 13px 14px 15px;
+}
+
+h2 {
+    font-size: 15px;
+    line-height: 1.35;
+    margin: 0 0 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-body p {
+    font-size: 13px;
+    color: var(--muted);
+    height: 40px;
+    overflow: hidden;
+    margin: 0 0 10px;
+}
+
+.domain {
+    font-size: 12px;
+    color: #75aaff;
+    overflow-wrap: anywhere;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 34px 0;
+}
+
+.pagination a,
+.pagination span {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #cbd5e1;
+}
+
+.pagination .current {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: white;
+}
+
+footer {
+    border-top: 1px solid var(--line);
+    padding: 24px 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+@media(max-width:900px) {
+
+    .grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+@media(max-width:650px) {
+
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .preview {
+        height: 125px;
+    }
+
+    .card-body {
+        padding: 10px;
+    }
+
+    .card-body p {
+        font-size: 12px;
+    }
+
+}
+
+@media(max-width:380px) {
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .preview {
+        height: 180px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <div class="wrap top">
+        <a class="logo" href="/">Ð<b>eople</b></a>
+        <small>Website discovery</small>
+    </div>
+</header>
+
+<main class="wrap">
+
+    <section class="intro">
+        <h1>Explore websites</h1>
+        <p>
+            Discover useful websites, tools and resources
+            from around the web.
+        </p>
+    </section>
+
+    <div class="tools">
+        <input
+            id="search"
+            type="search"
+            placeholder="Search websites on this page…"
+            aria-label="Search websites on this page">
+    </div>
+
+    <section class="grid" id="site-grid">
+        
+    <article class="site-card">
+      <a class="site-link"
+         href="https://onekindlab.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/onekindlab.com.jpg" alt="onekind lab — small, useful web tools" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>onekind lab — small, useful web tools</h2>
+          <p>onekind lab builds small web tools that run in your browser: everyday calculators, developer utilities, PDF and document tools.</p>
+          <span class="domain">onekindlab.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://hopecollective.shop"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/hopecollective.shop_240.jpg" alt="Hope Collective" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Hope Collective</h2>
+          <p>Curated fashion and home goods that empower women in recovery. A social enterprise of WeCare Recovery Home.</p>
+          <span class="domain">hopecollective.shop</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.thepriveacquisition.eu"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.thepriveacquisition.eu_240.jpg" alt="Welcome to thepriveacquisition.com" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Welcome to thepriveacquisition.com</h2>
+          <p>This site is currently under construction.</p>
+          <span class="domain">thepriveacquisition.eu</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://tiptop.software"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/tiptop.software_240.jpg" alt="Tiptop Software" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Tiptop Software</h2>
+          <p>Thoughtfully crafted apps that are a joy to use.</p>
+          <span class="domain">tiptop.software</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://bluelambinsurance.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/bluelambinsurance.com.jpg" alt="Blue Lamb Insurance | Independent Florida Insurance Agency" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Blue Lamb Insurance | Independent Florida Insurance Agency</h2>
+          <p>Blue Lamb Insurance is an independent Florida agency. We compare car, home, condo and renters insurance from top carriers to find coverage that fits your budget.</p>
+          <span class="domain">bluelambinsurance.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.pininaonline.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.pininaonline.com.jpg" alt="PininaOnline - Ropa con Actitud" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>PininaOnline - Ropa con Actitud</h2>
+          <p>Moda femenina que realza tu estilo: bikinis, vestidos y outfits cómodos para cada ocasión. Compra online con cambios fáciles y diseños únicos.</p>
+          <span class="domain">pininaonline.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.twoisbetterpr.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.twoisbetterpr.com_240.jpg" alt="Twoisbetter | Wedding Photographer in Puerto Rico" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Twoisbetter | Wedding Photographer in Puerto Rico</h2>
+          <p>Twoisbetter provides an unique and unforgettable experience to couples through photography. We want to create an atmosphere where couples can connect and fall in love even more.</p>
+          <span class="domain">twoisbetterpr.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://weekly.cebv.us"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/weekly.cebv.us.jpg" alt="CEBV Weekly" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>CEBV Weekly</h2>
+          <p>An easy-to-follow weekly overview of the Arizona Legislature&#x27;s most notable bills, plus highlights of selected state &amp; local boards and commissions. Posts are always free.</p>
+          <span class="domain">weekly.cebv.us</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://restylla.pro"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/restylla.pro.jpg" alt="ReStylla.pro - Sustainable Fashion AI | Transform Old Clothes Into New Designs" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>ReStylla.pro - Sustainable Fashion AI | Transform Old Clothes Into New Designs</h2>
+          <p>The go-to AI platform for independent designers. Transform old clothes into stunning new fashion with professional-grade patterns. Where fashion meets the renewal lifestyle. Born in Sweden.</p>
+          <span class="domain">restylla.pro</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://fasttutors.xyz"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/fasttutors.xyz_240.jpg" alt="fasttutors.xyz - This website is for sale! - fasttutors Resources and Information." loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>fasttutors.xyz - This website is for sale! - fasttutors Resources and Information.</h2>
+          <p>This website is for sale! fasttutors.xyz is your first and best source for information about fasttutors. Here you will also find topics relating to issues of general interest. We hope you find what you are looking for!</p>
+          <span class="domain">fasttutors.xyz</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://baltimoredogcare.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/baltimoredogcare.com_240.jpg" alt="Terms &amp; Conditions - PCM Builder 1" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Terms &amp; Conditions - PCM Builder 1</h2>
+          <p>The Nitty-Gritty: Template Development Hello! If you’re reading this, you’re like me – you like to know what you’re getting into. Unfortunately for us both, lawyers always write terms of use, and they write for impenetrable clarity, not ease of understanding. So we’ve provided a Normal Person English translation for each section. Hope it helps! […]</p>
+          <span class="domain">baltimoredogcare.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://mariehoffmanvo.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/mariehoffmanvo.com.jpg" alt="Marie Hoffman VO" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Marie Hoffman VO</h2>
+          <p>Voice Over artist specializes in corporate narration—including Medical, Pharmaceutical and Technical— e-learning, Promos, IVR/Telephone, Audiobooks</p>
+          <span class="domain">mariehoffmanvo.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://psrbathroomremodelingmiami.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/psrbathroomremodelingmiami.com.jpg" alt="Bathroom Remodeling in Miami, FL" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Bathroom Remodeling in Miami, FL</h2>
+          <p>Tub to shower conversions, walk-in showers, vanities, tile and full remodels for Miami homes and condos. Call (786) 574-3527.</p>
+          <span class="domain">psrbathroomremodelingmiami.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.ramscapesllc.net"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.ramscapesllc.net.jpg" alt="Landscape Design &amp; Landscaping Fort Collins | RAMSCAPES LLC" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Landscape Design &amp; Landscaping Fort Collins | RAMSCAPES LLC</h2>
+          <p>Affordable landscape design, installations, mulch, and seasonal cleanups in Fort Collins, CO. Student-owned and operated. Request a free estimate.</p>
+          <span class="domain">ramscapesllc.net</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://kota78daftar.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/kota78daftar.com_240.jpg" alt="Kota78: Slot Gacor dan Game Online Terpercaya" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Kota78: Slot Gacor dan Game Online Terpercaya</h2>
+          <p>Kota78 adalah situs game online yang menawarkan slot gacor dengan pengalaman bermain terbaik. Bergabunglah sekarang!</p>
+          <span class="domain">kota78daftar.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://theskinandhairclinic.co.uk"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/theskinandhairclinic.co.uk_240.jpg" alt="Best Hair Transplant Clinic in Liverpool | The Skin and Hair Clinic" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Best Hair Transplant Clinic in Liverpool | The Skin and Hair Clinic</h2>
+          <p>Liverpool hair transplant clinic &amp; hair transplant centre. Expert FUE, FUT &amp; DHI at Rose Lane Liverpool hair clinic. CQC-registered. Book free consultation.</p>
+          <span class="domain">theskinandhairclinic.co.uk</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://atman-dazhongcaipiao.com.cn"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/atman-dazhongcaipiao.com.cn.jpg" alt="大众彩票(中国)官方网站 - 官方投注平台 | 安全·高效·专业的彩票网站" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>大众彩票(中国)官方网站 - 官方投注平台 | 安全·高效·专业的彩票网站</h2>
+          <p>大众彩票,大众彩票app,大众彩票下载,大众彩票官网</p>
+          <span class="domain">atman-dazhongcaipiao.com.cn</span>
+        </div>
+
+      </a>
+    </article>
+    
+    </section>
+
+    <nav class="pagination" aria-label="Pagination">
+        <a href="/page/296/" rel="prev">← Previous</a>
+        <a href="/page/1/">1</a><span>…</span><a href="/page/295/">295</a><a href="/page/296/">296</a><a class="current" aria-current="page" href="/page/297/">297</a>
+        
+    </nav>
+
+</main>
+
+<footer>
+    <div class="wrap">
+        © 2026
+        Deople · Discover something useful.
+    </div>
+</footer>
+
+<script>
+
+const search = document.getElementById('search');
+
+search.addEventListener('input', () => {
+
+    const q = search.value.toLowerCase().trim();
+
+    document.querySelectorAll('.site-card').forEach(card => {
+
+        card.hidden = !card.innerText.toLowerCase().includes(q);
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
