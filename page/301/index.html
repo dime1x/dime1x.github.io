@@ -1,0 +1,1963 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1">
+
+<title>Explore Websites – Deople | Page 301</title>
+
+<meta name="description"
+      content="Discover 80 websites on Deople. Explore useful websites, tools and online resources.">
+
+<link rel="canonical"
+      href="https://deople.ai/page/301/">
+
+<meta name="robots"
+      content="index,follow">
+
+<!-- Homepage Favicon -->
+<link rel="icon"
+      type="image/svg+xml"
+      href="/favicon.svg">
+
+<!-- Google AdSense -->
+<script async
+src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7043421450416431"
+crossorigin="anonymous"></script>
+
+<!-- Google Analytics -->
+<script async
+src="https://www.googletagmanager.com/gtag/js?id=G-384RKFQQZQ"></script>
+
+<script>
+window.dataLayer = window.dataLayer || [];
+
+function gtag() {
+    dataLayer.push(arguments);
+}
+
+gtag('js', new Date());
+gtag('config', 'G-384RKFQQZQ');
+</script>
+
+<style>
+
+:root {
+    color-scheme: dark;
+    --bg: #090d16;
+    --panel: #111827;
+    --muted: #9ca3af;
+    --line: #263244;
+    --text: #f3f4f6;
+    --blue: #3685ff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.55 Inter, ui-sans-serif,
+         system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.wrap {
+    width: min(1180px, calc(100% - 32px));
+    margin: auto;
+}
+
+header {
+    border-bottom: 1px solid var(--line);
+    background: #0b1220;
+}
+
+.top {
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+}
+
+.logo b {
+    color: var(--blue);
+}
+
+.top small {
+    color: var(--muted);
+}
+
+main {
+    padding: 34px 0 60px;
+}
+
+.intro {
+    margin-bottom: 24px;
+}
+
+h1 {
+    font-size: clamp(26px, 4vw, 38px);
+    line-height: 1.15;
+    margin: 0 0 8px;
+    letter-spacing: -1px;
+}
+
+.intro p {
+    color: var(--muted);
+    margin: 0;
+}
+
+.tools {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 22px 0;
+}
+
+input {
+    width: 100%;
+    max-width: 440px;
+    background: #111827;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: white;
+    font: inherit;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--blue);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.site-card {
+    min-width: 0;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    overflow: hidden;
+    transition: transform .16s, border-color .16s;
+}
+
+.site-card:hover {
+    transform: translateY(-3px);
+    border-color: #477fc9;
+}
+
+.preview {
+    height: 170px;
+    background: #0b1220;
+    overflow: hidden;
+}
+
+.thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.placeholder {
+    display: grid;
+    place-items: center;
+    color: #64748b;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+.card-body {
+    padding: 13px 14px 15px;
+}
+
+h2 {
+    font-size: 15px;
+    line-height: 1.35;
+    margin: 0 0 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-body p {
+    font-size: 13px;
+    color: var(--muted);
+    height: 40px;
+    overflow: hidden;
+    margin: 0 0 10px;
+}
+
+.domain {
+    font-size: 12px;
+    color: #75aaff;
+    overflow-wrap: anywhere;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 34px 0;
+}
+
+.pagination a,
+.pagination span {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #cbd5e1;
+}
+
+.pagination .current {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: white;
+}
+
+footer {
+    border-top: 1px solid var(--line);
+    padding: 24px 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+@media(max-width:900px) {
+
+    .grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+@media(max-width:650px) {
+
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .preview {
+        height: 125px;
+    }
+
+    .card-body {
+        padding: 10px;
+    }
+
+    .card-body p {
+        font-size: 12px;
+    }
+
+}
+
+@media(max-width:380px) {
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .preview {
+        height: 180px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <div class="wrap top">
+        <a class="logo" href="/">Ð<b>eople</b></a>
+        <small>Website discovery</small>
+    </div>
+</header>
+
+<main class="wrap">
+
+    <section class="intro">
+        <h1>Explore websites</h1>
+        <p>
+            Discover useful websites, tools and resources
+            from around the web.
+        </p>
+    </section>
+
+    <div class="tools">
+        <input
+            id="search"
+            type="search"
+            placeholder="Search websites on this page…"
+            aria-label="Search websites on this page">
+    </div>
+
+    <section class="grid" id="site-grid">
+        
+    <article class="site-card">
+      <a class="site-link"
+         href="https://brickplumbingtx.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/brickplumbingtx.com.jpg" alt="Brick Plumbing - Expert Plumbing at Affordable Prices in Houston" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Brick Plumbing - Expert Plumbing at Affordable Prices in Houston</h2>
+          <p>Residential / Commercial Plumbing Services Houston, TX. Re-Pipes, Sewer / Drain Repairs, Leaks, Water Heaters &amp; More...</p>
+          <span class="domain">brickplumbingtx.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://mktr.axelle.online"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/mktr.axelle.online_240.jpg" alt="Professional &amp; Personal Online Beauty Shop
+ – Axelle - Beauty Online Shop" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Professional &amp; Personal Online Beauty Shop
+ – Axelle - Beauty Online Shop</h2>
+          <p>Cumpara direct de la importator produse pentru par, vopsea de par, agrafe si ace, uscatoare par si masini de tuns, foarfece tuns, ceara si aparate epilat, instrumente manichiura-pedichiura, consumabile unica folosinta pentru saloane (inclusvi role pat Roial). Preturi accesibile si oferte speciale permanente.</p>
+          <span class="domain">mktr.axelle.online</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://sykaaa-114.fun"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/sykaaa-114.fun.jpg" alt="Казино Сука официальный сайт. Игровые Автоматы, личный кабинет, регистрация. Зеркало Sykaaa" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Казино Сука официальный сайт. Игровые Автоматы, личный кабинет, регистрация. Зеркало Sykaaa</h2>
+          <p>Сука казино — это современная платформа с лицензией, быстрыми выплатами и прозрачными условиями. Регистрация в один клик предоставит доступ к тысячам слотов Sykaaa</p>
+          <span class="domain">sykaaa-114.fun</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://energisehealthcoaching.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/energisehealthcoaching.com.jpg" alt="Energise Health Coaching | Naturopathic Health Coach Surrey" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Energise Health Coaching | Naturopathic Health Coach Surrey</h2>
+          <p>Personalised naturopathic health coaching for busy men and women 40 plus. Based in Claygate, Surrey - online and in person.</p>
+          <span class="domain">energisehealthcoaching.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://union-investment.co.uk"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/union-investment.co.uk.jpg" alt="Real Estate in the UK | Union Investment Real Estate" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Real Estate in the UK | Union Investment Real Estate</h2>
+          <p>Learn all about Union Investment&#x27;s ambitions and investment criteria for the UK real estate market. Find your local experts.</p>
+          <span class="domain">union-investment.co.uk</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://tkqqb4.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/tkqqb4.com_240.jpg" alt="TKQQ | বাংলাদেশের গেমিং ও বিনোদনের এক ঠিকানা" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>TKQQ | বাংলাদেশের গেমিং ও বিনোদনের এক ঠিকানা</h2>
+          <p>ক্যাসিনো গেম, স্লট, ক্রিকেট ও ফুটবলের বিষয় নিয়ে জানুন TKQQ-এ। অ্যাকাউন্ট ও ওয়ালেটের নির্দেশিকা পড়ুন বাংলা বা ইংরেজিতে।</p>
+          <span class="domain">tkqqb4.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://mariasiflorin.site"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/mariasiflorin.site_240.jpg" alt="Nunta Maria &amp; Florin" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Nunta Maria &amp; Florin</h2>
+          <p>Panou privat pentru pregătirile de nuntă.</p>
+          <span class="domain">mariasiflorin.site</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.saf7aty.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.saf7aty.com.jpg" alt="صفحتي لتصميم وتطوير المواقع الالكترونية" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>صفحتي لتصميم وتطوير المواقع الالكترونية</h2>
+          <p>صفحتي هو موقع متخصص في تصميم وتطوير المواقع الإلكترونية، اذا كنت تحتاج الى ويب سايت، فانك تحتاج الى صفحتي، لدينا متخصصون في تطوير المواقع، اتصل بنا وسنقوم بتطوير الموقع المناسب لك، أو يمكنك الاختيار من مجموعة التصاميم الجاهزة.</p>
+          <span class="domain">saf7aty.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.caledennis.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.caledennis.com.jpg" alt="Cale Dennis | Capture &amp; Design" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Cale Dennis | Capture &amp; Design</h2>
+          <p>Discover professional photography and design services with Cale Dennis. Create impactful imagery every time!</p>
+          <span class="domain">caledennis.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://db7groupe.fr"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/db7groupe.fr.jpg" alt="Imprimerie Vesoul | Impression Grand Format, Flyers, PLV — DB7 Groupe" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Imprimerie Vesoul | Impression Grand Format, Flyers, PLV — DB7 Groupe</h2>
+          <p>Imprimerie à Vesoul — Cadeaux d&#x27;entreprise, goodies Noël &amp; fin d&#x27;année, kakémonos, flyers. Devis gratuit sous 24h. Livraison Bourgogne-Franche-Comté. DB7 Groupe.</p>
+          <span class="domain">db7groupe.fr</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://rivieratour.fr"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/rivieratour.fr_240.jpg" alt="Dovendi - Domain for sale" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Dovendi - Domain for sale</h2>
+          <p>This domain is available for sale. Check out price, information and more on Dovendi.com</p>
+          <span class="domain">rivieratour.fr</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://gas-hai.ch"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/gas-hai.ch.jpg" alt="GasHai | Sicherheit im Handumdrehen" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>GasHai | Sicherheit im Handumdrehen</h2>
+          <p>GasHai® Sicherheit im Handumdrehen. Mit 6 Funktionen der Schraubenschlüssel für das sichere Verschrauben verschiedenster Gasdruckminderer an Propangasflaschen bei Gasgrills u.a.m.</p>
+          <span class="domain">gas-hai.ch</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://online-marketing-duesseldorf.de"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/online-marketing-duesseldorf.de_240.jpg" alt="Online Marketing Düsseldorf – Online Marketing, SEO" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Online Marketing Düsseldorf – Online Marketing, SEO</h2>
+          <p>Online Marketing Düsseldorf provides information about online marketing, SEO, web design, social media and digital strategies.</p>
+          <span class="domain">online-marketing-duesseldorf.de</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://webjudol.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/webjudol.com.jpg" alt="WEBJUDOL - Jauhi Hindari &amp; Bertobatlah" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>WEBJUDOL - Jauhi Hindari &amp; Bertobatlah</h2>
+          <p>WEBJUDOL ajakan jauhi dan hindari judi online, sadari dampak buruknya, bertobatlah, perbaiki hidup, dan pilih jalan yang lebih berkah.</p>
+          <span class="domain">webjudol.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://sailloft.ajgcre.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/sailloft.ajgcre.com.jpg" alt="Sail Loft – Point Loma | Buyer Qualification &amp; NDA" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Sail Loft – Point Loma | Buyer Qualification &amp; NDA</h2>
+          <p>This is a well-known business in a small, tight-knit sailing community. Its name and location are released only after this form, a signed NDA, and the seller&#x27;s personal approval. Ranges are fine — complete answers move you to the front of the line. Everything you write here is held in strict confidence. AJ George Commercial | AJGCRE — Business Brokerage • CA DRE #02052387</p>
+          <span class="domain">sailloft.ajgcre.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://nontontoge.pages.dev"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/nontontoge.pages.dev_240.jpg" alt="Nonton Toge | Gudang Film 18+ Paling Update Sepanjang Masa" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Nonton Toge | Gudang Film 18+ Paling Update Sepanjang Masa</h2>
+          <p>Nonton Toge adalah portal video bokeh paling ramah kuota. Pilih resolusi rendah di kategori Bokep Sma, Bokep Abg, Bokep Bocil, Bokep Smp, Bokep Indo dan tetap n</p>
+          <span class="domain">nontontoge.pages.dev</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.procosplayshop.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.procosplayshop.com.jpg" alt="ProCosplayShop For Anime Costumes and Game Costumes" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>ProCosplayShop For Anime Costumes and Game Costumes</h2>
+          <p>Manufacturering &amp; Selling Top Quality Professional Cosplay Costumes &amp; Props With The Most Competitive Price. Fast Shipping &amp; Easy 30-Day Return Policy</p>
+          <span class="domain">procosplayshop.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://useinstantcreditgetdev.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/useinstantcreditgetdev.com.jpg" alt="Instant financing for Canadian SMEs | INSTANT.CREDIT" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Instant financing for Canadian SMEs | INSTANT.CREDIT</h2>
+          <p>Instant financing for Canadian businesses. Term loans, lines of credit, and revenue-based financing — instant funding from $10K to $3M, anywhere in Canada.</p>
+          <span class="domain">useinstantcreditgetdev.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://micpabogada.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/micpabogada.com.jpg" alt="Alvarez Law Firm - Birth Injury Attorneys" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Alvarez Law Firm - Birth Injury Attorneys</h2>
+          <p>El Bufete de Abogados Álvarez se enorgullece de servir a familias con parálisis cerebral y otras lesiones graves de nacimiento en Oregón.</p>
+          <span class="domain">micpabogada.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://adhdsimple.com.au"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/adhdsimple.com.au.jpg" alt="Online ADHD Test &amp; Private Diagnosis for Adults | ADHDsimple.com.au" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Online ADHD Test &amp; Private Diagnosis for Adults | ADHDsimple.com.au</h2>
+          <p>ADHD Simple is an Australian based clinic offering a quick, evidence-based screening to help identify signs of ADHD. It’s a simple first step for those seeking clarity, guidance, and support on the path to diagnosis and treatment.</p>
+          <span class="domain">adhdsimple.com.au</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://tierlistwar.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/tierlistwar.com.jpg" alt="Mondial · Tier List War" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Mondial · Tier List War</h2>
+          <p>Crée une arène, chacun ajoute ses éléments, tout le monde vote en secret, le classement est révélé à la fin.</p>
+          <span class="domain">tierlistwar.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://yingjunmao.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/yingjunmao.com.jpg" alt="关于 樱俊猫 | 蒸汽眼罩源头工厂 - 樱俊猫" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>关于 樱俊猫 | 蒸汽眼罩源头工厂 - 樱俊猫</h2>
+          <p>蒸汽眼罩源头工厂，支持批发、OEM/ODM代工、跨境供货、线下门店批量采购</p>
+          <span class="domain">yingjunmao.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://oliviamarietta.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/oliviamarietta.com_240.jpg" alt="oliviamarietta.com - oliviamarietta Resources and Information." loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>oliviamarietta.com - oliviamarietta Resources and Information.</h2>
+          <p>oliviamarietta.com is your first and best source for information about oliviamarietta. Here you will also find topics relating to issues of general interest. We hope you find what you are looking for!</p>
+          <span class="domain">oliviamarietta.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://21poolestreet.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/21poolestreet.com.jpg" alt="21 Poole Street, Murrayville | A renovation project" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>21 Poole Street, Murrayville | A renovation project</h2>
+          <p>Explore 21 Poole Street, Murrayville: a house to renovate with high ceilings, a shed and rear lane access. View photographs, the work required and floor plan.</p>
+          <span class="domain">21poolestreet.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://ruidianchaoguanfang.asia"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/ruidianchaoguanfang.asia.jpg" alt="瑞典超官方 | 最新赛程 积分榜 权威发布" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>瑞典超官方 | 最新赛程 积分榜 权威发布</h2>
+          <p>瑞典超官方中文站，提供最新赛程、积分榜、球队数据、转会新闻及赛事前瞻。瑞典足球超级联赛（Allsvenskan）权威发布，球迷互动问答。</p>
+          <span class="domain">ruidianchaoguanfang.asia</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.ecoglidecarts.au"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.ecoglidecarts.au.jpg" alt="Electric Golf Carts Australia | Tara and Evolution Carts by EcoGlide" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Electric Golf Carts Australia | Tara and Evolution Carts by EcoGlide</h2>
+          <p>EcoGlide supplies Tara and Evolution electric golf carts across Aus with lithium, long range and strong performance.</p>
+          <span class="domain">ecoglidecarts.au</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://wikigallery.org"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/wikigallery.org_240.jpg" alt="WikiGallery.org, the largest gallery in the world" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>WikiGallery.org, the largest gallery in the world</h2>
+          <p>WikiGallery.org, the largest gallery in the world: wikigallery - the largest virtaul gallery in the world with more than 150,000 on display. Always open and always free!</p>
+          <span class="domain">wikigallery.org</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://virikshamwellness.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/virikshamwellness.com.jpg" alt="Viriksham Wellness Pvt Ltd" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Viriksham Wellness Pvt Ltd</h2>
+          <p>AYUSH based multi brand creating entity</p>
+          <span class="domain">virikshamwellness.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://hallmikey.olares.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/hallmikey.olares.com.jpg" alt="Profile | Olares HomePage" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Profile | Olares HomePage</h2>
+          <p>An Open-Source Personal Cloud to Reclaim Your Data</p>
+          <span class="domain">hallmikey.olares.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://at-rpm.cloud"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/at-rpm.cloud_240.jpg" alt="AT-monitoring 2.0" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>AT-monitoring 2.0</h2>
+          <p>This web-based telemetry dashboard enhances patient monitoring by integrating ECG and vital data, ensuring compliance and improving operational efficiency for healthcare providers.</p>
+          <span class="domain">at-rpm.cloud</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://5bdt.ws"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/5bdt.ws.jpg" alt="5bdt – বাংলাদেশের সেরা অনলাইন বেটিং ও ক্যাসিনো প্ল্যাটফর্ম" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>5bdt – বাংলাদেশের সেরা অনলাইন বেটিং ও ক্যাসিনো প্ল্যাটফর্ম</h2>
+          <p>5bdt বাংলাদেশের বিশ্বস্ত অনলাইন বেটিং সাইট। ক্রিকেট, ফুটবল, লাইভ ক্যাসিনো, স্লট ও আরও অনেক কিছু। নিরাপদ পেমেন্ট, দ্রুত উইথড্রয়াল ও ২৪/৭ সাপোর্ট।</p>
+          <span class="domain">5bdt.ws</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://kiv.no"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/kiv.no.jpg" alt="Kjøp i Vennesla" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Kjøp i Vennesla</h2>
+          <p>Vennesla har et mangfold av butikker i ulike bransjer. Her finner du små, sjarmerende nisjebutikker og kjente byggevarehus. Vi har gratis parkering i hele kommunen!  Takk for at du handler lokalt.</p>
+          <span class="domain">kiv.no</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://alex-verdugo-birthday.pages.dev"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/alex-verdugo-birthday.pages.dev.jpg" alt="alex verdugo Birthday Alex verdugo on his mexican american roots - Alex Verdugo Birthday" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>alex verdugo Birthday Alex verdugo on his mexican american roots - Alex Verdugo Birthday</h2>
+          <p>Boston red sox alex verdugo making history through team&amp;#039;s first 30</p>
+          <span class="domain">alex-verdugo-birthday.pages.dev</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.jesushernandez.company"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.jesushernandez.company.jpg" alt="Jesús Hernández | Operations Intelligence" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Jesús Hernández | Operations Intelligence</h2>
+          <p>Planificación estratégica, Supply Chain, Business Intelligence y desarrollo Low-Code. Transformo operaciones complejas en sistemas medibles, inteligentes y escalables.</p>
+          <span class="domain">jesushernandez.company</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://fenxueshe2.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/fenxueshe2.com.jpg" alt="fenxueshe2.com" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>fenxueshe2.com</h2>
+          <p>Find information, resources and relevant links for fenxueshe2.com. This domain may be for sale.</p>
+          <span class="domain">fenxueshe2.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://ottawaairportcarrentals.ca"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/ottawaairportcarrentals.ca_240.jpg" alt="Affordable Car Rental Company in Canada, USA &amp; Caribbean | Airport Car Rental Pickup | Zoom Rent A Car" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Affordable Car Rental Company in Canada, USA &amp; Caribbean | Airport Car Rental Pickup | Zoom Rent A Car</h2>
+          <p>Zoom Rent A Car is an Affordable Car Rental Company across Canada, USA &amp; Caribbean with free airport shuttle service at select locations. Trusted since 1999. Book today and save.</p>
+          <span class="domain">ottawaairportcarrentals.ca</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://allevergleichen.de"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/allevergleichen.de.jpg" alt="Der Domainname allevergleichen.de steht zum Verkauf" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Der Domainname allevergleichen.de steht zum Verkauf</h2>
+          <p>Sichern Sie sich jetzt Ihre Wunschdomain! ✓ Sichere Zahlungsabwicklung ✓ Kompetentes Serviceteam ✓ Treuhändische Abwicklung ✓</p>
+          <span class="domain">allevergleichen.de</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://ladno.studio"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/ladno.studio.jpg" alt="Ladno — CRM на русском для бизнеса в США: мувинг, траки, салоны, опт" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Ladno — CRM на русском для бизнеса в США: мувинг, траки, салоны, опт</h2>
+          <p>CRM для русскоязычного бизнеса в США: мувинг, траковые компании, салоны красоты и барбершопы, опт и импорт, клининг, ремонт, уход на дому, автосервис. Подписка или своя копия на вашем сервере. Поддержка на русском.</p>
+          <span class="domain">ladno.studio</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.saudeblue.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.saudeblue.com_240.jpg" alt="Blue - Você é a nossa pessoa!" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Blue - Você é a nossa pessoa!</h2>
+          <p>Lançamento do Produto Nacional Blue, Contrate Agora · Plano de Saúde com cobertura nacional · Tecnologia, Cuidado e Personalização muito mais que um plano de saúde.</p>
+          <span class="domain">saudeblue.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://turbine.cash"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/turbine.cash.jpg" alt="Turbine Cash LLC — Software built for motion" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Turbine Cash LLC — Software built for motion</h2>
+          <p>Turbine Cash LLC designs and builds ambitious software products, cloud systems, and blockchain infrastructure.</p>
+          <span class="domain">turbine.cash</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://bayliquorsb.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/bayliquorsb.com.jpg" alt="Bay Liquor Seal Beach CA" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Bay Liquor Seal Beach CA</h2>
+          <p>- A Wine and Liquor (Spirits) store located in 1780 Pacific Coast Hwy, Seal Beach, CA 90740, USA</p>
+          <span class="domain">bayliquorsb.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.heddy.life"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.heddy.life.jpg" alt="Healing is just the start. Thrive in your next chapter." loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Healing is just the start. Thrive in your next chapter.</h2>
+          <p>Empowering you to move beyond adversity of your past, my mission is to guide you toward a more fulfilling and enriching life. Discover personal transformation with my support.</p>
+          <span class="domain">heddy.life</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.leebrennandesign.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.leebrennandesign.com.jpg" alt="Handmade Jewellery Australia - Lee Brennan Design" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Handmade Jewellery Australia - Lee Brennan Design</h2>
+          <p>Discover unique handmade jewellery from Australia at Lee Brennan Design, offering bespoke, handcrafted pieces that showcase timeless artisanal designs</p>
+          <span class="domain">leebrennandesign.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://fbsport-master.com.cn"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/fbsport-master.com.cn.jpg" alt="fb体育(中国)官方网站 · 中国官方网站" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>fb体育(中国)官方网站 · 中国官方网站</h2>
+          <p>fb体育FB体育围绕赛事新闻资讯、电竞内容、综合专区、APP服务与账户安全提醒，提供清晰稳定的官方服务入口，也便于继续跟踪近期赛程。</p>
+          <span class="domain">fbsport-master.com.cn</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://iberfence.eu"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/iberfence.eu_240.jpg" alt="Iberfence · Fabricante de Clavadoras de Postes y Estacas" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Iberfence · Fabricante de Clavadoras de Postes y Estacas</h2>
+          <p>Fabricante europeo de clavadoras e hincadoras de postes y estacas a gasolina. Servicio técnico propio, recambios en 24-72 h y red de distribuidores.</p>
+          <span class="domain">iberfence.eu</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://irvingnolan-76k.pages.dev"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/irvingnolan-76k.pages.dev.jpg" alt="Irving Nolan Blog - Irving Nolan" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Irving Nolan Blog - Irving Nolan</h2>
+          <p>Read Everything, Learn More Irving Nolan.</p>
+          <span class="domain">irvingnolan-76k.pages.dev</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://azizsaleem.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/azizsaleem.com_240.jpg" alt="عزيز سليم - ملحن ومؤلف موسيقي سعودي" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>عزيز سليم - ملحن ومؤلف موسيقي سعودي</h2>
+          <p>الموقع الرسمي للملحن عزيز سليم</p>
+          <span class="domain">azizsaleem.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://neometal.site"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/neometal.site.jpg" alt="NEOMETAL TOV — ferrous &amp; non-ferrous metals and metal-products trading, Kyiv" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>NEOMETAL TOV — ferrous &amp; non-ferrous metals and metal-products trading, Kyiv</h2>
+          <p>NEOMETAL TOV is a Kyiv-based trading house for ferrous and non-ferrous metals, rolled and semi-finished products — sourcing, quality control and logistics across Ukraine and export markets.</p>
+          <span class="domain">neometal.site</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://meritoempresarial.com.ar"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/meritoempresarial.com.ar.jpg" alt="Mérito Empresarial 2026 - Premio a la Excelencia Empresarial en San Juan" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Mérito Empresarial 2026 - Premio a la Excelencia Empresarial en San Juan</h2>
+          <p>Fundación Mérito premia la excelencia empresarial en San Juan. Reconocemos las mejores empresas en gastronomía, comercio, salud, belleza e industria. Más de 20 años premiando líderes.</p>
+          <span class="domain">meritoempresarial.com.ar</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://heavyliftingservices.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/heavyliftingservices.com.jpg" alt="Domain Name Experts and Internet Marketing Company | Easy Domains" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Domain Name Experts and Internet Marketing Company | Easy Domains</h2>
+          <p>We provide a variety of websites and domain names for all online businesses. Contact Easy Domains today your local Internet Marketing Company.</p>
+          <span class="domain">heavyliftingservices.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://pizzeriavittorioadomicilio.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/pizzeriavittorioadomicilio.com_240.jpg" alt="Pizzeria Vittorio - Santander - Italiana" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Pizzeria Vittorio - Santander - Italiana</h2>
+          <p>Pizzería Vittorio te ofrece la más exquisita variedad de Italiana que puedes encontrar en Santander. Ven a visitarnos o haz tu pedido online. Verás como te sorprenderemos con nuestras especialidades.</p>
+          <span class="domain">pizzeriavittorioadomicilio.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://efyai.xyz"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/efyai.xyz_240.jpg" alt="efyai.xyz - This website is for sale! - efyai Resources and Information." loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>efyai.xyz - This website is for sale! - efyai Resources and Information.</h2>
+          <p>This website is for sale! efyai.xyz is your first and best source for information about efyai. Here you will also find topics relating to issues of general interest. We hope you find what you are looking for!</p>
+          <span class="domain">efyai.xyz</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://ibizasonicaradio.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/ibizasonicaradio.com.jpg" alt="Ibiza Sonica Radio Electronic Music" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Ibiza Sonica Radio Electronic Music</h2>
+          <p>IbizaSonicaRadio, Electronic Music, Web Radios στο IbizaSonicaRadio.Com</p>
+          <span class="domain">ibizasonicaradio.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.bleemproperties.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.bleemproperties.com_240.jpg" alt="Sell Your House Fast!" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Sell Your House Fast!</h2>
+          <p>Are you thinking, &quot;I need to sell my home fast&quot;?</p>
+          <span class="domain">bleemproperties.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://romyclima.no"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/romyclima.no.jpg" alt="RoMy Clima | Landsdekkende leverandør av varmepumper" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>RoMy Clima | Landsdekkende leverandør av varmepumper</h2>
+          <p>Vi leverer luft-luft og luft-vann varmepumper. I tillegg er vi utvikler av ventilasjonsvarmepumpen ClimaSmart og varmesentralen SmartHeater.</p>
+          <span class="domain">romyclima.no</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.rhmanga.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.rhmanga.com.jpg" alt="Robert H.&#x27;s Manga Portfolio" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Robert H.&#x27;s Manga Portfolio</h2>
+          <p>My translation and lettering portfolio</p>
+          <span class="domain">rhmanga.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://awcmsastro.ahlikoding.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/awcmsastro.ahlikoding.com.jpg" alt="AWCMS statis | Solusi Digital Terpadu AhliWeb" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>AWCMS statis | Solusi Digital Terpadu AhliWeb</h2>
+          <p>AWCMS statis adalah template landing page Astro untuk menampilkan 10 pilar layanan digital AhliWeb: hosting, web app, ERP, keamanan, CRM, IoT, geospatial, konsultasi, data, dan pelatihan.</p>
+          <span class="domain">awcmsastro.ahlikoding.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://pang.novalinklabs.dev"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/pang.novalinklabs.dev.jpg" alt="Pang Pang" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Pang Pang</h2>
+          <p>Pang Pang - a one-touch balloon game. Hold to inflate, let go before a spike touches it.</p>
+          <span class="domain">pang.novalinklabs.dev</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://ultimateplay.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/ultimateplay.com.jpg" alt="UltimatePlay | Upload a self-contained HTML game, discover the best vibe-coded experiments, and play them instantly in the browser." loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>UltimatePlay | Upload a self-contained HTML game, discover the best vibe-coded experiments, and play them instantly in the browser.</h2>
+          <p>Upload a self-contained HTML game, discover the best vibe-coded experiments, and play them instantly in the browser.</p>
+          <span class="domain">ultimateplay.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://salon.awj-bh.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/salon.awj-bh.com.jpg" alt="Nelly Nails Salon &amp; Spa — Riffa, Bahrain" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Nelly Nails Salon &amp; Spa — Riffa, Bahrain</h2>
+          <p>Nelly Nails Salon &amp; Spa — ladies beauty salon in Riffa, Bahrain. Nails, hair, skincare and makeup. Book your appointment online in under a minute.</p>
+          <span class="domain">salon.awj-bh.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://universitytiles.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/universitytiles.com_240.jpg" alt="West Wind Mahjong | Collegiate Mahjong" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>West Wind Mahjong | Collegiate Mahjong</h2>
+          <p>Your favorite game, your favorite university - together on one table. Officially licensed collegiate mahjong tiles.</p>
+          <span class="domain">universitytiles.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.preconmaster.ca"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.preconmaster.ca.jpg" alt="PreconMaster.ca | 樓花鍾師 Official: Instagram, Facebook | Linktree" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>PreconMaster.ca | 樓花鍾師 Official: Instagram, Facebook | Linktree</h2>
+          <p>獨立屋，鎮屋 樓花專家
+Detached &amp; Town Homes | 
+Preconstruction Specialists | 
+416-543-6368 (English / 粵語) | 416-732-1668 (普通話)</p>
+          <span class="domain">preconmaster.ca</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.sirlucky.es"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.sirlucky.es_240.jpg" alt="alquiler trajes hombre y Moda masculina" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>alquiler trajes hombre y Moda masculina</h2>
+          <p>alquiler trajes hombre y Moda masculina alquiler trajes hombre, alquiler de chaques, Blog de Moda masculina</p>
+          <span class="domain">sirlucky.es</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://27beauty.co.uk"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/27beauty.co.uk.jpg" alt="27beauty — beauty &amp; grooming essentials, everyday prices" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>27beauty — beauty &amp; grooming essentials, everyday prices</h2>
+          <p>Genuine beauty and grooming brands at everyday prices, dispatched from the UK — plus the everyday extras we&#x27;re known for on eBay. Scanned a QR card? Get 10% off here.</p>
+          <span class="domain">27beauty.co.uk</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.ditotelecommunity.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.ditotelecommunity.com.jpg" alt="DITO | Rated #1 Mobile Network in the Philippines by Ookla" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>DITO | Rated #1 Mobile Network in the Philippines by Ookla</h2>
+          <p>The community welcomes you DITO! We are committed to weaving together strong communities with stronger connectivity. Get the best experience DITO!</p>
+          <span class="domain">ditotelecommunity.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.tuchucheriavenezolana.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.tuchucheriavenezolana.com.jpg" alt="tuchucheriavenezolana.com" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>tuchucheriavenezolana.com</h2>
+          <p>tuchucheriavenezolana.com</p>
+          <span class="domain">tuchucheriavenezolana.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://autoscuola2mila.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/autoscuola2mila.com_240.jpg" alt="Autoscuola 2Mila" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Autoscuola 2Mila</h2>
+          <p>Autoscuola 2Mila, Viale Trastevere 258/262, Roma: patenti di tutte le categorie, lezioni di guida, rinnovi, conversioni e recupero punti.</p>
+          <span class="domain">autoscuola2mila.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://playnixy.top"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/playnixy.top.jpg" alt="playnixy — Browser games &amp; HTML5 catalog" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>playnixy — Browser games &amp; HTML5 catalog</h2>
+          <p>Hand-picked HTML5 games: puzzle, racing, arcade, idle and more — play in your browser without installs. Short sessions, mobile-friendly when the publisher supports it.</p>
+          <span class="domain">playnixy.top</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://taose69.tv"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/taose69.tv.jpg" alt="桃花岛导航 - 专业的成人娱乐APP综合导航" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>桃花岛导航 - 专业的成人娱乐APP综合导航</h2>
+          <p>✅✅✅c老司机福利视频，回家地址 thddh1.com.com thddh2.com thddh3.com 高清成人直播APP、黄瓜视频APP、番茄社区、小姐姐、小草莓、抖阴app、杏吧app、草榴社区小草app,最新地址.91porn,高清无广告。2020年手机端最安全不坑爹的平台</p>
+          <span class="domain">taose69.tv</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://deschijfvaninnovatie.nl"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/deschijfvaninnovatie.nl.jpg" alt="De Schijf van Innovatie" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>De Schijf van Innovatie</h2>
+          <p>Verkoop van Warmtepanelen, Infrarood Verwarming en Audio/Video optimalisatie</p>
+          <span class="domain">deschijfvaninnovatie.nl</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://www.relvelconsulting.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/www.relvelconsulting.com.jpg" alt="RelVel Consulting | Fractional Leadership for Growing Teams" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>RelVel Consulting | Fractional Leadership for Growing Teams</h2>
+          <p>Fractional COO and delivery leadership that brings senior structure, decision speed, and momentum to complex work — without a full-time hire.</p>
+          <span class="domain">relvelconsulting.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://hnsyec.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/hnsyec.com_240.jpg" alt="河南森源电气股份有限公司" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>河南森源电气股份有限公司</h2>
+          <p>河南森源电气股份有限公司（股票代码：002358）创建于1992年，主要生产智能型500kV及以下电压等级的发、输、变、配开关设备、变压器及其元器件，电网一二次融合类产品，光储超充预装式配电站，以智能箱式变电站为主的光伏、风力发电设备，交、直流智能充电桩(站)等产品。公司坚持“依靠机制创新引进高素质人才，依靠高素质人才开发高科技产品，依靠高科技产品抢占市场制高点”的发展战略，吸引了来自北京、西安等地的多名院士、博士和国家、行业标委会委员及多名行业技术专家，构建了优秀的技术研发团队，参与或主持了近五十项国家标准和行业标准的制定。</p>
+          <span class="domain">hnsyec.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://fastpayoutcasinoexpert.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/fastpayoutcasinoexpert.com.jpg" alt="Casino Not on GamStop Fast Payout Online Casino UK 2026: What Speed Really Costs" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Casino Not on GamStop Fast Payout Online Casino UK 2026: What Speed Really Costs</h2>
+          <p>How British payout rules compare with offshore ones: withdrawal data, licence checks, KYC, bonus terms and what a casino not on GamStop really owes you.</p>
+          <span class="domain">fastpayoutcasinoexpert.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://jonferrara.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/jonferrara.com_240.jpg" alt="Jon Ferrara — The Human Side of Business" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Jon Ferrara — The Human Side of Business</h2>
+          <p>Jon Ferrara — founder and CEO of Nimble, co-founder of GoldMine, CRM pioneer, keynote speaker, and lifelong evangelist for the human side of business.</p>
+          <span class="domain">jonferrara.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://freegamesdlau.pages.dev"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/freegamesdlau.pages.dev_240.jpg" alt="freegamesdl" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>freegamesdl</h2>
+          <p>Download new games for free! Get the latest adventure, survival, simulation and all other Top Free PC Games, Enjoying Direct Links&quot;</p>
+          <span class="domain">freegamesdlau.pages.dev</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://plgeventos.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/plgeventos.com.jpg" alt="PLG Produções | Shows e eventos em Itaguaí, RJ" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>PLG Produções | Shows e eventos em Itaguaí, RJ</h2>
+          <p>Veja a agenda de shows em Itaguaí (RJ), o evento Vício com Matuê, 2ZDINIZZ e Renan da Penha e o portfólio da PLG Produções na Costa Verde.</p>
+          <span class="domain">plgeventos.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://ugameapp.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/ugameapp.com_240.jpg" alt="Discover the Best Apps for Every Lifestyle on One Platform" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Discover the Best Apps for Every Lifestyle on One Platform</h2>
+          <p>Explore a wide array of apps catering to different interests and needs, from gaming and sports to education, finance, and beyond. Our platform offers a seamless experience for users to discover, download, and enjoy top-rated applications across various categories.</p>
+          <span class="domain">ugameapp.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://lokeshjoshi.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/lokeshjoshi.com_240.jpg" alt="lokesh joshi | green hydrogen" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>lokesh joshi | green hydrogen</h2>
+          <p>Lokesh Joshi | Founder | Trainer | Consultant | Author | GroKalp Limited | Green H2 World | Amazon | Green Hydrogen | Methane | Carbon Nano Tubes | Creativity | Innovation</p>
+          <span class="domain">lokeshjoshi.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://adelaidedetailing.au"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/adelaidedetailing.au.jpg" alt="Expert Mobile Car Detailing Adelaide | Bubble &amp; Squeak | We Dry Harder!" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Expert Mobile Car Detailing Adelaide | Bubble &amp; Squeak | We Dry Harder!</h2>
+          <p>Bubble &amp; Squeak Mobile Car Detailing offers professional car detailing in Adelaide. We offer interior, exterior &amp; premium detailing at your location. We are the experts!</p>
+          <span class="domain">adelaidedetailing.au</span>
+        </div>
+
+      </a>
+    </article>
+    
+
+    <article class="site-card">
+      <a class="site-link"
+         href="https://kingdomtotoalur.com"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        <div class="preview">
+          <img class="thumb" src="https://img.deople.ai/kingdomtotoalur.com.jpg" alt="Google" loading="lazy" decoding="async" onerror="this.style.display='none'">
+        </div>
+
+        <div class="card-body">
+          <h2>Google</h2>
+          <p>Search the world&#x27;s information, including webpages, images, videos and more. Google has many special features to help you find exactly what you&#x27;re looking for.</p>
+          <span class="domain">kingdomtotoalur.com</span>
+        </div>
+
+      </a>
+    </article>
+    
+    </section>
+
+    <nav class="pagination" aria-label="Pagination">
+        <a href="/page/300/" rel="prev">← Previous</a>
+        <a href="/page/1/">1</a><span>…</span><a href="/page/299/">299</a><a href="/page/300/">300</a><a class="current" aria-current="page" href="/page/301/">301</a><a href="/page/302/">302</a>
+        <a href="/page/302/" rel="next">Next →</a>
+    </nav>
+
+</main>
+
+<footer>
+    <div class="wrap">
+        © 2026
+        Deople · Discover something useful.
+    </div>
+</footer>
+
+<script>
+
+const search = document.getElementById('search');
+
+search.addEventListener('input', () => {
+
+    const q = search.value.toLowerCase().trim();
+
+    document.querySelectorAll('.site-card').forEach(card => {
+
+        card.hidden = !card.innerText.toLowerCase().includes(q);
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
