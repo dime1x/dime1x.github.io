@@ -219,26 +219,26 @@
         const shardCache = new Map();
         let renderSequence = 0;
 
-        // 每次打开页面时，随机打乱前 4 个 JSON 分片（001.json–004.json）。
-        // 只改变前端显示顺序，不会修改 R2 上的原始 JSON 文件。
-        const RANDOMIZED_SHARD_COUNT = 4;
-        const randomizedShardCache = new Map();
+        // 先按丰富度分数从高到低排列；
+        // 70分及以上的网站随机打乱，70分以下的网站保持原有排序不变。
+        let sortedWebsitesCache = null;
 
-        function getDisplayShard(index, items) {
-            if (index >= RANDOMIZED_SHARD_COUNT) return items;
-            if (!randomizedShardCache.has(index)) {
-                randomizedShardCache.set(index, shuffleArray(items));
-            }
-            return randomizedShardCache.get(index);
-        }
+        function sortByRichness(items) {
+            const sorted = [...items].sort((a, b) =>
+                (b.richness_score || 0) - (a.richness_score || 0)
+            );
 
-        function shuffleArray(array) {
-            const result = [...array];
-            for (let i = result.length - 1; i > 0; i--) {
+            const highScore = sorted.filter(item => item.richness_score >= 70);
+            const remaining = sorted.filter(item => item.richness_score < 70);
+
+            // Fisher-Yates 洗牌：只打乱 70 分及以上的网站。
+            for (let i = highScore.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [result[i], result[j]] = [result[j], result[i]];
+                [highScore[i], highScore[j]] = [highScore[j], highScore[i]];
             }
-            return result;
+
+            // 低于 70 分的部分继续保持原来的丰富度降序。
+            return highScore.concat(remaining);
         }
 
         const imageObserver = ('IntersectionObserver' in window)
@@ -301,7 +301,8 @@
                     description: v.description || 'No description available...',
                     image: v.image || '',
                     status: v.status || 200,
-                    keywords: Array.isArray(v.keywords) ? v.keywords : []
+                    keywords: Array.isArray(v.keywords) ? v.keywords : [],
+                    richness_score: Math.max(0, Math.min(100, Number(v.richness_score) || 0))
                 }));
             }).catch(error => {
                 shardCache.delete(index);
@@ -312,42 +313,26 @@
             return promise;
         }
 
-        async function loadPageItems(page) {
-            const start = (page - 1) * ITEMS_PER_PAGE;
-            const end = Math.min(start + ITEMS_PER_PAGE, manifest.total);
-            if (start >= end) return [];
+        async function loadAllSortedWebsites() {
+            if (sortedWebsitesCache) return sortedWebsitesCache;
 
-            const firstShard = Math.floor(start / manifest.shard_size);
-            const lastShard = Math.floor((end - 1) / manifest.shard_size);
-            const loaded = await Promise.all(
-                Array.from({ length: lastShard - firstShard + 1 }, (_, n) =>
-                    loadShard(firstShard + n)
-                )
+            const allShards = await Promise.all(
+                manifest.files.map((_, index) => loadShard(index))
             );
 
-            const result = [];
-            for (let shardIndex = firstShard; shardIndex <= lastShard; shardIndex++) {
-                // 前 4 个分片使用随机顺序；第 5 个及之后保持原始顺序
-                const items = getDisplayShard(
-                    shardIndex,
-                    loaded[shardIndex - firstShard]
-                );
-                const shardStart = shardIndex * manifest.shard_size;
-                const from = Math.max(start, shardStart) - shardStart;
-                const to = Math.min(end, shardStart + items.length) - shardStart;
-                result.push(...items.slice(from, to));
-            }
-            return result;
+            // Merge every shard, then sort the complete dataset globally.
+            sortedWebsitesCache = sortByRichness(allShards.flat());
+            return sortedWebsitesCache;
+        }
+
+        async function loadPageItems(page) {
+            const all = await loadAllSortedWebsites();
+            const start = (page - 1) * ITEMS_PER_PAGE;
+            return all.slice(start, start + ITEMS_PER_PAGE);
         }
 
         async function loadAllForSearch() {
-            const all = await Promise.all(
-                manifest.files.map(async (_, index) => {
-                    const items = await loadShard(index);
-                    return getDisplayShard(index, items);
-                })
-            );
-            return all.flat();
+            return loadAllSortedWebsites();
         }
 
         function getFilteredData(allData) {
@@ -421,9 +406,15 @@
                             <div class="flex items-center min-w-0">
                                 <span class="text-xs font-semibold text-textMuted truncate">${esc(item.input || item.url)}</span>
                             </div>
-                            <h3 class="text-base sm:text-xl font-normal text-blue-600 leading-snug line-clamp-2">
-                                <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-normal hover:underline">${esc(item.title)}</a>
-                            </h3>
+                            <div class="flex items-start justify-between gap-2 min-w-0">
+                                <h3 class="text-base sm:text-xl font-normal text-blue-600 leading-snug line-clamp-2 min-w-0">
+                                    <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-normal hover:underline">${esc(item.title)}</a>
+                                </h3>
+                                <span class="shrink-0 inline-flex items-center gap-1 rounded-full bg-lime-100 text-lime-800 px-2.5 py-1 text-[10px] sm:text-xs font-bold" title="Website richness score">
+                                    <i data-lucide="sparkles" class="w-3 h-3"></i>
+                                    ${item.richness_score}/100
+                                </span>
+                            </div>
                             <p class="text-xs sm:text-sm text-textMuted line-clamp-4 leading-relaxed">${esc(item.description)}</p>
                         </div>
                     `;
@@ -481,18 +472,8 @@
                     throw new Error('Invalid manifest.json format');
                 }
 
-                // 预先加载并随机打乱前 4 个 JSON 分片；不足 4 个时按实际数量处理
-                const shardsToRandomize = Math.min(
-                    RANDOMIZED_SHARD_COUNT,
-                    manifest.files.length
-                );
-                await Promise.all(
-                    Array.from({ length: shardsToRandomize }, async (_, index) => {
-                        const items = await loadShard(index);
-                        getDisplayShard(index, items);
-                    })
-                );
-
+                // 需要比较所有网站的丰富度分数，因此先加载全部 JSON 分片并进行全局排序。
+                await loadAllSortedWebsites();
                 await renderFeedCards();
             } catch (error) {
                 console.error('Failed to load website manifest:', error);

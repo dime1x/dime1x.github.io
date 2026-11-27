@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>比特币节奏 2011–2022</title>
+<style>
+  :root { --bg:#07080c; --fg:#f5f5f7; --muted:#8a8f9c; --btc:#f7931a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg); color: var(--fg); font-family: "Geist", system-ui, sans-serif; overflow: hidden; }
+  #stage { position: relative; width: 100%; height: 100vh; min-height: 480px; }
+  canvas { display: block; width: 100%; height: 100%; }
+  .hud { position: absolute; top: 16px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; gap: 12px; }
+  .year { font-family: "Geist Mono", monospace; font-size: clamp(36px, 9vw, 84px); font-weight: 700; line-height: 1; letter-spacing: -0.04em; }
+  .label { font-size: 12px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
+  .price { font-family: "Geist Mono", monospace; font-size: clamp(20px, 5vw, 40px); font-weight: 600; color: var(--btc); text-align: right; }
+  .mult { font-family: "Geist Mono", monospace; font-size: 13px; color: var(--muted); text-align: right; margin-top: 4px; }
+  .controls { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 12px; transition: opacity .4s; }
+  .controls.hidden { opacity: 0; pointer-events: none; }
+  .play { width: 84px; height: 84px; border-radius: 50%; border: 0; background: var(--btc); color: #111; cursor: pointer; display: grid; place-items: center; box-shadow: 0 0 60px rgba(247,147,26,.5); transition: transform .15s; }
+  .play:hover { transform: scale(1.06); }
+  .play:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+  .hint { font-size: 14px; color: var(--muted); }
+  .pause { position: absolute; right: 16px; bottom: 16px; border: 1px solid #2a2d36; background: rgba(20,22,28,.8); color: var(--fg); padding: 6px 12px; border-radius: 999px; font-size: 12px; font-style: italic; cursor: pointer; display: none; }
+  .pause.show { display: block; }
+  .tuner { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 16px; padding: 10px 16px; border: 1px solid #23262f; border-radius: 14px; background: rgba(14,16,22,.82); backdrop-filter: blur(8px); z-index: 2; }
+  .tuner label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--muted); min-width: 110px; }
+  .tuner .row { display: flex; justify-content: space-between; gap: 8px; }
+  .tuner output { font-family: "Geist Mono", monospace; color: var(--fg); }
+  .tuner input[type=range] { width: 100%; accent-color: var(--btc); cursor: pointer; }
+  @media (max-width: 760px) {
+    .tuner { top: auto; bottom: calc(28% + 40px); gap: 10px; padding: 8px 10px; width: calc(100% - 24px); }
+    .tuner label { min-width: 0; flex: 1; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c" aria-label="随音乐节奏跳动的比特币成交量柱状图，从左到右为 2011 至 2022 年，底部为价格曲线" role="img"></canvas>
+  <div class="hud">
+    <div>
+      <div class="label">Bitcoin Beat</div>
+      <div class="year" id="year">2011</div>
+    </div>
+    <div>
+      <div class="label" style="text-align:right">BTC / USD</div>
+      <div class="price" id="price">$0.30</div>
+      <div class="mult" id="mult">×1</div>
+      <div class="mult" id="vol">日成交量 $50K</div>
+    </div>
+  </div>
+  <div class="controls" id="controls">
+    <button class="play" id="play" aria-label="播放音乐">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <div class="hint">点击播放 · 打开声音</div>
+  </div>
+  <button class="pause" id="pause">暂停</button>
+  <div class="tuner" role="group" aria-label="播放调节">
+    <label>
+      <span class="row">节奏速率 <output id="bpmOut">143 BPM</output></span>
+      <input type="range" id="bpm" min="100" max="200" step="1" value="143" />
+    </label>
+    <label>
+      <span class="row">时间轴速度 <output id="durOut">45 秒</output></span>
+      <input type="range" id="dur" min="15" max="120" step="1" value="45" />
+    </label>
+    <label>
+      <span class="row">跳动激烈度 <output id="intOut">1.3×</output></span>
+      <input type="range" id="int" min="0.5" max="2.5" step="0.1" value="1.3" />
+    </label>
+  </div>
+</div>
+
+<script>
+const DATA = [[2011.0,0.3],[2011.2,0.9],[2011.45,30],[2011.7,5],[2011.9,3],[2012.0,5.3],[2012.5,6.7],[2012.99,13.5],[2013.3,140],[2013.55,90],[2013.8,200],[2013.92,1100],[2014.0,770],[2014.25,460],[2014.5,640],[2014.75,390],[2015.04,180],[2015.5,260],[2015.75,235],[2016.0,430],[2016.5,670],[2016.75,610],[2017.0,960],[2017.25,1080],[2017.5,2500],[2017.75,4300],[2017.96,19000],[2018.1,8000],[2018.5,6400],[2018.95,3200],[2019.5,12000],[2019.95,7200],[2020.2,5000],[2020.5,9100],[2020.75,10800],[2021.0,29000],[2021.28,63000],[2021.55,30000],[2021.86,68000],[2022.0,46000],[2022.45,20000],[2022.75,19500],[2023.0,16500]];
+const T0 = 2011, T1 = 2023;
+let DURATION = 45, BPM = 160, INTENSITY = 1.3, tlProgress = 0, lastAudioT = null;
+const LOGMIN = Math.log10(0.1), LOGMAX = Math.log10(100000);
+
+const VOLUME = [[2011.0,5e4],[2011.45,2e6],[2011.9,3e5],[2012.5,5e5],[2012.99,1e6],[2013.3,3e7],[2013.92,1.5e8],[2014.5,4e7],[2015.0,3e7],[2015.5,2.5e7],[2016.0,6e7],[2016.5,1e8],[2017.0,2e8],[2017.5,1.2e9],[2017.96,1.5e10],[2018.5,4.5e9],[2018.95,5e9],[2019.5,2e10],[2019.95,1.8e10],[2020.2,4e10],[2020.75,2.5e10],[2021.0,4e10],[2021.28,6e10],[2021.86,4e10],[2022.45,3e10],[2023.0,2.5e10]];
+const VLOGMIN = 4, VLOGMAX = 11;
+
+function logInterp(series, t) {
+  if (t <= series[0][0]) return series[0][1];
+  for (let i = 1; i < series.length; i++) {
+    if (t <= series[i][0]) {
+      const [ta, pa] = series[i-1], [tb, pb] = series[i];
+      const k = (t - ta) / (tb - ta);
+      return Math.pow(10, Math.log10(pa) + (Math.log10(pb) - Math.log10(pa)) * k);
+    }
+  }
+  return series[series.length-1][1];
+}
+const MOUNTAIN = [[2011.0,0.3],[2011.45,0.46],[2012.2,0.3],[2013.0,0.36],[2013.92,0.62],[2015.2,0.38],[2016.3,0.46],[2017.96,0.86],[2018.9,0.55],[2019.5,0.72],[2020.2,0.62],[2021.3,1.0],[2021.58,0.82],[2021.86,0.96],[2023.0,0.66]];
+function mountainAt(t) {
+  if (t <= MOUNTAIN[0][0]) return MOUNTAIN[0][1];
+  for (let i = 1; i < MOUNTAIN.length; i++) {
+    if (t <= MOUNTAIN[i][0]) {
+      const [ta, a] = MOUNTAIN[i-1], [tb, b] = MOUNTAIN[i];
+      const k = (1 - Math.cos(Math.PI * (t - ta) / (tb - ta))) / 2;
+      return a + (b - a) * k;
+    }
+  }
+  return MOUNTAIN[MOUNTAIN.length-1][1];
+}
+const priceAt = t => logInterp(DATA, t);
+const volumeAt = t => logInterp(VOLUME, t);
+const fmtVol = v => v >= 1e9 ? '$' + (v / 1e9).toFixed(1) + 'B' : v >= 1e6 ? '$' + (v / 1e6).toFixed(1) + 'M' : '$' + Math.round(v / 1e3) + 'K';
+
+const canvas = document.getElementById('c');
+const g = canvas.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = canvas.clientWidth; H = canvas.clientHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener('resize', resize); resize();
+
+/* ---------- Audio ---------- */
+let ctx, analyser, master, freq, startTime = 0, nextNote = 0, step = 0, noiseBuf, timer;
+const kickTimes = [], hitTimes = [], bigTimes = [];
+const CHORDS = [[41,53,56,60,65],[37,49,53,56,61],[44,56,60,63,68],[39,51,55,58,63]];
+const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+
+function initAudio() {
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  master = ctx.createGain(); master.gain.value = 0.8;
+  const comp = ctx.createDynamicsCompressor();
+  analyser = ctx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.72;
+  master.connect(comp); comp.connect(analyser); analyser.connect(ctx.destination);
+  freq = new Uint8Array(analyser.frequencyBinCount);
+  noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+  const d = noiseBuf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  startTime = nextNote = ctx.currentTime + 0.1;
+  timer = setInterval(schedule, 25);
+}
+function env(node, t, peak, dur) {
+  node.gain.setValueAtTime(0.0001, t);
+  node.gain.exponentialRampToValueAtTime(peak, t + 0.005);
+  node.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+}
+function kick(t, amt) {
+  const o = ctx.createOscillator(), gn = ctx.createGain();
+  o.frequency.setValueAtTime(190, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+  env(gn, t, 1.0 * amt, 0.32); o.connect(gn); gn.connect(master); o.start(t); o.stop(t + 0.5);
+  kickTimes.push(t);
+}
+function noise(t, hp, peak, dur) {
+  const s = ctx.createBufferSource(); s.buffer = noiseBuf;
+  const f = ctx.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = hp;
+  const gn = ctx.createGain(); env(gn, t, peak, dur);
+  s.connect(f); f.connect(gn); gn.connect(master); s.start(t); s.stop(t + dur + 0.05);
+}
+function snare(t) {
+  noise(t, 1200, 0.35, 0.2);
+  const o = ctx.createOscillator(), gn = ctx.createGain(); o.type = 'triangle'; o.frequency.value = 190;
+  env(gn, t, 0.25, 0.12); o.connect(gn); gn.connect(master); o.start(t); o.stop(t + 0.2);
+}
+function tone(t, midi, type, peak, dur, cutoff) {
+  const o = ctx.createOscillator(), f = ctx.createBiquadFilter(), gn = ctx.createGain();
+  o.type = type; o.frequency.value = mtof(midi);
+  f.type = 'lowpass'; f.frequency.value = cutoff; f.Q.value = 6;
+  env(gn, t, peak, dur); o.connect(f); f.connect(gn); gn.connect(master); o.start(t); o.stop(t + dur + 0.05);
+}
+function clap(t) {
+  [0, 0.012, 0.024].forEach((d, i) => noise(t + d, 1400, i === 2 ? 0.4 : 0.22, i === 2 ? 0.18 : 0.02));
+  hitTimes.push([t, 0.7]);
+}
+const STAB = [0, 3, 6, 10, 13];
+function schedule() {
+  while (nextNote < ctx.currentTime + 0.12) {
+    const p = tlProgress;
+    const s = step % 16, bar = Math.floor(step / 16);
+    const chord = CHORDS[bar % 4];
+    const fill = bar % 8 === 7 && p > 0.1;
+    const drop = !(bar % 16 === 15 && s >= 8);
+    if (drop && s % 4 === 0) kick(nextNote, 1);
+    if (s === 0 && (bar % 2 === 0 || bar % 16 === 0)) bigTimes.push(nextNote);
+    if (s === 4 || s === 12) clap(nextNote);
+    if (fill && s >= 8) noise(nextNote, 1800, 0.08 + 0.02 * (s - 8), 0.06);
+    if (s % 4 === 2) noise(nextNote, 6000, 0.14, 0.12);
+    if (p > 0.06) noise(nextNote, 9000, s % 2 ? 0.04 : 0.07, 0.03);
+    if (s % 4 !== 0) tone(nextNote, chord[0] - 12 + (s % 4 === 2 ? 12 : 0), 'sawtooth', s % 4 === 2 ? 0.3 : 0.16, 0.1, 500 + 1500 * p);
+    if (s % 4 === 2) hitTimes.push([nextNote, 0.45]);
+    if (p > 0.12 && STAB.includes(s)) chord.slice(1, 4).forEach(n => tone(nextNote, n + 12, 'sawtooth', 0.05, 0.14, 2200 + 2500 * p));
+    if (p > 0.4) tone(nextNote, chord[1 + ((step * 3) % 4)] + 24, 'square', 0.035, 0.07, 4000);
+    nextNote += 60 / BPM / 4; step++;
+  }
+  while (kickTimes.length > 8) kickTimes.shift();
+  while (hitTimes.length > 16) hitTimes.shift();
+  while (bigTimes.length > 4) bigTimes.shift();
+}
+
+const bindRange = (id, outId, fmtFn, apply) => {
+  const el = document.getElementById(id), out = document.getElementById(outId);
+  const update = () => { const v = parseFloat(el.value); apply(v); out.textContent = fmtFn(v); };
+  el.addEventListener('input', update); update();
+};
+bindRange('bpm', 'bpmOut', v => v + ' BPM', v => { BPM = v; });
+bindRange('dur', 'durOut', v => v + ' 秒', v => { DURATION = v; });
+bindRange('int', 'intOut', v => v.toFixed(1) + '×', v => { INTENSITY = v; });
+
+/* ---------- UI ---------- */
+const playBtn = document.getElementById('play'), controls = document.getElementById('controls'), pauseBtn = document.getElementById('pause');
+playBtn.addEventListener('click', () => {
+  if (!ctx) initAudio(); else ctx.resume();
+  controls.classList.add('hidden'); pauseBtn.classList.add('show');
+});
+pauseBtn.addEventListener('click', () => {
+  if (ctx.state === 'running') { ctx.suspend(); pauseBtn.textContent = '继续'; }
+  else { ctx.resume(); pauseBtn.textContent = '暂停'; }
+});
+
+const yearEl = document.getElementById('year'), priceEl = document.getElementById('price'), multEl = document.getElementById('mult');
+const fmt = p => p < 10 ? '$' + p.toFixed(2) : '$' + Math.round(p).toLocaleString('en-US');
+
+/* ---------- Render ---------- */
+const BARS = 900;
+let cam = 0;
+const heights = new Float32Array(BARS), peaks = new Float32Array(BARS), reveal = new Float32Array(BARS);
+const easeOutBack = x => { const c = 1.70158; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+let pulse = 0, lastKick = 0, lastHit = 0, hitNow = 0, growth = 0.15;
+const jolt = new Float32Array(BARS), spike = new Float32Array(BARS);
+let bigNow = false, lastBig = 0, spikeCenter = -1;
+const volEl = document.getElementById('vol');
+
+function frame(now) {
+  requestAnimationFrame(frame);
+  const playing = ctx && ctx.state === 'running';
+  if (playing && ctx.currentTime >= startTime) {
+    if (lastAudioT !== null) tlProgress = (tlProgress + (ctx.currentTime - lastAudioT) / DURATION) % 1;
+    lastAudioT = ctx.currentTime;
+  } else if (ctx) lastAudioT = ctx.state === 'running' ? lastAudioT : null;
+  const progress = tlProgress;
+  const t = T0 + (T1 - T0) * progress;
+  const price = priceAt(t);
+  const logNorm = (Math.log10(price) - LOGMIN) / (LOGMAX - LOGMIN);
+  const targetGrowth = Math.max(0.12 + 0.88 * progress, logNorm);
+  growth += (targetGrowth - growth) * (targetGrowth < growth ? 0.2 : 0.05);
+
+  if (ctx) {
+    hitNow = 0;
+    for (const k of kickTimes) if (k <= ctx.currentTime && k > lastKick) { lastKick = k; pulse = 1; hitNow = 1; }
+    for (const [ht, amt] of hitTimes) if (ht <= ctx.currentTime && ht > lastHit) { lastHit = ht; pulse = Math.max(pulse, amt); hitNow = Math.max(hitNow, amt); }
+    bigNow = false;
+    for (const b of bigTimes) if (b <= ctx.currentTime && b > lastBig) { lastBig = b; bigNow = true; }
+    if (!playing) { hitNow = 0; bigNow = false; }
+  }
+  pulse *= 0.8;
+
+  volEl.textContent = '日成交量 ' + fmtVol(volumeAt(t));
+  yearEl.textContent = Math.floor(Math.min(t, 2022.999));
+  priceEl.textContent = fmt(price);
+  multEl.textContent = '×' + Math.round(price / DATA[0][1]).toLocaleString('en-US') + ' 自 2011';
+
+  const hue = 205 - 175 * progress;
+  g.fillStyle = '#07080c'; g.fillRect(0, 0, W, H);
+
+  const chartH = Math.max(120, H * 0.28);
+  const barBase = H - chartH - 24;
+  const barTop = 110;
+  const maxBarH = barBase - barTop;
+
+  const glow = g.createRadialGradient(W/2, barBase, 0, W/2, barBase, W * (0.3 + 0.4 * growth));
+  glow.addColorStop(0, `rgba(70,90,255,${0.1 + 0.22 * pulse})`);
+  glow.addColorStop(1, 'hsla(0,0%,0%,0)');
+  g.fillStyle = glow; g.fillRect(0, 0, W, barBase + 40);
+
+  if (playing) analyser.getByteFrequencyData(freq);
+  const worldW = Math.max(W * 3, 1600);
+  const x0 = 52, x1 = x0 + worldW;
+  const slot = (x1 - x0) / BARS;
+  const head = progress * BARS;
+  const headX = x0 + head * slot;
+  const camTarget = ctx ? Math.min(Math.max(0, headX - W * 0.65), x1 + 20 - W) : 0;
+  cam += (camTarget - cam) * (camTarget < cam - W ? 1 : 0.08);
+
+  const revealedEnd = ctx ? Math.floor(head) : Math.floor(BARS * 0.35);
+  const firstVis = Math.max(0, Math.floor((cam - x0) / slot));
+  const lastVis = Math.min(revealedEnd, Math.ceil((cam + W - x0) / slot));
+  const span = lastVis - firstVis;
+  const burst = (center, width, height) => {
+    width *= BARS / 420;
+    for (let k = -Math.ceil(width * 1.6); k <= Math.ceil(width * 1.6); k++) {
+      const i = Math.round(center + k);
+      if (i < firstVis || i >= lastVis) continue;
+      const shape = Math.max(0, 1 - Math.abs(k) / (width * 1.6));
+      spike[i] = Math.max(spike[i], height * Math.pow(shape, 1.3) * (0.5 + Math.random() * 0.5));
+    }
+  };
+  if (span > 4) {
+    const rightBiased = () => firstVis + span * Math.sqrt(Math.random());
+    if (hitNow === 1) burst(firstVis + span * (0.88 + Math.random() * 0.1), 3 + Math.random() * 5, Math.min(1, 0.8 + Math.random() * 0.2));
+    if (hitNow) {
+      const n = Math.max(1, Math.round((hitNow === 1 ? 2 : 1) * INTENSITY));
+      for (let k = 0; k < n; k++) burst(rightBiased(), 2 + Math.random() * 4, Math.min(1, (0.2 + Math.random() * 0.6) * hitNow * INTENSITY));
+    }
+    if (bigNow) for (let k = 0; k < 2 + Math.round(INTENSITY * 1.5); k++) burst(rightBiased(), 2.5 + Math.random() * 5, Math.min(1, 0.8 + Math.random() * 0.2));
+  }
+
+  g.save(); g.translate(-cam, 0);
+  const barFill = g.createLinearGradient(cam, 0, cam + W, 0);
+  barFill.addColorStop(0, '#3a2cff'); barFill.addColorStop(0.18, '#4a6bff');
+  barFill.addColorStop(0.4, '#3fe0d0'); barFill.addColorStop(0.62, '#4f5cff');
+  barFill.addColorStop(0.82, '#3fe0d0'); barFill.addColorStop(1, '#6d4bff');
+  const bw = Math.max(1, slot * 0.62);
+
+  for (let i = 0; i < BARS; i++) {
+    const revealed = i < revealedEnd;
+    reveal[i] += ((revealed ? 1 : 0) - reveal[i]) * (revealed ? 0.25 : 0.35);
+    if (reveal[i] < 0.01) { heights[i] = 0; spike[i] = 0; continue; }
+    const x = x0 + i * slot + (slot - bw) / 2;
+    const onScreen = x + bw >= cam - 20 && x <= cam + W + 20;
+    if (!onScreen) { spike[i] *= 0.8; continue; }
+
+    const v = playing ? freq[2 + ((i * 13) % 60)] / 255 : 0.4 + 0.2 * Math.sin(now / 300 + i * 0.7);
+    if (hitNow) jolt[i] = Math.random() < 0.5 ? Math.random() * 0.3 : 0.6 + Math.random() * 0.4;
+    else if (Math.random() < 0.3) jolt[i] += (Math.random() * 0.6 - jolt[i]) * 0.6;
+    spike[i] *= 0.84;
+
+    const curve = mountainAt(T0 + (i + 0.5) / BARS * (T1 - T0));
+    const rel = span > 0 ? Math.min(1, Math.max(0, (i - firstVis) / span)) : 1;
+    const ramp = 0.18 + 0.82 * Math.pow(rel, 1.3);
+    const base = maxBarH * 0.4 * curve * ramp * (0.35 + 0.65 * jolt[i] * (0.6 + 0.4 * v)) * reveal[i];
+    const target = base + spike[i] * (0.25 + 0.75 * ramp) * Math.max(0, maxBarH - base) * reveal[i];
+    heights[i] += (target - heights[i]) * (target > heights[i] ? 1 : 0.35);
+
+    const h = heights[i];
+    g.fillStyle = barFill;
+    g.globalAlpha = 0.95;
+    g.fillRect(x, barBase - h, bw, h);
+    g.globalAlpha = 0.18;
+    g.fillRect(x, barBase + 3, bw, h * 0.22);
+  }
+  g.globalAlpha = 1;
+  g.fillStyle = 'rgba(63,224,208,0.85)';
+  g.fillRect(cam, barBase - 1, W, 1.5);
+
+  if (ctx) {
+    const line = g.createLinearGradient(0, barTop, 0, barBase);
+    line.addColorStop(0, 'rgba(255,255,255,0)');
+    line.addColorStop(1, `rgba(255,255,255,${0.35 + 0.4 * pulse})`);
+    g.fillStyle = line; g.fillRect(headX - 1, barTop, 2, barBase - barTop);
+  }
+  g.restore();
+
+  drawChart(t, chartH, hue, x0, x1);
+
+  const edge = g.createLinearGradient(0, 0, 60, 0);
+  edge.addColorStop(0, 'rgba(7,8,12,1)'); edge.addColorStop(1, 'rgba(7,8,12,0)');
+  g.fillStyle = edge; g.fillRect(0, 0, 60, barBase + 10);
+  const edgeR = g.createLinearGradient(W - 60, 0, W, 0);
+  edgeR.addColorStop(0, 'rgba(7,8,12,0)'); edgeR.addColorStop(1, 'rgba(7,8,12,1)');
+  g.fillStyle = edgeR; g.fillRect(W - 60, 0, 60, barBase + 10);
+}
+
+function roundRect(x, y, w, h, r) {
+  if (h < 1) return;
+  r = Math.min(r, h);
+  g.beginPath();
+  g.moveTo(x, y + h); g.lineTo(x, y + r); g.quadraticCurveTo(x, y, x + r, y);
+  g.lineTo(x + w - r, y); g.quadraticCurveTo(x + w, y, x + w, y + r); g.lineTo(x + w, y + h);
+  g.closePath(); g.fill();
+}
+
+function drawChart(t, chartH, hue, x0, x1) {
+  const pad = { b: 26, t: 14 };
+  const top = H - chartH, y0 = top + pad.t, y1 = H - pad.b;
+  const X = yr => x0 + (yr - T0) / (T1 - T0) * (x1 - x0);
+  const Y = p => y1 - (Math.log10(p) - LOGMIN) / (LOGMAX - LOGMIN) * (y1 - y0);
+
+  g.fillStyle = 'rgba(255,255,255,0.025)'; g.fillRect(0, top, W, chartH);
+  g.strokeStyle = 'rgba(255,255,255,0.08)'; g.lineWidth = 1;
+  [1, 100, 10000].forEach(p => { const y = Y(p); g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); });
+
+  g.save(); g.translate(-cam, 0);
+  g.font = '11px "Geist Mono", monospace'; g.fillStyle = '#6b707c';
+  g.textAlign = 'center'; g.textBaseline = 'top';
+  for (let yr = 2011; yr <= 2022; yr++) {
+    const xs = X(yr);
+    g.strokeStyle = 'rgba(255,255,255,0.06)'; g.beginPath(); g.moveTo(xs, y0); g.lineTo(xs, y1); g.stroke();
+    g.fillText(String(yr), X(yr + 0.5), y1 + 8);
+  }
+
+  const pts = [];
+  for (let yr = T0; yr <= T1; yr += 0.02) pts.push([X(yr), Y(priceAt(yr)), yr]);
+
+  g.setLineDash([3, 4]); g.strokeStyle = 'rgba(255,255,255,0.15)'; g.beginPath();
+  pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); g.setLineDash([]);
+
+  const done = pts.filter(p => p[2] <= t); done.push([X(t), Y(priceAt(t)), t]);
+  const fill = g.createLinearGradient(0, y0, 0, y1);
+  fill.addColorStop(0, `hsla(${hue},95%,55%,0.35)`); fill.addColorStop(1, `hsla(${hue},95%,55%,0)`);
+  g.beginPath(); g.moveTo(done[0][0], y1);
+  done.forEach(([x, y]) => g.lineTo(x, y)); g.lineTo(done[done.length - 1][0], y1); g.closePath();
+  g.fillStyle = fill; g.fill();
+
+  g.beginPath(); done.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y));
+  g.strokeStyle = `hsl(${hue + 10},100%,62%)`; g.lineWidth = 2.2;
+  g.shadowColor = `hsl(${hue},100%,60%)`; g.shadowBlur = 10; g.stroke(); g.shadowBlur = 0;
+
+  const [cx, cy] = done[done.length - 1];
+  g.fillStyle = '#fff'; g.beginPath(); g.arc(cx, cy, 4 + 3 * pulse, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = `hsla(${hue},100%,65%,${0.6 * pulse})`; g.lineWidth = 2;
+  g.beginPath(); g.arc(cx, cy, 8 + 14 * (1 - pulse), 0, Math.PI * 2); g.stroke();
+  g.restore();
+
+  const axisBg = g.createLinearGradient(0, 0, 64, 0);
+  axisBg.addColorStop(0, 'rgba(7,8,12,0.95)'); axisBg.addColorStop(1, 'rgba(7,8,12,0)');
+  g.fillStyle = axisBg; g.fillRect(0, top, 64, chartH);
+  g.font = '11px "Geist Mono", monospace'; g.fillStyle = '#8a8f9c'; g.textAlign = 'left'; g.textBaseline = 'middle';
+  [[1,'$1'],[100,'$100'],[10000,'$10K']].forEach(([p, s]) => g.fillText(s, 8, Y(p) - 8));
+}
+
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
